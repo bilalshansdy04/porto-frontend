@@ -1,7 +1,54 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { api, IMAGE_BASE_URL } from "../services/api";
+import type {
+  DashboardStats,
+  Experience,
+  Project,
+  Skill,
+  Setting,
+} from "../services/api";
 import meImage from "../assets/me.webp";
 
 export function Home() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [settings, setSettings] = useState<Setting | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [statsData, expData, projData, skillsData, settingsData] =
+          await Promise.all([
+            api.getDashboardStats(),
+            api.getExperiences(),
+            api.getProjects(),
+            api.getSkills(),
+            api.getSettings(),
+          ]);
+        setStats(statsData);
+        setExperiences(expData || []);
+        setSkills(skillsData || []);
+        setSettings(settingsData);
+        // Only show live and completed projects
+        setProjects(
+          (projData || []).filter(
+            (p) =>
+              p.is_complete && (p.status === "Live" || p.status === "Done"),
+          ),
+        );
+      } catch (err) {
+        console.error("Failed to load home data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
   return (
     <main className="grow w-full max-w-300 mx-auto px-6 md:px-grid-margin py-10">
       {/* Hero Section */}
@@ -10,29 +57,45 @@ export function Home() {
           <div className="inline-flex items-center gap-2 bg-surface-container-highest px-3 py-1.5 rounded-full w-fit">
             <span className="w-2 h-2 rounded-full bg-brand-blue"></span>
             <span className="font-label-code text-label-code text-brand-slate">
-              Available for New Projects
+              {settings?.language === "id"
+                ? "Tersedia untuk Proyek Baru"
+                : "Available for New Projects"}
             </span>
           </div>
           <h1 className="font-display text-display text-brand-navy">
-            Architecting Robust Digital Solutions.
+            {settings?.language === "id"
+              ? "Saya Bilal Shandyarta Syamsudin"
+              : "I am Bilal Shandyarta Syamsudin"}
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
-            I am Bilal Shandyarta Syamsudin, a Full-Stack Developer specializing
-            in scalable enterprise applications, secure data bridges, and
-            high-performance technical ecosystems.
+            {stats?.summary ||
+              (settings?.language === "id"
+                ? "Tidak ada ringkasan"
+                : "No Summary")}
           </p>
+          {(settings ? settings.show_experience : true) &&
+          stats?.years_of_experience ? (
+            <p className="font-label-code text-label-code text-brand-blue font-bold">
+              {stats.years_of_experience}+{" "}
+              {settings?.language === "id"
+                ? "Tahun Pengalaman"
+                : "Years of Experience"}
+            </p>
+          ) : null}
           <div className="flex gap-4 mt-4">
             <a
               className="bg-brand-navy text-white px-6 py-3 rounded-xl font-label-code text-label-code hover:opacity-90 transition-opacity"
               href="#works"
             >
-              View Selected Works
+              {settings?.language === "id"
+                ? "Lihat Karya Pilihan"
+                : "View Selected Works"}
             </a>
             <a
               className="border border-brand-slate text-brand-navy px-6 py-3 rounded-xl font-label-code text-label-code hover:bg-surface-container-highest transition-colors"
               href="#contact"
             >
-              Get in Touch
+              {settings?.language === "id" ? "Hubungi Saya" : "Get in Touch"}
             </a>
           </div>
         </div>
@@ -48,272 +111,220 @@ export function Home() {
       </section>
 
       {/* Technical Arsenal Section */}
-      <section className="mb-section-gap-desktop">
+      <section className="mb-section-gap-desktop" id="skills">
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
-            Capabilities
+            {settings?.language === "id" ? "Kemampuan" : "Capabilities"}
           </span>
           <h2 className="font-headline-lg text-headline-lg text-brand-navy">
-            Technical Arsenal
+            {settings?.language === "id"
+              ? "Kemampuan Teknis"
+              : "Technical Skills"}
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white border border-outline-variant p-6 rounded-xl hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow group">
-            <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
-              <span className="material-symbols-outlined">terminal</span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
-              Backend Engineering
-            </h3>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-              Robust architecture and secure API development.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                PHP
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                Laravel
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                MySQL
-              </span>
-            </div>
-          </div>
-          <div className="bg-white border border-outline-variant p-6 rounded-xl hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow group">
-            <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
-              <span className="material-symbols-outlined">web</span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
-              Frontend Interfaces
-            </h3>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-              Responsive, highly interactive user experiences.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                JavaScript
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                React
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                Tailwind
-              </span>
-            </div>
-          </div>
-          <div className="bg-white border border-outline-variant p-6 rounded-xl hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow group">
-            <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
-              <span className="material-symbols-outlined">database</span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
-              Systems Integration
-            </h3>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-              Seamless data flow across complex platforms.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                SAP
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                REST APIs
-              </span>
-              <span className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded">
-                Git
-              </span>
-            </div>
-          </div>
+          {(() => {
+            const CATEGORIES = [
+              {
+                name: "Bahasa Pemrograman",
+                icon: "terminal",
+                desc: "Core languages for building robust software.",
+              },
+              {
+                name: "Framework & Lingkungan",
+                icon: "web",
+                desc: "Tools for creating scalable applications.",
+              },
+              {
+                name: "Database & Infrastruktur",
+                icon: "database",
+                desc: "Data management and deployment architectures.",
+              },
+              {
+                name: "Alat Pengembangan (Tools)",
+                icon: "handyman",
+                desc: "Essential utilities for the development workflow.",
+              },
+              {
+                name: "Lainnya",
+                icon: "apps",
+                desc: "Other valuable skills and capabilities.",
+              },
+            ];
+
+            return CATEGORIES.map((cat) => {
+              const catSkills = skills.filter((s) => s.category === cat.name);
+              if (catSkills.length === 0) return null;
+
+              return (
+                <div
+                  key={cat.name}
+                  className="bg-white border border-outline-variant p-6 rounded-xl hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow group"
+                >
+                  <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                    <span className="material-symbols-outlined">
+                      {cat.icon}
+                    </span>
+                  </div>
+                  <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
+                    {cat.name}
+                  </h3>
+                  <p className="font-body-md text-body-md text-on-surface-variant mb-4">
+                    {cat.desc}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {catSkills.map((skill) => (
+                      <span
+                        key={skill.id}
+                        className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded"
+                      >
+                        {skill.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            });
+          })()}
         </div>
       </section>
 
       {/* Professional Journey Section */}
       <section className="mb-section-gap-desktop" id="experience">
-        <div className="flex flex-col gap-2 mb-12">
-          <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
-            Timeline
-          </span>
-          <h2 className="font-headline-lg text-headline-lg text-brand-navy">
-            Professional Journey
-          </h2>
-        </div>
-        <div className="relative border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 bg-brand-blue rounded-none border border-white"></div>
-            <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
-              <h3 className="font-headline-md text-headline-md text-brand-navy">
-                PT. MULTI SPUNINDO JAYA
-              </h3>
-              <span className="font-label-code text-label-code text-brand-slate">
-                Full-Stack Developer
-              </span>
-            </div>
-            <p className="font-label-code text-label-code text-on-surface-variant mb-4">
-              Present
-            </p>
-            <ul className="space-y-3 font-body-md text-body-md text-on-surface-variant">
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
-                <span>
-                  Architected and maintained enterprise-level applications
-                  ensuring high availability.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
-                <span>
-                  Developed secure data pipelines interfacing with legacy
-                  systems.
-                </span>
-              </li>
-            </ul>
+          <div className="flex flex-col gap-2 mb-12">
+            <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
+              {settings?.language === "id" ? "Linimasa" : "Timeline"}
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-brand-navy">
+              {settings?.language === "id"
+                ? "Perjalanan Profesional"
+                : "Professional Journey"}
+            </h2>
           </div>
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 bg-surface-container-high rounded-none border border-outline-variant"></div>
-            <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
-              <h3 className="font-headline-md text-headline-md text-brand-navy">
-                PT. PYXIS Ultimate Solution
-              </h3>
-              <span className="font-label-code text-label-code text-brand-slate">
-                Software Engineer
-              </span>
-            </div>
-            <p className="font-label-code text-label-code text-on-surface-variant mb-4">
-              Previous
-            </p>
-            <ul className="space-y-3 font-body-md text-body-md text-on-surface-variant">
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
-                <span>
-                  Implemented core features for client-facing logistics
-                  dashboards.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
-                <span>
-                  Optimized database queries resulting in a 30% reduction in
-                  load times.
-                </span>
-              </li>
-            </ul>
+          <div className="relative border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
+            {loading ? (
+              <p className="pl-8 text-secondary">
+                {settings?.language === "id"
+                  ? "Memuat pengalaman..."
+                  : "Loading experiences..."}
+              </p>
+            ) : experiences.length === 0 ? (
+              <p className="pl-8 text-secondary">
+                {settings?.language === "id"
+                  ? "Belum ada pengalaman yang ditambahkan."
+                  : "No experiences added yet."}
+              </p>
+            ) : (
+              experiences.map((exp) => (
+                <div key={exp.id} className="relative pl-8 md:pl-12">
+                  <div
+                    className={`absolute -left-1.25 top-1.5 w-2.5 h-2.5 rounded-none border ${exp.is_current ? "bg-brand-blue border-white" : "bg-surface-container-high border-outline-variant"}`}
+                  ></div>
+                  <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
+                    <h3 className="font-headline-md text-headline-md text-brand-navy">
+                      {exp.company_name}
+                    </h3>
+                    <span className="font-label-code text-label-code text-brand-slate">
+                      {exp.role}
+                    </span>
+                  </div>
+                  <p className="font-label-code text-label-code text-on-surface-variant mb-4">
+                    {exp.start_date} -{" "}
+                    {exp.is_current
+                      ? settings?.language === "id"
+                        ? "Sekarang"
+                        : "Present"
+                      : exp.end_date}
+                  </p>
+                  {exp.responsibilities && exp.responsibilities.length > 0 && (
+                    <ul className="space-y-3 font-body-md text-body-md text-on-surface-variant">
+                      {exp.responsibilities.map((resp, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
+                          <span>{resp}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))
+            )}
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Selected Works Section */}
       <section className="mb-section-gap-desktop" id="works">
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
-            Portfolio
+            {settings?.language === "id" ? "Portofolio" : "Portfolio"}
           </span>
           <h2 className="font-headline-lg text-headline-lg text-brand-navy">
-            Selected Works
+            {settings?.language === "id" ? "Karya Pilihan" : "Selected Works"}
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Link className="group block" to="/project/msjchat">
-            <div className="bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all">
-              <div className="aspect-video bg-surface-container-low border-b border-outline-variant overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  alt="MSJCHAT Enterprise"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU_az6vm8XlKsrfCFdNGdp4-Jk_-C781dVI8rRHwECDzHu-0Afpr6D52V8bAcP1yv0UVFoRtLoECU-zRbMVgqchQ--9383gxiDidlkOORy8qXxphmnHbAc7uAimK7ik9Av3WCD-QvRFfA1vmqVlxoeYh8_mhsXNy-yHndWNgyezYP5d0uVWJaGRhMABVIln5ldhBQh8c0JDxBRcdbkNSsiKUK9POThQfC4ZGzZULn_4tENdxjzDK0"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
-                    MSJCHAT Enterprise
-                  </h3>
-                  <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
-                    arrow_outward
-                  </span>
+          {loading ? (
+            <p className="text-secondary">
+              {settings?.language === "id"
+                ? "Memuat proyek..."
+                : "Loading projects..."}
+            </p>
+          ) : projects.length === 0 ? (
+            <p className="text-secondary">
+              {settings?.language === "id"
+                ? "Tidak ada proyek aktif untuk ditampilkan."
+                : "No live projects to display."}
+            </p>
+          ) : (
+            projects.map((project, idx) => (
+              <Link
+                key={project.id}
+                className={`group block ${idx % 3 === 2 ? "md:col-span-2" : ""}`}
+                to={`/project/${project.id}`}
+              >
+                <div
+                  className={`bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all flex flex-col ${idx % 3 === 2 ? "md:flex-row" : ""}`}
+                >
+                  <div
+                    className={`bg-surface-container-low border-outline-variant overflow-hidden ${idx % 3 === 2 ? "md:w-1/2 border-b md:border-b-0 md:border-r aspect-video md:aspect-auto" : "aspect-video border-b"}`}
+                  >
+                    <img
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      alt={project.name}
+                      src={`${IMAGE_BASE_URL}${project.image_url}`}
+                    />
+                  </div>
+                  <div
+                    className={`p-6 ${idx % 3 === 2 ? "md:w-1/2 flex flex-col justify-center" : ""}`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
+                        {project.name}
+                      </h3>
+                      <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
+                        arrow_outward
+                      </span>
+                    </div>
+                    <p className="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+                    {project.tech_stack && project.tech_stack.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {project.tech_stack.map((tech, i) => (
+                          <span
+                            key={i}
+                            className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                  Secure internal communication platform integrated with
-                  corporate directory.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    React
-                  </span>
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    WebSockets
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Link className="group block" to="/project/logistics">
-            <div className="bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all">
-              <div className="aspect-video bg-surface-container-low border-b border-outline-variant overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  alt="Logistics Dashboard"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDireUgrVlejpNZL261i1HCtU-lisocD2Ep3CzOIoDPW3kCT-rPFTl92GeWHPT20hALwru5uGhwL6kd74nygNMrpjw8DmsurVFcGlZvvsFiLfRlbYz-MrBCfUfnA1LCjZKpI_QZ-pentak7iR-uQw7Bx1ws7b2wc9_oFV0PUX0x8-j0WQ0YZRbidTRac4kZHO1sn8lKhVP8vKmcJFZfNZrvKwAdOthFW-FzLbY2yn_q4jJEGgjGkqw"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
-                    Logistics Dashboard
-                  </h3>
-                  <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
-                    arrow_outward
-                  </span>
-                </div>
-                <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                  Real-time tracking and resource allocation interface for fleet
-                  management.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    Laravel
-                  </span>
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    Vue.js
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Link className="group block md:col-span-2" to="/project/sap">
-            <div className="bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all flex flex-col md:flex-row">
-              <div className="aspect-video md:aspect-auto md:w-1/2 bg-surface-container-low border-b md:border-b-0 md:border-r border-outline-variant overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  alt="SAP Data Bridge"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLRy7mLb3Qm-if_g3Z0_P4FFoC0jRszqvcWWEllY6bLb-WGLvF-TNhcFSJZFXn9TNvqSEnQkglSNILCW6qIwrXWYX3pGB-XcNIi9dKrEL97MDbri3Z8DkhrGRNp3DkjTCpD7_-yKAcc0vrJmEiZzY2zQSy8oCs2mU6t0l8U1PV6y7T1ts2dqSeq0RMd8LXzc9_9-DlCKAXf2IZrBAzOYFdpo1Z_fnY6H7HM-HIJSxOr8SXzHqpqz0"
-                />
-              </div>
-              <div className="p-6 md:w-1/2 flex flex-col justify-center">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
-                    SAP Data Bridge
-                  </h3>
-                  <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
-                    arrow_outward
-                  </span>
-                </div>
-                <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                  Middleware solution synchronizing on-premise SAP databases
-                  with cloud web applications.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    PHP
-                  </span>
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    REST API
-                  </span>
-                  <span className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded">
-                    SAP RFC
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            ))
+          )}
         </div>
       </section>
     </main>

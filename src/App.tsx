@@ -8,6 +8,11 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminManageProjects } from "./pages/admin/AdminManageProjects";
 import { AdminProfessionalJourney } from "./pages/admin/AdminProfessionalJourney";
 
+import { AdminEditProject } from "./pages/admin/AdminEditProject";
+import { AdminManageSkills } from "./pages/admin/AdminManageSkills";
+import { AdminEditProfile } from "./pages/admin/AdminEditProfile";
+import { AdminSettings } from "./pages/admin/AdminSettings";
+
 function App() {
   return (
     <Router>
@@ -30,8 +35,12 @@ function App() {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route path="profile/edit" element={<AdminEditProfile />} />
           <Route path="projects" element={<AdminManageProjects />} />
+          <Route path="projects/:id/edit" element={<AdminEditProject />} />
+          <Route path="skills" element={<AdminManageSkills />} />
           <Route path="journey" element={<AdminProfessionalJourney />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </Router>

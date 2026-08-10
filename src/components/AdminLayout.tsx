@@ -65,13 +65,41 @@ export function AdminLayout() {
             )}
           </NavLink>
           
-          <a
-            className="flex items-center gap-3 px-4 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container rounded-xl transition-all duration-200"
-            href="#"
+          <NavLink
+            to="/admin/skills"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
+                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
+              }`
+            }
           >
-            <span className="material-symbols-outlined">settings</span>
-            Settings
-          </a>
+            {({ isActive }) => (
+              <>
+                <span className="material-symbols-outlined" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>handyman</span>
+                Manage Skills
+              </>
+            )}
+          </NavLink>
+          
+          <NavLink
+            to="/admin/settings"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
+                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <span className="material-symbols-outlined" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>settings</span>
+                Settings
+              </>
+            )}
+          </NavLink>
           
           <NavLink
             to="/"
