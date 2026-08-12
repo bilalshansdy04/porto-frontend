@@ -23,6 +23,8 @@ export interface Project {
   tech_stack: string[];
   project_flow: string[];
   jobdesc: string[];
+  link?: string;
+  carousel_images?: string[];
 }
 
 export interface Experience {
@@ -112,6 +114,18 @@ export const api = {
     fetch(`${BASE_URL}/projects`, {
       method: "POST",
       body: formData, // fetch automatically sets the correct multipart boundary
+    }).then((res) => handleResponse<Project>(res)),
+
+  uploadProjectImages: (id: number | string, formData: FormData) =>
+    fetch(`${BASE_URL}/projects/${id}/images`, {
+      method: "POST",
+      body: formData,
+    }).then((res) => handleResponse<Project>(res)),
+
+  uploadProjectThumbnail: (id: number | string, formData: FormData) =>
+    fetch(`${BASE_URL}/projects/${id}/thumbnail`, {
+      method: "POST",
+      body: formData,
     }).then((res) => handleResponse<Project>(res)),
 
   updateProject: (id: number | string, data: Partial<Project>) =>

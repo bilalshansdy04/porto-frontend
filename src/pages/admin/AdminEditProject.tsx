@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import type { Project } from "../../services/api";
 
+import { ImageCropperModal } from "../../components/admin/ImageCropperModal";
+
 const ArrayField = ({
   label,
   inputState,
@@ -71,15 +73,20 @@ export function AdminEditProject() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Form states
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("Draft");
+  const [link, setLink] = useState("");
   const [techStackInput, setTechStackInput] = useState("");
   const [techStack, setTechStack] = useState<string[]>([]);
   const [projectFlowInput, setProjectFlowInput] = useState("");
   const [projectFlow, setProjectFlow] = useState<string[]>([]);
   const [jobdescInput, setJobdescInput] = useState("");
   const [jobdesc, setJobdesc] = useState<string[]>([]);
+  const [carouselImages, setCarouselImages] = useState<string[]>([]);
+
+  // Cropper states
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -87,11 +94,14 @@ export function AdminEditProject() {
         .getProject(id)
         .then((data) => {
           setProject(data);
+          setName(data.name || "");
           setDescription(data.description || "");
           setStatus(data.status || "Draft");
+          setLink(data.link || "");
           setTechStack(data.tech_stack || []);
           setProjectFlow(data.project_flow || []);
           setJobdesc(data.jobdesc || []);
+          setCarouselImages(data.carousel_images || []);
           setLoading(false);
         })
         .catch((err) => {
@@ -125,15 +135,60 @@ export function AdminEditProject() {
     setListState(listState.filter((_, i) => i !== index));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setCropImageSrc(reader.result?.toString() || null);
+      });
+      reader.readAsDataURL(file);
+      e.target.value = ""; // Reset input
+    }
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    const formData = new FormData();
+    formData.append("images", croppedBlob, "carousel-image.jpg");
+    try {
+      const updatedProject = await api.uploadProjectImages(id!, formData);
+      setCarouselImages(updatedProject.carousel_images || []);
+      setCropImageSrc(null); // Close modal
+      alert("Image cropped and uploaded successfully!");
+    } catch (err) {
+      console.error("Failed to upload cropped image", err);
+      alert("Failed to upload image.");
+    }
+  };
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const formData = new FormData();
+      formData.append("image", e.target.files[0]);
+      try {
+        const updatedProject = await api.uploadProjectThumbnail(id!, formData);
+        setProject(updatedProject);
+        alert("Main thumbnail uploaded successfully!");
+      } catch (err) {
+        console.error("Failed to upload thumbnail", err);
+        alert("Failed to upload thumbnail.");
+      }
+      e.target.value = ""; // Reset input
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await api.updateProject(id!, {
+        name,
         description,
         status,
+        link,
         tech_stack: techStack,
         project_flow: projectFlow,
         jobdesc: jobdesc,
+        carousel_images: carouselImages,
         is_complete: true,
       });
       // Navigate back to project list
@@ -169,6 +224,19 @@ export function AdminEditProject() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+                Project Name
+              </label>
+              <input
+                type="text"
+                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
+                placeholder="Project Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
                 Description
               </label>
               <textarea
@@ -193,6 +261,18 @@ export function AdminEditProject() {
                 <option value="Live">Live</option>
                 <option value="Done">Done</option>
               </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+                External Link (Optional)
+              </label>
+              <input
+                type="url"
+                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
+                placeholder="https://example.com"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+              />
             </div>
           </div>
 
@@ -229,6 +309,62 @@ export function AdminEditProject() {
             handleRemoveItem={handleRemoveItem}
           />
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border border-outline-variant p-4 rounded-lg bg-surface-container-lowest">
+              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+                Main Thumbnail
+              </label>
+              {project.image_url ? (
+                <div className="mb-4">
+                  <img src={`http://localhost:8080${project.image_url}`} alt="Thumbnail" className="w-full h-40 object-cover rounded-md border border-outline-variant" />
+                </div>
+              ) : (
+                <div className="mb-4 text-error text-sm font-semibold">
+                  No Thumbnail Uploaded
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailUpload}
+                className="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-surface-container-low file:text-primary hover:file:bg-surface-container transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="border-t border-outline-variant pt-4 mt-4">
+            <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              Add Carousel Image (21:9)
+            </label>
+            <div className="mb-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-surface-container-low file:text-primary hover:file:bg-surface-container transition-colors"
+              />
+            </div>
+            {carouselImages.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {carouselImages.map((imgUrl, idx) => (
+                  <div key={idx} className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
+                    <img src={`http://localhost:8080${imgUrl}`} alt={`Carousel ${idx}`} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setCarouselImages(carouselImages.filter((_, i) => i !== idx))}
+                        className="bg-error text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                        title="Remove Image"
+                      >
+                        <span className="material-symbols-outlined text-sm">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-outline-variant">
             <button
               className="font-body-md text-body-md text-secondary hover:text-primary transition-colors py-2 px-4"
@@ -247,6 +383,14 @@ export function AdminEditProject() {
           </div>
         </form>
       </div>
+
+      {cropImageSrc && (
+        <ImageCropperModal
+          imageSrc={cropImageSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={() => setCropImageSrc(null)}
+        />
+      )}
     </main>
   );
 }

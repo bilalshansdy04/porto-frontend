@@ -51,35 +51,75 @@ export function ProjectDetail() {
 
   return (
     <main className="flex-grow max-w-max-width mx-auto w-full px-grid-margin py-section-gap-mobile md:py-section-gap-desktop space-y-section-gap-mobile md:space-y-section-gap-desktop">
-      {/* Hero Section */}
-      <section className="flex flex-col items-start gap-6">
-        <Link className="flex items-center text-[#3b82f6] font-body-md text-body-md hover:underline mb-4" to="/">
-          <span className="material-symbols-outlined mr-2" style={{ fontSize: "18px" }}>arrow_back</span>
-          {settings?.language === "id" ? "Kembali ke Proyek" : "Back to Projects"}
-        </Link>
-        <h1 className="font-display text-display text-primary max-w-3xl">{project.name}</h1>
-        <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed whitespace-pre-wrap">
-          {project.description}
-        </p>
-        {project.tech_stack && project.tech_stack.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-4">
-            {project.tech_stack.map((tech, idx) => (
-              <span key={idx} className="font-label-code text-label-code bg-[#f1f5f9] text-[#64748b] px-3 py-1 rounded">
-                {tech}
-              </span>
-            ))}
-          </div>
-        )}
-      </section>
+      {/* Hero & Banner Section */}
+      <section className="flex flex-col gap-6">
+        {/* Top Banner (Carousel) */}
+        <div className="w-full aspect-[21/9] rounded-xl border border-outline-variant overflow-hidden bg-white project-card relative">
+          {project.carousel_images && project.carousel_images.length > 0 ? (
+            <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar h-full">
+              {project.carousel_images.map((imgUrl, idx) => (
+                <div key={idx} className="w-full h-full shrink-0 snap-center relative">
+                  <img 
+                    className="w-full h-full object-cover" 
+                    alt={`${project.name} screenshot ${idx + 1}`} 
+                    src={`${IMAGE_BASE_URL}${imgUrl}`} 
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <img 
+              className="w-full h-full object-cover" 
+              alt={project.name} 
+              src={`${IMAGE_BASE_URL}${project.image_url}`} 
+            />
+          )}
+          
+          {/* Scroll Indicator Hint */}
+          {project.carousel_images && project.carousel_images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm pointer-events-none">
+              {project.carousel_images.map((_, idx) => (
+                <div key={idx} className="w-1.5 h-1.5 rounded-full bg-white/80"></div>
+              ))}
+            </div>
+          )}
+        </div>
 
-      {/* Project Images (Bento Grid Style) */}
-      <section className="grid grid-cols-1 md:grid-cols-12 gap-grid-gutter">
-        <div className="md:col-span-12 h-96 rounded-xl border border-outline-variant overflow-hidden bg-white project-card relative">
-          <img 
-            className="w-full h-full object-cover" 
-            alt={project.name} 
-            src={`${IMAGE_BASE_URL}${project.image_url}`} 
-          />
+        {/* Project Info (Below Banner) */}
+        <div className="flex flex-col gap-4 mt-2">
+          <Link className="inline-flex items-center text-[#3b82f6] font-body-md text-body-md hover:underline mb-2 w-fit" to="/">
+            <span className="material-symbols-outlined mr-2" style={{ fontSize: "18px" }}>arrow_back</span>
+            {settings?.language === "id" ? "Kembali ke Proyek" : "Back to Projects"}
+          </Link>
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <h1 className="font-display text-display text-primary">{project.name}</h1>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-brand-navy text-white px-6 py-3 rounded-lg font-label-code text-label-code hover:opacity-90 transition-opacity whitespace-nowrap"
+              >
+                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                {settings?.language === "id" ? "Kunjungi Proyek" : "Visit Project"}
+              </a>
+            )}
+          </div>
+
+          {project.tech_stack && project.tech_stack.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {project.tech_stack.map((tech, idx) => (
+                <span key={idx} className="font-label-code text-label-code bg-[#f1f5f9] text-[#64748b] px-3 py-1 rounded">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-wrap max-w-4xl">
+            {project.description}
+          </p>
         </div>
       </section>
 
