@@ -13,6 +13,7 @@ import { AdminManageSkills } from "./pages/admin/AdminManageSkills";
 import { AdminEditProfile } from "./pages/admin/AdminEditProfile";
 import { AdminSettings } from "./pages/admin/AdminSettings";
 import { Toaster } from "@/components/ui/toast";
+import { SecretAdminGateway } from "./components/SecretAdminGateway";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         </Route>
       </Routes>
       <Toaster />
+      <SecretAdminGateway />
     </Router>
   );
 }

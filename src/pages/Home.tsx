@@ -23,6 +23,18 @@ export function Home() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [settings, setSettings] = useState<Setting | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleSecretClick = () => {
+    setClickCount((prev) => {
+      const newCount = prev + 1;
+      if (newCount >= 5) {
+        window.dispatchEvent(new Event("openSecretAdminDialog"));
+        return 0;
+      }
+      return newCount;
+    });
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -82,7 +94,10 @@ export function Home() {
                 : "Available for New Projects"}
             </span>
           </div>
-          <h1 className="font-display text-display text-brand-navy">
+          <h1 
+            className="font-display text-display text-brand-navy cursor-default select-none"
+            onClick={handleSecretClick}
+          >
             {settings?.language === "id"
               ? "Saya Bilal Shandyarta Syamsudin"
               : "I am Bilal Shandyarta Syamsudin"}
