@@ -8,8 +8,8 @@ import type {
   Skill,
   Setting,
 } from "../services/api";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import SpotlightCard from "../components/SpotlightCard";
 import meImage from "../assets/me.webp";
 
 export function Home() {
@@ -143,11 +143,12 @@ export function Home() {
               if (catSkills.length === 0) return null;
 
               return (
-                <Card
+                <SpotlightCard
                   key={cat.name}
-                  className="group hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow border-outline-variant rounded-xl"
+                  className="bg-surface group hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow border border-outline-variant rounded-xl p-6"
+                  spotlightColor="rgba(59, 130, 246, 0.15)"
                 >
-                  <CardContent className="p-6">
+                  <div>
                     <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
                       <span className="material-symbols-outlined">
                         {cat.icon}
@@ -169,8 +170,8 @@ export function Home() {
                         </span>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </SpotlightCard>
               );
             });
           })()}
