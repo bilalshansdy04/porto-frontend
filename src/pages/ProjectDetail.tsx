@@ -3,13 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, IMAGE_BASE_URL } from "../services/api";
 import type { Project, Setting } from "../services/api";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import DepthCarousel from "@/components/DepthCarousel";
 
 export function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -108,26 +102,21 @@ export function ProjectDetail() {
 
           {/* Carousel Below Description with Smaller Size */}
           {project.carousel_images && project.carousel_images.length > 0 && (
-            <div className="mt-8 max-w-2xl mx-auto w-full px-12 relative">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {project.carousel_images.map((imgUrl, idx) => (
-                    <CarouselItem key={idx}>
-                      <div className="p-1">
-                        <div className="w-full aspect-[16/9] rounded-xl border border-outline-variant overflow-hidden">
-                          <img 
-                            className="w-full h-full object-cover" 
-                            alt={`${project.name} screenshot ${idx + 1}`} 
-                            src={`${IMAGE_BASE_URL}${imgUrl}`} 
-                          />
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="absolute left-0" />
-                <CarouselNext className="absolute right-0" />
-              </Carousel>
+            <div className="mt-8 w-full max-w-4xl mx-auto h-[400px] sm:h-[500px] relative">
+              <DepthCarousel
+                items={project.carousel_images.map((imgUrl, idx) => ({
+                  image: `${IMAGE_BASE_URL}${imgUrl}`,
+                  alt: `${project.name} screenshot ${idx + 1}`
+                }))}
+                cardWidth={600}
+                cardHeight={340}
+                depth={150}
+                spread={60}
+                tilt={15}
+                visibleCards={3}
+                autoplay
+                loop
+              />
             </div>
           )}
         </div>
