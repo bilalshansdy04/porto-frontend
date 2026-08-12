@@ -55,7 +55,10 @@ export function Home() {
   return (
     <main className="grow w-full max-w-300 mx-auto px-6 md:px-grid-margin py-10">
       {/* Hero Section */}
-      <section className={`grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop`}>
+      <section
+        className={`grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop`}
+        id="home"
+      >
         <div className="flex flex-col gap-6 order-2 md:order-1">
           <div className="inline-flex items-center gap-2 bg-surface-container-highest px-3 py-1.5 rounded-full w-fit">
             <span className="w-2 h-2 rounded-full bg-brand-blue"></span>
@@ -282,7 +285,9 @@ export function Home() {
                   colors={["#3b82f6", "#60a5fa", "#93c5fd"]}
                   borderRadius={12}
                 >
-                  <div className={`flex flex-col h-full rounded-[inherit] ${idx % 3 === 2 ? "md:flex-row" : ""}`}>
+                  <div
+                    className={`flex flex-col h-full rounded-[inherit] ${idx % 3 === 2 ? "md:flex-row" : ""}`}
+                  >
                     <div
                       className={`p-6 pb-0 ${idx % 3 === 2 ? "md:w-1/2 md:pb-6 md:pr-0" : ""}`}
                     >

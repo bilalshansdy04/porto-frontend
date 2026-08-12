@@ -4,6 +4,7 @@ import { api } from "../services/api";
 import type { Setting } from "../services/api";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import GooeyNav from "./GooeyNav";
 
 export function TopNavBar() {
   const [settings, setSettings] = useState<Setting | null>(null);
@@ -24,43 +25,33 @@ export function TopNavBar() {
         >
           Bilal Shandyarta
         </Link>
-        <div className="hidden md:flex gap-8 items-center">
-          <Link
-            to="/"
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "text-primary font-bold border-b-2 border-primary rounded-none pb-1 hover:bg-transparent hover:text-primary transition-opacity duration-200 opacity-80"
-            )}
-          >
-            {settings?.language === "id" ? "Portofolio" : "Portfolio"}
-          </Link>
-          <a
-            href="/#skills"
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
-            )}
-          >
-            {settings?.language === "id" ? "Kemampuan" : "Skills"}
-          </a>
-          <a
-            href="/#experience"
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
-            )}
-          >
-            {settings?.language === "id" ? "Pengalaman" : "Experience"}
-          </a>
-          <a
-            href="/#works"
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
-            )}
-          >
-            {settings?.language === "id" ? "Karya" : "Works"}
-          </a>
+        <div className="hidden md:flex items-center">
+          <div style={{ position: "relative" }}>
+            <GooeyNav
+              items={[
+                {
+                  label:
+                    settings?.language === "id" ? "Portofolio" : "Portfolio",
+                  href: "/",
+                },
+                {
+                  label: settings?.language === "id" ? "Kemampuan" : "Skills",
+                  href: "/#skills",
+                },
+                {
+                  label:
+                    settings?.language === "id" ? "Pengalaman" : "Experience",
+                  href: "/#experience",
+                },
+                {
+                  label: settings?.language === "id" ? "Karya" : "Works",
+                  href: "/#works",
+                },
+              ]}
+              particleCount={10}
+              colors={["#ffffff"]}
+            />
+          </div>
         </div>
       </div>
     </nav>
