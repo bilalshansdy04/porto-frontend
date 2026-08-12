@@ -378,7 +378,7 @@ export function AdminEditProject() {
               Cancel
             </Button>
             <Button
-              className="bg-brand-navy hover:bg-brand-navy/90 text-white flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
               type="submit"
             >
               <span className="material-symbols-outlined text-sm">save</span>

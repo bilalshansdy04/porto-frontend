@@ -17,8 +17,10 @@ export function AdminLayout() {
             end
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
-                "w-full justify-start gap-3 px-4 py-6 text-base"
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
               )
             }
           >
@@ -34,8 +36,10 @@ export function AdminLayout() {
             to="/admin/projects"
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
-                "w-full justify-start gap-3 px-4 py-6 text-base"
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
               )
             }
           >
@@ -51,8 +55,10 @@ export function AdminLayout() {
             to="/admin/journey"
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
-                "w-full justify-start gap-3 px-4 py-6 text-base"
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
               )
             }
           >
@@ -68,8 +74,10 @@ export function AdminLayout() {
             to="/admin/skills"
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
-                "w-full justify-start gap-3 px-4 py-6 text-base"
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
               )
             }
           >
@@ -85,8 +93,10 @@ export function AdminLayout() {
             to="/admin/settings"
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
-                "w-full justify-start gap-3 px-4 py-6 text-base"
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
               )
             }
           >

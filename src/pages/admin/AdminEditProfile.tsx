@@ -118,7 +118,7 @@ export function AdminEditProfile() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`bg-brand-navy text-white px-6 py-2.5 rounded-lg font-label-code flex items-center gap-2 transition-colors ${
+              className={`bg-primary text-white px-6 py-2.5 rounded-lg font-label-code flex items-center gap-2 transition-colors ${
                 isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
               }`}
             >
