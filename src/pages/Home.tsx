@@ -8,8 +8,11 @@ import type {
   Skill,
   Setting,
 } from "../services/api";
-import { Card, CardContent } from "@/components/ui/card";
 import SpotlightCard from "../components/SpotlightCard";
+import GradientWaves from "../components/GradientWaves";
+import SideRays from "../components/SideRays";
+import LightRays from "../components/LightRays";
+import Particles from "../components/Particles";
 import BorderGlow from "../components/BorderGlow";
 import meImage from "../assets/me.webp";
 
@@ -56,10 +59,21 @@ export function Home() {
     <main className="grow w-full max-w-300 mx-auto px-6 md:px-grid-margin py-10">
       {/* Hero Section */}
       <section
-        className={`grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop`}
+        className={`relative grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30`}
         id="home"
       >
-        <div className="flex flex-col gap-6 order-2 md:order-1">
+        <div className="absolute inset-0 z-0">
+          <GradientWaves
+            horizonColor="#020617"
+            waveColor="#1e293b"
+            crestColor="#3b82f6"
+            speed={0.4}
+            amplitude={2.0}
+            opacity={0.7}
+            mouseInteraction={true}
+          />
+        </div>
+        <div className="relative z-10 flex flex-col gap-6 order-2 md:order-1">
           <div className="inline-flex items-center gap-2 bg-surface-container-highest px-3 py-1.5 rounded-full w-fit">
             <span className="w-2 h-2 rounded-full bg-brand-blue"></span>
             <span className="font-label-code text-label-code text-brand-slate">
@@ -90,8 +104,8 @@ export function Home() {
           ) : null}
         </div>
         {(settings ? settings.show_photo : true) && (
-          <div className="order-1 md:order-2 flex justify-center md:justify-end">
-            <div className="relative w-full max-w-100 aspect-3/4 bg-transparent">
+          <div className="relative z-10 order-1 md:order-2 flex justify-center md:justify-end">
+            <div className="relative w-full max-w-100 aspect-3/4 bg-transparent rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(59,130,246,0.3)]">
               <img
                 alt="Bilal Shandyarta Professional Portrait"
                 className="w-full h-full object-cover object-top"
@@ -103,8 +117,23 @@ export function Home() {
       </section>
 
       {/* Technical Arsenal Section */}
-      <section className="mb-section-gap-desktop" id="skills">
-        <div className="flex flex-col gap-2 mb-12">
+      <section
+        className="relative mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30"
+        id="skills"
+      >
+        <div className="absolute inset-0 z-0">
+          <SideRays
+            rayColor1="#1e293b"
+            rayColor2="#3b82f6"
+            intensity={1}
+            spread={1.5}
+            origin="top-right"
+            tilt={-10}
+            opacity={0.8}
+            speed={2}
+          />
+        </div>
+        <div className="relative z-10 flex flex-col gap-2 mb-12">
           <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
             {settings?.language === "id" ? "Kemampuan" : "Capabilities"}
           </span>
@@ -114,7 +143,7 @@ export function Home() {
               : "Technical Skills"}
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {(() => {
             const CATEGORIES = [
               {
@@ -185,8 +214,23 @@ export function Home() {
       </section>
 
       {/* Professional Journey Section */}
-      <section className="mb-section-gap-desktop" id="experience">
-        <div className="flex flex-col gap-2 mb-12">
+      <section
+        className="relative mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30"
+        id="experience"
+      >
+        <div className="absolute inset-0 z-0 opacity-50">
+          <LightRays
+            raysOrigin="bottom-center"
+            raysColor="#3b82f6"
+            raysSpeed={0.5}
+            lightSpread={1.5}
+            rayLength={1.5}
+            followMouse={true}
+            mouseInfluence={0.2}
+            className="custom-rays"
+          />
+        </div>
+        <div className="relative z-10 flex flex-col gap-2 mb-12">
           <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
             {settings?.language === "id" ? "Linimasa" : "Timeline"}
           </span>
@@ -196,7 +240,7 @@ export function Home() {
               : "Professional Journey"}
           </h2>
         </div>
-        <div className="relative border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
+        <div className="relative z-10 border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
           {loading ? (
             <p className="pl-8 text-secondary">
               {settings?.language === "id"
@@ -248,8 +292,24 @@ export function Home() {
       </section>
 
       {/* Selected Works Section */}
-      <section className="mb-section-gap-desktop" id="works">
-        <div className="flex flex-col gap-2 mb-12">
+      <section
+        className="relative mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30"
+        id="works"
+      >
+        <div className="absolute inset-0 z-0">
+          <Particles
+            particleColors={["#3b82f6", "#60a5fa", "#93c5fd"]}
+            particleCount={300}
+            particleSpread={15}
+            speed={0.15}
+            particleBaseSize={80}
+            moveParticlesOnHover={true}
+            particleHoverFactor={0.5}
+            alphaParticles={true}
+            cameraDistance={25}
+          />
+        </div>
+        <div className="relative z-10 flex flex-col gap-2 mb-12">
           <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
             {settings?.language === "id" ? "Portofolio" : "Portfolio"}
           </span>
@@ -257,7 +317,7 @@ export function Home() {
             {settings?.language === "id" ? "Karya Pilihan" : "Selected Works"}
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
           {loading ? (
             <p className="text-secondary">
               {settings?.language === "id"
