@@ -15,7 +15,7 @@ export function SecretAdminGateway() {
   const [isOpen, setIsOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-  const SECRET_PASSWORD = "rememberthemagicinsideyou";
+  const SECRET_PASSWORD = import.meta.env.VITE_SECRET_PASSWORD;
 
   // Listen for custom event to open dialog from 5 clicks
   useEffect(() => {

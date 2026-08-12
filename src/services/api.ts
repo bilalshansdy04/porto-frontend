@@ -1,5 +1,5 @@
-const BASE_URL = "http://localhost:8080/api";
-export const IMAGE_BASE_URL = "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_URL;
+export const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_API_URL;
 
 export interface Profile {
   summary: string;
@@ -73,7 +73,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 // API Client
 export const api = {
   getSettings: () =>
-    fetch(`${BASE_URL}/settings`, { cache: 'no-store' }).then((res) =>
+    fetch(`${BASE_URL}/settings`, { cache: "no-store" }).then((res) =>
       handleResponse<Setting>(res),
     ),
 
