@@ -9,6 +9,7 @@ export interface Profile {
 export interface Setting {
   id: number;
   show_experience: boolean;
+  show_photo: boolean;
   language: string;
 }
 

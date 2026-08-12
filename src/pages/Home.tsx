@@ -10,6 +10,7 @@ import type {
 } from "../services/api";
 import { Card, CardContent } from "@/components/ui/card";
 import SpotlightCard from "../components/SpotlightCard";
+import BorderGlow from "../components/BorderGlow";
 import meImage from "../assets/me.webp";
 
 export function Home() {
@@ -54,7 +55,7 @@ export function Home() {
   return (
     <main className="grow w-full max-w-300 mx-auto px-6 md:px-grid-margin py-10">
       {/* Hero Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-section-gap-desktop">
+      <section className={`grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop`}>
         <div className="flex flex-col gap-6 order-2 md:order-1">
           <div className="inline-flex items-center gap-2 bg-surface-container-highest px-3 py-1.5 rounded-full w-fit">
             <span className="w-2 h-2 rounded-full bg-brand-blue"></span>
@@ -85,15 +86,17 @@ export function Home() {
             </p>
           ) : null}
         </div>
-        <div className="order-1 md:order-2 flex justify-center md:justify-end">
-          <div className="relative w-full max-w-100 aspect-3/4 bg-transparent">
-            <img
-              alt="Bilal Shandyarta Professional Portrait"
-              className="w-full h-full object-cover object-top"
-              src={meImage}
-            />
+        {(settings ? settings.show_photo : true) && (
+          <div className="order-1 md:order-2 flex justify-center md:justify-end">
+            <div className="relative w-full max-w-100 aspect-3/4 bg-transparent">
+              <img
+                alt="Bilal Shandyarta Professional Portrait"
+                className="w-full h-full object-cover object-top"
+                src={meImage}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Technical Arsenal Section */}
@@ -271,46 +274,55 @@ export function Home() {
                 className={`group block ${idx % 3 === 2 ? "md:col-span-2" : ""}`}
                 to={`/project/${project.id}`}
               >
-                <Card
-                  className={`border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all flex flex-col ${idx % 3 === 2 ? "md:flex-row" : ""}`}
+                <BorderGlow
+                  className={`bg-surface rounded-xl transition-all h-full`}
+                  edgeSensitivity={100}
+                  glowColor="210 100 60"
+                  animated
+                  colors={["#3b82f6", "#60a5fa", "#93c5fd"]}
+                  borderRadius={12}
                 >
-                  <div
-                    className={`bg-surface-container-low border-outline-variant overflow-hidden ${idx % 3 === 2 ? "md:w-1/2 border-b md:border-b-0 md:border-r aspect-video md:aspect-auto" : "aspect-video border-b"}`}
-                  >
-                    <img
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      alt={project.name}
-                      src={`${IMAGE_BASE_URL}${project.image_url}`}
-                    />
-                  </div>
-                  <CardContent
-                    className={`p-6 ${idx % 3 === 2 ? "md:w-1/2 flex flex-col justify-center" : ""}`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
-                        {project.name}
-                      </h3>
-                      <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
-                        arrow_outward
-                      </span>
-                    </div>
-                    <p className="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    {project.tech_stack && project.tech_stack.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {project.tech_stack.map((tech, i) => (
-                          <span
-                            key={i}
-                            className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded"
-                          >
-                            {tech}
-                          </span>
-                        ))}
+                  <div className={`flex flex-col h-full rounded-[inherit] ${idx % 3 === 2 ? "md:flex-row" : ""}`}>
+                    <div
+                      className={`p-6 pb-0 ${idx % 3 === 2 ? "md:w-1/2 md:pb-6 md:pr-0" : ""}`}
+                    >
+                      <div className="w-full h-full rounded-xl overflow-hidden bg-surface-container-low aspect-video border border-outline-variant/50">
+                        <img
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          alt={project.name}
+                          src={`${IMAGE_BASE_URL}${project.image_url}`}
+                        />
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    </div>
+                    <div
+                      className={`p-6 ${idx % 3 === 2 ? "md:w-1/2 flex flex-col justify-center" : "flex-1"}`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-headline-md text-headline-md text-brand-navy group-hover:text-brand-blue transition-colors">
+                          {project.name}
+                        </h3>
+                        <span className="material-symbols-outlined text-brand-slate group-hover:text-brand-blue transition-colors">
+                          arrow_outward
+                        </span>
+                      </div>
+                      <p className="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-3">
+                        {project.description}
+                      </p>
+                      {project.tech_stack && project.tech_stack.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {project.tech_stack.map((tech, i) => (
+                            <span
+                              key={i}
+                              className="font-label-code text-label-code text-brand-slate bg-surface-container px-2 py-1 rounded"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </BorderGlow>
               </Link>
             ))
           )}

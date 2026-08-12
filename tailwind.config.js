@@ -9,55 +9,55 @@ export default {
     extend: {
       "colors": {
         "secondary-fixed-dim": "#b7c8e1",
-        "on-surface-variant": "#45474c",
+        "on-surface-variant": "#94a3b8", // Slate 400
         "on-tertiary-fixed-variant": "#564427",
-        "surface-container-low": "#f5f3f4",
+        "surface-container-low": "#0f172a", // Slate 900
         "on-secondary-fixed": "#0b1c30",
-        "primary-container": "#1e293b",
-        "on-primary-container": "#8590a6",
-        "secondary": "#505f76",
-        "inverse-surface": "#303032",
-        "error": "#ba1a1a",
-        "on-primary": "#ffffff",
-        "on-tertiary-container": "#a38c6a",
-        "primary": "#091426",
+        "primary-container": "#1e293b", // Slate 800
+        "on-primary-container": "#cbd5e1", // Slate 300
+        "secondary": "#94a3b8", // Slate 400
+        "inverse-surface": "#fbf8fa",
+        "error": "#ffb4ab",
+        "on-primary": "#020617",
+        "on-tertiary-container": "#ffdea9",
+        "primary": "#3b82f6", // Brand blue
         "tertiary-fixed": "#fadfb8",
-        "surface-variant": "#e4e2e3",
-        "secondary-container": "#d0e1fb",
-        "on-surface": "#1b1b1d",
-        "background": "#fbf8fa",
+        "surface-variant": "#1e293b", // Slate 800
+        "secondary-container": "#334155", // Slate 700
+        "on-surface": "#f8fafc", // Slate 50
+        "background": "#020617", // Slate 950
         "on-secondary-fixed-variant": "#38485d",
         "tertiary-fixed-dim": "#ddc39d",
         "primary-fixed-dim": "#bcc7de",
         "tertiary-container": "#35260c",
-        "on-secondary-container": "#54647a",
+        "on-secondary-container": "#cbd5e1", // Slate 300
         "on-primary-fixed": "#111c2d",
         "on-tertiary-fixed": "#271902",
-        "on-error-container": "#93000a",
-        "inverse-primary": "#bcc7de",
-        "inverse-on-surface": "#f3f0f2",
-        "outline": "#75777d",
-        "surface-tint": "#545f73",
-        "on-secondary": "#ffffff",
-        "surface-container": "#f0edef",
-        "surface-container-high": "#eae7e9",
-        "surface-container-lowest": "#ffffff",
-        "on-background": "#1b1b1d",
-        "error-container": "#ffdad6",
+        "on-error-container": "#ffdad6",
+        "inverse-primary": "#091426",
+        "inverse-on-surface": "#1b1b1d",
+        "outline": "#64748b", // Slate 500
+        "surface-tint": "#3b82f6",
+        "on-secondary": "#020617", // Slate 950
+        "surface-container": "#1e293b", // Slate 800
+        "surface-container-high": "#334155", // Slate 700
+        "surface-container-lowest": "#020617", // Slate 950
+        "on-background": "#f8fafc", // Slate 50
+        "error-container": "#93000a",
         "on-primary-fixed-variant": "#3c475a",
-        "surface": "#fbf8fa",
+        "surface": "#0f172a", // Slate 900
         "primary-fixed": "#d8e3fb",
-        "surface-bright": "#fbf8fa",
-        "tertiary": "#1e1200",
-        "on-tertiary": "#ffffff",
-        "surface-container-highest": "#e4e2e3",
+        "surface-bright": "#1e293b", // Slate 800
+        "tertiary": "#ffb4ab",
+        "on-tertiary": "#020617",
+        "surface-container-highest": "#475569", // Slate 600
         "secondary-fixed": "#d3e4fe",
-        "on-error": "#ffffff",
-        "outline-variant": "#c5c6cd",
-        "surface-dim": "#dcd9db",
+        "on-error": "#690005",
+        "outline-variant": "#334155", // Slate 700
+        "surface-dim": "#020617", // Slate 950
         "brand-blue": "#3b82f6",
-        "brand-navy": "#1e293b",
-        "brand-slate": "#64748b"
+        "brand-navy": "#f1f5f9", // Slate 100
+        "brand-slate": "#94a3b8" // Slate 400
       },
       "borderRadius": {
         "DEFAULT": "0.125rem",

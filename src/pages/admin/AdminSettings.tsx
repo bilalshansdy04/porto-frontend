@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function AdminSettings() {
   const [showExperience, setShowExperience] = useState(true);
+  const [showPhoto, setShowPhoto] = useState(true);
   const [language, setLanguage] = useState("id");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,6 +17,7 @@ export function AdminSettings() {
         const settings = await api.getSettings();
         if (settings) {
           setShowExperience(settings.show_experience);
+          setShowPhoto(settings.show_photo !== undefined ? settings.show_photo : true);
           setLanguage(settings.language);
         }
       } catch (err) {
@@ -32,6 +34,7 @@ export function AdminSettings() {
     try {
       await api.updateSettings({
         show_experience: showExperience,
+        show_photo: showPhoto,
         language: language,
       });
       toast.add({ title: "Success", description: "Settings saved successfully!", type: "success" });
@@ -86,6 +89,24 @@ export function AdminSettings() {
                 id="show-experience"
                 checked={showExperience}
                 onCheckedChange={setShowExperience}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-surface dark:bg-surface-container-highest rounded-xl border border-outline-variant dark:border-outline mt-4">
+              <div>
+                <h4 className="text-title-md font-title-md font-bold text-primary">
+                  Show Profile Photo
+                </h4>
+                <p className="text-body-md text-secondary mt-1">
+                  Toggle the visibility of your profile photo on the
+                  public portfolio.
+                </p>
+              </div>
+
+              <Switch
+                id="show-photo"
+                checked={showPhoto}
+                onCheckedChange={setShowPhoto}
               />
             </div>
           </section>
