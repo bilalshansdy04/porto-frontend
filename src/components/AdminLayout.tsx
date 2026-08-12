@@ -1,4 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { buttonVariants, Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function AdminLayout() {
   return (
@@ -14,11 +16,10 @@ export function AdminLayout() {
             to="/admin"
             end
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
-                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
-              }`
+              cn(
+                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+                "w-full justify-start gap-3 px-4 py-6 text-base"
+              )
             }
           >
             {({ isActive }) => (
@@ -32,11 +33,10 @@ export function AdminLayout() {
           <NavLink
             to="/admin/projects"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
-                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
-              }`
+              cn(
+                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+                "w-full justify-start gap-3 px-4 py-6 text-base"
+              )
             }
           >
             {({ isActive }) => (
@@ -50,11 +50,10 @@ export function AdminLayout() {
           <NavLink
             to="/admin/journey"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
-                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
-              }`
+              cn(
+                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+                "w-full justify-start gap-3 px-4 py-6 text-base"
+              )
             }
           >
             {({ isActive }) => (
@@ -68,11 +67,10 @@ export function AdminLayout() {
           <NavLink
             to="/admin/skills"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
-                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
-              }`
+              cn(
+                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+                "w-full justify-start gap-3 px-4 py-6 text-base"
+              )
             }
           >
             {({ isActive }) => (
@@ -86,11 +84,10 @@ export function AdminLayout() {
           <NavLink
             to="/admin/settings"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed"
-                  : "text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container"
-              }`
+              cn(
+                buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+                "w-full justify-start gap-3 px-4 py-6 text-base"
+              )
             }
           >
             {({ isActive }) => (
@@ -103,7 +100,10 @@ export function AdminLayout() {
           
           <NavLink
             to="/"
-            className="flex items-center gap-3 px-4 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container rounded-xl transition-all duration-200 mt-auto"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "w-full justify-start gap-3 px-4 py-6 text-base mt-auto text-secondary"
+            )}
           >
             <span className="material-symbols-outlined">logout</span>
             Back to Site
@@ -116,9 +116,9 @@ export function AdminLayout() {
         {/* TopAppBar */}
         <header className="bg-surface dark:bg-surface-container-highest text-primary dark:text-primary-fixed-dim font-headline-md text-headline-md w-full sticky top-0 z-40 border-b border-outline-variant dark:border-outline px-grid-margin py-base flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
-            <button className="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors duration-200">
+            <Button variant="ghost" size="icon" className="text-primary rounded-full">
               <span className="material-symbols-outlined">menu</span>
-            </button>
+            </Button>
             <span className="text-headline-md font-headline-md font-bold text-primary">Dashboard</span>
           </div>
           <div className="flex items-center gap-4">

@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "../../lib/cropImage";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface ImageCropperModalProps {
   imageSrc: string;
@@ -18,7 +20,7 @@ export function ImageCropperModal({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
   const onCropCompleteHandler = useCallback(
-    (croppedArea: any, croppedAreaPixels: any) => {
+    (_: any, croppedAreaPixels: any) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
     [],
@@ -42,19 +44,13 @@ export function ImageCropperModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-surface w-full max-w-3xl rounded-xl shadow-xl overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-          <h2 className="font-headline-md text-headline-md text-primary">
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onCancel(); }}>
+      <DialogContent className="max-w-3xl p-0 overflow-hidden bg-surface sm:rounded-xl">
+        <DialogHeader className="px-6 py-4 border-b border-outline-variant">
+          <DialogTitle className="font-headline-md text-headline-md text-primary">
             Crop Image (21:9)
-          </h2>
-          <button
-            onClick={onCancel}
-            className="text-secondary hover:text-error transition-colors"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
+          </DialogTitle>
+        </DialogHeader>
 
         <div className="relative w-full h-[50vh] bg-surface-container-highest">
           <Cropper
@@ -89,21 +85,22 @@ export function ImageCropperModal({
           </div>
 
           <div className="flex gap-3 w-full sm:w-auto">
-            <button
+            <Button
+              variant="outline"
               onClick={onCancel}
-              className="flex-1 sm:flex-none px-6 py-2 border border-secondary text-secondary rounded-lg font-body-md hover:bg-surface-container-low transition-colors"
+              className="flex-1 sm:flex-none border-secondary text-secondary"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
-              className="flex-1 sm:flex-none px-6 py-2 bg-brand-blue text-white rounded-lg font-body-md hover:opacity-90 transition-opacity"
+              className="flex-1 sm:flex-none bg-brand-blue text-white hover:bg-brand-blue/90"
             >
               Crop & Upload
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { api } from "../../services/api";
 import type { Experience } from "../../services/api";
+import { toast } from "@/components/ui/toast";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function AdminProfessionalJourney() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -54,8 +60,9 @@ export function AdminProfessionalJourney() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !role || !startDate) {
-      return alert("Company, Role, and Start Date are required.");
+    if (!companyName.trim() || !role.trim() || !startDate.trim()) {
+      toast.add({ title: "Validation Error", description: "Company, Role, and Start Date are required.", type: "error" });
+      return;
     }
 
     setIsSubmitting(true);
@@ -66,9 +73,9 @@ export function AdminProfessionalJourney() {
         start_date: startDate,
         end_date: isCurrent ? "" : endDate,
         is_current: isCurrent,
-        responsibilities: responsibilities
+        responsibilities: responsibilities,
       });
-      
+
       // Reset form
       setCompanyName("");
       setRole("");
@@ -76,24 +83,25 @@ export function AdminProfessionalJourney() {
       setEndDate("");
       setIsCurrent(false);
       setResponsibilities([]);
-      
+
       fetchExperiences();
     } catch (err) {
       console.error("Failed to save experience", err);
-      alert("Failed to save experience.");
+      toast.add({ title: "Error", description: "Failed to save experience.", type: "error" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this experience?")) return;
+    if (!window.confirm("Are you sure you want to delete this experience?"))
+      return;
     try {
       await api.deleteExperience(id);
       fetchExperiences();
     } catch (err) {
       console.error("Failed to delete experience", err);
-      alert("Failed to delete experience");
+      toast.add({ title: "Error", description: "Failed to delete experience.", type: "error" });
     }
   };
 
@@ -114,183 +122,194 @@ export function AdminProfessionalJourney() {
             Current Entries
           </h3>
           {loading ? (
-            <p>Loading...</p>
+            <p className="text-secondary">Loading...</p>
           ) : experiences.length === 0 ? (
             <p className="text-secondary">No experiences found.</p>
           ) : (
-            experiences.map(exp => (
-              <div key={exp.id} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 hover:shadow-md transition-shadow relative group">
-                <button 
+            experiences.map((exp) => (
+              <Card
+                key={exp.id}
+                className="relative group hover:shadow-md transition-shadow"
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => handleDelete(exp.id)}
-                  className="absolute top-2 right-2 text-error opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-surface-container hover:bg-error-container rounded"
+                  className="absolute top-2 right-2 text-error opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 hover:text-error hover:bg-error/10"
                   title="Delete"
                 >
-                  <span className="material-symbols-outlined text-sm">delete</span>
-                </button>
-                <div className="flex justify-between items-start mb-2 pr-6">
-                  <h4 className="font-body-lg text-body-lg font-bold text-primary">
-                    {exp.role}
-                  </h4>
-                  <span className="font-label-code text-label-code bg-surface-container px-2 py-1 rounded text-secondary whitespace-nowrap ml-2">
-                    {exp.start_date} - {exp.is_current ? "Present" : exp.end_date}
+                  <span className="material-symbols-outlined text-sm">
+                    delete
                   </span>
-                </div>
-                <p className="font-body-md text-body-md text-secondary">
-                  {exp.company_name}
-                </p>
-              </div>
+                </Button>
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start mb-2 pr-6">
+                    <h4 className="font-body-lg text-body-lg font-bold text-primary">
+                      {exp.role}
+                    </h4>
+                    <span className="font-label-code text-label-code bg-surface-container px-2 py-1 rounded text-secondary whitespace-nowrap ml-2">
+                      {exp.start_date} -{" "}
+                      {exp.is_current ? "Present" : exp.end_date}
+                    </span>
+                  </div>
+                  <p className="font-body-md text-body-md text-secondary">
+                    {exp.company_name}
+                  </p>
+                </CardContent>
+              </Card>
             ))
           )}
         </div>
         {/* Add/Edit Form */}
         <div className="lg:col-span-2">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-sm">
-            <h3 className="font-headline-md text-headline-md text-primary mb-6">
-              Add New Experience
-            </h3>
-            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
-                    Company Name
-                  </label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"
-                    placeholder="e.g. Acme Corp"
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
-                    Role / Position
-                  </label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"
-                    placeholder="e.g. Software Engineer"
-                    type="text"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
-                    Start Date
-                  </label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-label-code text-primary focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"
-                    type="month"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
-                    End Date
-                  </label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-label-code text-primary focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all disabled:opacity-50"
-                    type="month"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    disabled={isCurrent}
-                  />
-                  <div className="mt-2 flex items-center gap-2">
-                    <input
-                      className="rounded border-outline-variant text-primary focus:ring-primary"
-                      id="current-role"
-                      type="checkbox"
-                      checked={isCurrent}
-                      onChange={(e) => setIsCurrent(e.target.checked)}
+          <Card>
+            <CardHeader>
+              <CardTitle>Add New Experience</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="uppercase text-xs font-semibold text-secondary">
+                      Company Name
+                    </Label>
+                    <Input
+                      placeholder="e.g. Acme Corp"
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
                     />
-                    <label
-                      className="font-body-md text-body-md text-secondary cursor-pointer"
-                      htmlFor="current-role"
-                    >
-                      I currently work here
-                    </label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="uppercase text-xs font-semibold text-secondary">
+                      Role / Position
+                    </Label>
+                    <Input
+                      placeholder="e.g. Software Engineer"
+                      type="text"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="uppercase text-xs font-semibold text-secondary">
+                      Start Date
+                    </Label>
+                    <Input
+                      type="month"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 flex flex-col justify-start">
+                    <Label className="uppercase text-xs font-semibold text-secondary">
+                      End Date
+                    </Label>
+                    <Input
+                      type="month"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      disabled={isCurrent}
+                    />
+                    <div className="mt-3 flex items-center space-x-2">
+                      <Checkbox
+                        id="current-role"
+                        checked={isCurrent}
+                        onCheckedChange={(checked) =>
+                          setIsCurrent(checked as boolean)
+                        }
+                      />
+                      <Label
+                        htmlFor="current-role"
+                        className="font-normal text-secondary cursor-pointer"
+                      >
+                        I currently work here
+                      </Label>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="border-t border-outline-variant pt-6 mt-2">
-                <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
-                  Responsibilities & Achievements
-                </label>
-                <div className="flex gap-2 mb-4">
-                  <input
-                    className="flex-1 bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"
-                    id="resp-input"
-                    placeholder="Describe a key responsibility or achievement..."
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                  />
-                  <button
-                    className="border border-[#505f76] text-[#505f76] px-4 py-2 rounded-lg font-body-md font-semibold hover:bg-surface-container-low transition-all flex items-center gap-1"
-                    id="add-resp-btn"
+
+                <div className="border-t border-outline-variant pt-6 mt-2">
+                  <Label className="uppercase text-xs font-semibold text-secondary block mb-4">
+                    Responsibilities & Achievements
+                  </Label>
+                  <div className="flex gap-2 mb-4">
+                    <Input
+                      className="flex-1"
+                      id="resp-input"
+                      placeholder="Describe a key responsibility or achievement..."
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                    />
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={handleAddResp}
+                      className="gap-1"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        add
+                      </span>{" "}
+                      Add
+                    </Button>
+                  </div>
+                  <ul className="flex flex-col gap-2 mt-4" id="resp-list">
+                    {responsibilities.map((resp, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
+                      >
+                        <div className="w-1.5 h-1.5 bg-[#3b82f6] mt-2 shrink-0 rounded-full"></div>
+                        <span className="font-body-md text-body-md text-on-surface flex-1">
+                          {resp}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-error hover:bg-error-container hover:text-error"
+                          title="Remove"
+                          type="button"
+                          onClick={() => handleRemoveResp(idx)}
+                        >
+                          <span className="material-symbols-outlined text-sm">
+                            close
+                          </span>
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-outline-variant">
+                  <Button
+                    variant="ghost"
                     type="button"
-                    onClick={handleAddResp}
+                    onClick={() => {
+                      setCompanyName("");
+                      setRole("");
+                      setStartDate("");
+                      setEndDate("");
+                      setIsCurrent(false);
+                      setResponsibilities([]);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="gap-2 text-white"
+                    disabled={isSubmitting}
                   >
                     <span className="material-symbols-outlined text-sm">
-                      add
-                    </span>{" "}
-                    Add
-                  </button>
+                      save
+                    </span>
+                    {isSubmitting ? "Saving..." : "Save Experience"}
+                  </Button>
                 </div>
-                <ul className="flex flex-col gap-2 mt-4" id="resp-list">
-                  {responsibilities.map((resp, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-start gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
-                    >
-                      <div className="w-1.5 h-1.5 bg-[#3b82f6] mt-2 shrink-0"></div>
-                      <span className="font-body-md text-body-md text-on-surface flex-1">
-                        {resp}
-                      </span>
-                      <button
-                        className="text-error hover:bg-error-container p-1 rounded transition-colors remove-btn"
-                        title="Remove"
-                        type="button"
-                        onClick={() => handleRemoveResp(idx)}
-                      >
-                        <span className="material-symbols-outlined text-sm">
-                          close
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-outline-variant">
-                <button
-                  className="font-body-md text-body-md text-secondary hover:text-primary transition-colors py-2 px-4"
-                  type="button"
-                  onClick={() => {
-                    setCompanyName("");
-                    setRole("");
-                    setStartDate("");
-                    setEndDate("");
-                    setIsCurrent(false);
-                    setResponsibilities([]);
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`bg-[#1e293b] text-white px-6 py-3 rounded-lg font-body-md font-semibold transition-opacity flex items-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'}`}
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  <span className="material-symbols-outlined text-sm">
-                    save
-                  </span>
-                  {isSubmitting ? 'Saving...' : 'Save Experience'}
-                </button>
-              </div>
-            </form>
-          </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </main>

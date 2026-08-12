@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, IMAGE_BASE_URL } from "../services/api";
 import type { Project, Setting } from "../services/api";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -40,7 +48,7 @@ export function ProjectDetail() {
           <h1 className="font-display text-display text-primary mb-4">
             {settings?.language === "id" ? "Proyek Tidak Ditemukan" : "Project Not Found"}
           </h1>
-          <Link className="inline-flex items-center px-6 py-3 border border-[#64748b] rounded-lg font-body-md text-body-md text-primary hover:bg-[#f1f5f9] transition-colors" to="/">
+          <Link to="/" className={buttonVariants({ variant: "outline", className: "px-6 py-6 font-body-md text-primary" })}>
             <span className="material-symbols-outlined mr-2" style={{ fontSize: "20px" }}>arrow_back</span>
             {settings?.language === "id" ? "Kembali ke Proyek" : "Back to Projects"}
           </Link>
@@ -53,41 +61,18 @@ export function ProjectDetail() {
     <main className="flex-grow max-w-max-width mx-auto w-full px-grid-margin py-section-gap-mobile md:py-section-gap-desktop space-y-section-gap-mobile md:space-y-section-gap-desktop">
       {/* Hero & Banner Section */}
       <section className="flex flex-col gap-6">
-        {/* Top Banner (Carousel) */}
+        {/* Top Banner (Static Image) */}
         <div className="w-full aspect-[21/9] rounded-xl border border-outline-variant overflow-hidden bg-white project-card relative">
-          {project.carousel_images && project.carousel_images.length > 0 ? (
-            <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar h-full">
-              {project.carousel_images.map((imgUrl, idx) => (
-                <div key={idx} className="w-full h-full shrink-0 snap-center relative">
-                  <img 
-                    className="w-full h-full object-cover" 
-                    alt={`${project.name} screenshot ${idx + 1}`} 
-                    src={`${IMAGE_BASE_URL}${imgUrl}`} 
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <img 
-              className="w-full h-full object-cover" 
-              alt={project.name} 
-              src={`${IMAGE_BASE_URL}${project.image_url}`} 
-            />
-          )}
-          
-          {/* Scroll Indicator Hint */}
-          {project.carousel_images && project.carousel_images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm pointer-events-none">
-              {project.carousel_images.map((_, idx) => (
-                <div key={idx} className="w-1.5 h-1.5 rounded-full bg-white/80"></div>
-              ))}
-            </div>
-          )}
+          <img 
+            className="w-full h-full object-cover" 
+            alt={project.name} 
+            src={`${IMAGE_BASE_URL}${project.image_url}`} 
+          />
         </div>
 
         {/* Project Info (Below Banner) */}
         <div className="flex flex-col gap-4 mt-2">
-          <Link className="inline-flex items-center text-[#3b82f6] font-body-md text-body-md hover:underline mb-2 w-fit" to="/">
+          <Link to="/" className={buttonVariants({ variant: "link", className: "p-0 h-auto justify-start text-[#3b82f6] hover:underline mb-2 w-fit" })}>
             <span className="material-symbols-outlined mr-2" style={{ fontSize: "18px" }}>arrow_back</span>
             {settings?.language === "id" ? "Kembali ke Proyek" : "Back to Projects"}
           </Link>
@@ -99,9 +84,9 @@ export function ProjectDetail() {
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-brand-navy text-white px-6 py-3 rounded-lg font-label-code text-label-code hover:opacity-90 transition-opacity whitespace-nowrap"
+                className={buttonVariants({ className: "bg-brand-navy hover:opacity-90 transition-opacity whitespace-nowrap" })}
               >
-                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                <span className="material-symbols-outlined text-sm mr-2">open_in_new</span>
                 {settings?.language === "id" ? "Kunjungi Proyek" : "Visit Project"}
               </a>
             )}
@@ -120,6 +105,31 @@ export function ProjectDetail() {
           <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-wrap max-w-4xl">
             {project.description}
           </p>
+
+          {/* Carousel Below Description with Smaller Size */}
+          {project.carousel_images && project.carousel_images.length > 0 && (
+            <div className="mt-8 max-w-2xl mx-auto w-full px-12 relative">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {project.carousel_images.map((imgUrl, idx) => (
+                    <CarouselItem key={idx}>
+                      <div className="p-1">
+                        <div className="w-full aspect-[16/9] rounded-xl border border-outline-variant overflow-hidden">
+                          <img 
+                            className="w-full h-full object-cover" 
+                            alt={`${project.name} screenshot ${idx + 1}`} 
+                            src={`${IMAGE_BASE_URL}${imgUrl}`} 
+                          />
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="absolute left-0" />
+                <CarouselNext className="absolute right-0" />
+              </Carousel>
+            </div>
+          )}
         </div>
       </section>
 
@@ -181,7 +191,7 @@ export function ProjectDetail() {
       </section>
 
       <div className="flex justify-center pt-12 pb-8">
-        <Link className="inline-flex items-center px-6 py-3 border border-[#64748b] rounded-lg font-body-md text-body-md text-primary hover:bg-[#f1f5f9] transition-colors" to="/">
+        <Link to="/" className={buttonVariants({ variant: "outline", className: "px-6 py-6 font-body-md text-primary" })}>
           <span className="material-symbols-outlined mr-2" style={{ fontSize: "20px" }}>arrow_back</span>
           {settings?.language === "id" ? "Kembali ke Proyek" : "Back to Projects"}
         </Link>

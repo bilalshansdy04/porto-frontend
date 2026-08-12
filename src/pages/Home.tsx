@@ -8,6 +8,8 @@ import type {
   Skill,
   Setting,
 } from "../services/api";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import meImage from "../assets/me.webp";
 
 export function Home() {
@@ -82,22 +84,6 @@ export function Home() {
                 : "Years of Experience"}
             </p>
           ) : null}
-          <div className="flex gap-4 mt-4">
-            <a
-              className="bg-brand-navy text-white px-6 py-3 rounded-xl font-label-code text-label-code hover:opacity-90 transition-opacity"
-              href="#works"
-            >
-              {settings?.language === "id"
-                ? "Lihat Karya Pilihan"
-                : "View Selected Works"}
-            </a>
-            <a
-              className="border border-brand-slate text-brand-navy px-6 py-3 rounded-xl font-label-code text-label-code hover:bg-surface-container-highest transition-colors"
-              href="#contact"
-            >
-              {settings?.language === "id" ? "Hubungi Saya" : "Get in Touch"}
-            </a>
-          </div>
         </div>
         <div className="order-1 md:order-2 flex justify-center md:justify-end">
           <div className="relative w-full max-w-100 aspect-3/4 bg-transparent">
@@ -157,32 +143,34 @@ export function Home() {
               if (catSkills.length === 0) return null;
 
               return (
-                <div
+                <Card
                   key={cat.name}
-                  className="bg-white border border-outline-variant p-6 rounded-xl hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow group"
+                  className="group hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-shadow border-outline-variant rounded-xl"
                 >
-                  <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined">
-                      {cat.icon}
-                    </span>
-                  </div>
-                  <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
-                    {cat.name}
-                  </h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                    {cat.desc}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {catSkills.map((skill) => (
-                      <span
-                        key={skill.id}
-                        className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded"
-                      >
-                        {skill.name}
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg mb-4 text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                      <span className="material-symbols-outlined">
+                        {cat.icon}
                       </span>
-                    ))}
-                  </div>
-                </div>
+                    </div>
+                    <h3 className="font-headline-md text-headline-md text-brand-navy mb-2">
+                      {cat.name}
+                    </h3>
+                    <p className="font-body-md text-body-md text-on-surface-variant mb-4">
+                      {cat.desc}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {catSkills.map((skill) => (
+                        <span
+                          key={skill.id}
+                          className="bg-surface-container text-brand-slate font-label-code text-label-code px-2 py-1 rounded"
+                        >
+                          {skill.name}
+                        </span>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               );
             });
           })()}
@@ -191,66 +179,66 @@ export function Home() {
 
       {/* Professional Journey Section */}
       <section className="mb-section-gap-desktop" id="experience">
-          <div className="flex flex-col gap-2 mb-12">
-            <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
-              {settings?.language === "id" ? "Linimasa" : "Timeline"}
-            </span>
-            <h2 className="font-headline-lg text-headline-lg text-brand-navy">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-label-caps text-label-caps text-brand-slate uppercase tracking-wider">
+            {settings?.language === "id" ? "Linimasa" : "Timeline"}
+          </span>
+          <h2 className="font-headline-lg text-headline-lg text-brand-navy">
+            {settings?.language === "id"
+              ? "Perjalanan Profesional"
+              : "Professional Journey"}
+          </h2>
+        </div>
+        <div className="relative border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
+          {loading ? (
+            <p className="pl-8 text-secondary">
               {settings?.language === "id"
-                ? "Perjalanan Profesional"
-                : "Professional Journey"}
-            </h2>
-          </div>
-          <div className="relative border-l border-outline-variant ml-4 md:ml-6 space-y-12 pb-4">
-            {loading ? (
-              <p className="pl-8 text-secondary">
-                {settings?.language === "id"
-                  ? "Memuat pengalaman..."
-                  : "Loading experiences..."}
-              </p>
-            ) : experiences.length === 0 ? (
-              <p className="pl-8 text-secondary">
-                {settings?.language === "id"
-                  ? "Belum ada pengalaman yang ditambahkan."
-                  : "No experiences added yet."}
-              </p>
-            ) : (
-              experiences.map((exp) => (
-                <div key={exp.id} className="relative pl-8 md:pl-12">
-                  <div
-                    className={`absolute -left-1.25 top-1.5 w-2.5 h-2.5 rounded-none border ${exp.is_current ? "bg-brand-blue border-white" : "bg-surface-container-high border-outline-variant"}`}
-                  ></div>
-                  <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
-                    <h3 className="font-headline-md text-headline-md text-brand-navy">
-                      {exp.company_name}
-                    </h3>
-                    <span className="font-label-code text-label-code text-brand-slate">
-                      {exp.role}
-                    </span>
-                  </div>
-                  <p className="font-label-code text-label-code text-on-surface-variant mb-4">
-                    {exp.start_date} -{" "}
-                    {exp.is_current
-                      ? settings?.language === "id"
-                        ? "Sekarang"
-                        : "Present"
-                      : exp.end_date}
-                  </p>
-                  {exp.responsibilities && exp.responsibilities.length > 0 && (
-                    <ul className="space-y-3 font-body-md text-body-md text-on-surface-variant">
-                      {exp.responsibilities.map((resp, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
-                          <span>{resp}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                ? "Memuat pengalaman..."
+                : "Loading experiences..."}
+            </p>
+          ) : experiences.length === 0 ? (
+            <p className="pl-8 text-secondary">
+              {settings?.language === "id"
+                ? "Belum ada pengalaman yang ditambahkan."
+                : "No experiences added yet."}
+            </p>
+          ) : (
+            experiences.map((exp) => (
+              <div key={exp.id} className="relative pl-8 md:pl-12">
+                <div
+                  className={`absolute -left-1.25 top-1.5 w-2.5 h-2.5 rounded-none border ${exp.is_current ? "bg-brand-blue border-white" : "bg-surface-container-high border-outline-variant"}`}
+                ></div>
+                <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
+                  <h3 className="font-headline-md text-headline-md text-brand-navy">
+                    {exp.company_name}
+                  </h3>
+                  <span className="font-label-code text-label-code text-brand-slate">
+                    {exp.role}
+                  </span>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
+                <p className="font-label-code text-label-code text-on-surface-variant mb-4">
+                  {exp.start_date} -{" "}
+                  {exp.is_current
+                    ? settings?.language === "id"
+                      ? "Sekarang"
+                      : "Present"
+                    : exp.end_date}
+                </p>
+                {exp.responsibilities && exp.responsibilities.length > 0 && (
+                  <ul className="space-y-3 font-body-md text-body-md text-on-surface-variant">
+                    {exp.responsibilities.map((resp, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-brand-blue rounded-none mt-2 shrink-0"></span>
+                        <span>{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       {/* Selected Works Section */}
       <section className="mb-section-gap-desktop" id="works">
@@ -282,8 +270,8 @@ export function Home() {
                 className={`group block ${idx % 3 === 2 ? "md:col-span-2" : ""}`}
                 to={`/project/${project.id}`}
               >
-                <div
-                  className={`bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all flex flex-col ${idx % 3 === 2 ? "md:flex-row" : ""}`}
+                <Card
+                  className={`border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(30,41,59,0.05)] transition-all flex flex-col ${idx % 3 === 2 ? "md:flex-row" : ""}`}
                 >
                   <div
                     className={`bg-surface-container-low border-outline-variant overflow-hidden ${idx % 3 === 2 ? "md:w-1/2 border-b md:border-b-0 md:border-r aspect-video md:aspect-auto" : "aspect-video border-b"}`}
@@ -294,7 +282,7 @@ export function Home() {
                       src={`${IMAGE_BASE_URL}${project.image_url}`}
                     />
                   </div>
-                  <div
+                  <CardContent
                     className={`p-6 ${idx % 3 === 2 ? "md:w-1/2 flex flex-col justify-center" : ""}`}
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -320,8 +308,8 @@ export function Home() {
                         ))}
                       </div>
                     )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </Link>
             ))
           )}

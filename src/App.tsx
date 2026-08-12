@@ -12,6 +12,7 @@ import { AdminEditProject } from "./pages/admin/AdminEditProject";
 import { AdminManageSkills } from "./pages/admin/AdminManageSkills";
 import { AdminEditProfile } from "./pages/admin/AdminEditProfile";
 import { AdminSettings } from "./pages/admin/AdminSettings";
+import { Toaster } from "@/components/ui/toast";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
+      <Toaster />
     </Router>
   );
 }

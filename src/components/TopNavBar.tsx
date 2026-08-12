@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import type { Setting } from "../services/api";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function TopNavBar() {
   const [settings, setSettings] = useState<Setting | null>(null);
@@ -25,25 +27,37 @@ export function TopNavBar() {
         <div className="hidden md:flex gap-8 items-center">
           <Link
             to="/"
-            className="text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary transition-opacity duration-200 opacity-80"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "text-primary font-bold border-b-2 border-primary rounded-none pb-1 hover:bg-transparent hover:text-primary transition-opacity duration-200 opacity-80"
+            )}
           >
             {settings?.language === "id" ? "Portofolio" : "Portfolio"}
           </Link>
           <a
             href="/#skills"
-            className="text-on-surface-variant hover:text-primary transition-colors duration-200"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
+            )}
           >
             {settings?.language === "id" ? "Kemampuan" : "Skills"}
           </a>
           <a
             href="/#experience"
-            className="text-on-surface-variant hover:text-primary transition-colors duration-200"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
+            )}
           >
             {settings?.language === "id" ? "Pengalaman" : "Experience"}
           </a>
           <a
             href="/#works"
-            className="text-on-surface-variant hover:text-primary transition-colors duration-200"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "text-on-surface-variant hover:text-primary hover:bg-transparent transition-colors duration-200"
+            )}
           >
             {settings?.language === "id" ? "Karya" : "Works"}
           </a>

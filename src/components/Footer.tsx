@@ -1,3 +1,6 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 export function Footer() {
   return (
     <footer
@@ -10,27 +13,27 @@ export function Footer() {
         </div>
         <div className="flex gap-6">
           <a
-            className="text-on-surface-variant hover:text-primary underline transition-all opacity-100 hover:opacity-70"
+            className={cn(buttonVariants({ variant: "link" }), "text-on-surface-variant hover:text-primary transition-all opacity-100 hover:opacity-70")}
             href="https://linkedin.com/in/bilal-shandyata-syamsudin"
             target="_blank"
           >
             LinkedIn
           </a>
           <a
-            className="text-on-surface-variant hover:text-primary underline transition-all opacity-100 hover:opacity-70"
+            className={cn(buttonVariants({ variant: "link" }), "text-on-surface-variant hover:text-primary transition-all opacity-100 hover:opacity-70")}
             href="https://github.com/bilalshansdy04"
             target="_blank"
           >
             GitHub
           </a>
           <a
-            className="text-on-surface-variant hover:text-primary underline transition-all opacity-100 hover:opacity-70"
+            className={cn(buttonVariants({ variant: "link" }), "text-on-surface-variant hover:text-primary transition-all opacity-100 hover:opacity-70")}
             href="#"
           >
             Resume
           </a>
           <a
-            className="text-on-surface-variant hover:text-primary underline transition-all opacity-100 hover:opacity-70"
+            className={cn(buttonVariants({ variant: "link" }), "text-on-surface-variant hover:text-primary transition-all opacity-100 hover:opacity-70")}
             href="#"
           >
             Email

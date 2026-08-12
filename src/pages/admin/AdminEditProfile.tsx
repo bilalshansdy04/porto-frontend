@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
+import { toast } from "@/components/ui/toast";
 
 export function AdminEditProfile() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export function AdminEditProfile() {
       navigate("/admin");
     } catch (err) {
       console.error("Failed to save profile", err);
-      alert("Failed to save profile. Please try again.");
+      toast.add({ title: "Error", description: "Failed to save profile. Please try again.", type: "error" });
     } finally {
       setIsSubmitting(false);
     }

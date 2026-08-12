@@ -4,6 +4,11 @@ import { api } from "../../services/api";
 import type { Project } from "../../services/api";
 
 import { ImageCropperModal } from "../../components/admin/ImageCropperModal";
+import { toast } from "@/components/ui/toast";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const ArrayField = ({
   label,
@@ -16,12 +21,12 @@ const ArrayField = ({
   handleRemoveItem,
 }: any) => (
   <div className="border-t border-outline-variant pt-4 mt-4">
-    <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+    <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
       {label}
-    </label>
+    </Label>
     <div className="flex gap-2 mb-4">
-      <input
-        className="flex-1 bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
+      <Input
+        className="flex-1"
         placeholder={placeholder}
         type="text"
         value={inputState}
@@ -33,15 +38,15 @@ const ArrayField = ({
           }
         }}
       />
-      <button
-        className="border border-secondary text-secondary px-4 py-2 rounded-lg font-body-md font-semibold hover:bg-surface-container-low transition-all flex items-center gap-1"
+      <Button
+        variant="outline"
         type="button"
         onClick={() =>
           handleAddItem(inputState, setInputState, listState, setListState)
         }
       >
-        <span className="material-symbols-outlined text-sm">add</span> Add
-      </button>
+        <span className="material-symbols-outlined text-sm mr-1">add</span> Add
+      </Button>
     </div>
     <ul className="flex flex-col gap-2">
       {listState.map((item: string, idx: number) => (
@@ -49,18 +54,20 @@ const ArrayField = ({
           key={idx}
           className="flex items-start gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
         >
-          <div className="w-1.5 h-1.5 bg-brand-blue mt-2 shrink-0"></div>
-          <span className="font-body-md text-body-md text-on-surface flex-1">
+          <div className="w-1.5 h-1.5 bg-brand-blue mt-2 shrink-0 rounded-full"></div>
+          <span className="text-sm flex-1">
             {item}
           </span>
-          <button
-            className="text-error hover:bg-error-container p-1 rounded transition-colors"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-error hover:bg-error-container hover:text-error h-6 w-6"
             title="Remove"
             type="button"
             onClick={() => handleRemoveItem(idx, listState, setListState)}
           >
             <span className="material-symbols-outlined text-sm">close</span>
-          </button>
+          </Button>
         </li>
       ))}
     </ul>
@@ -154,10 +161,10 @@ export function AdminEditProject() {
       const updatedProject = await api.uploadProjectImages(id!, formData);
       setCarouselImages(updatedProject.carousel_images || []);
       setCropImageSrc(null); // Close modal
-      alert("Image cropped and uploaded successfully!");
+      toast.add({ title: "Success", description: "Image cropped and uploaded successfully!", type: "success" });
     } catch (err) {
       console.error("Failed to upload cropped image", err);
-      alert("Failed to upload image.");
+      toast.add({ title: "Error", description: "Failed to upload image.", type: "error" });
     }
   };
 
@@ -168,10 +175,10 @@ export function AdminEditProject() {
       try {
         const updatedProject = await api.uploadProjectThumbnail(id!, formData);
         setProject(updatedProject);
-        alert("Main thumbnail uploaded successfully!");
+        toast.add({ title: "Success", description: "Main thumbnail uploaded successfully!", type: "success" });
       } catch (err) {
         console.error("Failed to upload thumbnail", err);
-        alert("Failed to upload thumbnail.");
+        toast.add({ title: "Error", description: "Failed to upload thumbnail.", type: "error" });
       }
       e.target.value = ""; // Reset input
     }
@@ -195,11 +202,9 @@ export function AdminEditProject() {
       navigate("/admin/projects");
     } catch (err) {
       console.error("Failed to update project", err);
-      alert("Failed to update project details.");
+      toast.add({ title: "Error", description: "Failed to update project details.", type: "error" });
     }
   };
-
-  // Removed inner ArrayField
 
   return (
     <main className="flex-1 p-8 max-w-max-width mx-auto w-full">
@@ -223,12 +228,11 @@ export function AdminEditProject() {
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
                 Project Name
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
-                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
                 placeholder="Project Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -236,24 +240,24 @@ export function AdminEditProject() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
                 Description
-              </label>
-              <textarea
-                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all resize-none"
+              </Label>
+              <Textarea
                 placeholder="Detailed project description..."
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
+                className="resize-none"
+              />
             </div>
 
             <div>
-              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
                 Status
-              </label>
+              </Label>
               <select
-                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
+                className="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
@@ -263,12 +267,11 @@ export function AdminEditProject() {
               </select>
             </div>
             <div className="md:col-span-2">
-              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
                 External Link (Optional)
-              </label>
-              <input
+              </Label>
+              <Input
                 type="url"
-                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-primary focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all"
                 placeholder="https://example.com"
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
@@ -311,9 +314,9 @@ export function AdminEditProject() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-outline-variant p-4 rounded-lg bg-surface-container-lowest">
-              <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
                 Main Thumbnail
-              </label>
+              </Label>
               {project.image_url ? (
                 <div className="mb-4">
                   <img src={`http://localhost:8080${project.image_url}`} alt="Thumbnail" className="w-full h-40 object-cover rounded-md border border-outline-variant" />
@@ -323,25 +326,25 @@ export function AdminEditProject() {
                   No Thumbnail Uploaded
                 </div>
               )}
-              <input
+              <Input
                 type="file"
                 accept="image/*"
                 onChange={handleThumbnailUpload}
-                className="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-surface-container-low file:text-primary hover:file:bg-surface-container transition-colors"
+                className="cursor-pointer file:cursor-pointer"
               />
             </div>
           </div>
 
           <div className="border-t border-outline-variant pt-4 mt-4">
-            <label className="block font-label-caps text-label-caps text-secondary mb-2 uppercase">
+            <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
               Add Carousel Image (21:9)
-            </label>
+            </Label>
             <div className="mb-4">
-              <input
+              <Input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-surface-container-low file:text-primary hover:file:bg-surface-container transition-colors"
+                className="cursor-pointer file:cursor-pointer"
               />
             </div>
             {carouselImages.length > 0 && (
@@ -350,14 +353,15 @@ export function AdminEditProject() {
                   <div key={idx} className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
                     <img src={`http://localhost:8080${imgUrl}`} alt={`Carousel ${idx}`} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button
+                      <Button
                         type="button"
+                        variant="destructive"
+                        size="icon"
                         onClick={() => setCarouselImages(carouselImages.filter((_, i) => i !== idx))}
-                        className="bg-error text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                         title="Remove Image"
                       >
                         <span className="material-symbols-outlined text-sm">delete</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -366,20 +370,20 @@ export function AdminEditProject() {
           </div>
 
           <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-outline-variant">
-            <button
-              className="font-body-md text-body-md text-secondary hover:text-primary transition-colors py-2 px-4"
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => navigate("/admin/projects")}
             >
               Cancel
-            </button>
-            <button
-              className="bg-brand-navy text-white px-6 py-3 rounded-lg font-body-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
+            </Button>
+            <Button
+              className="bg-brand-navy hover:bg-brand-navy/90 text-white flex items-center gap-2"
               type="submit"
             >
               <span className="material-symbols-outlined text-sm">save</span>
               Save Details
-            </button>
+            </Button>
           </div>
         </form>
       </div>
