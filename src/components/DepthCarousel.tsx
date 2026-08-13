@@ -4,8 +4,8 @@ import {
   useMemo,
   useRef,
   useState,
-  PointerEvent as ReactPointerEvent,
-  KeyboardEvent as ReactKeyboardEvent
+  type PointerEvent as ReactPointerEvent,
+  type KeyboardEvent as ReactKeyboardEvent
 } from 'react';
 import gsap from 'gsap';
 

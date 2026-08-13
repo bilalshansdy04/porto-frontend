@@ -21,7 +21,7 @@ export function Home() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [settings, setSettings] = useState<Setting | null>(null);
   const [loading, setLoading] = useState(true);
-  const [clickCount, setClickCount] = useState(0);
+  const [, setClickCount] = useState(0);
 
   const handleSecretClick = () => {
     setClickCount((prev) => {
