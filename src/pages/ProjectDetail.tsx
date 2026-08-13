@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api, IMAGE_BASE_URL } from "../services/api";
+import { api, getImageUrl } from "../services/api";
 import type { Project, Setting } from "../services/api";
 import { buttonVariants } from "@/components/ui/button";
 import DepthCarousel from "@/components/DepthCarousel";
@@ -84,7 +84,7 @@ export function ProjectDetail() {
           <img
             className="w-full h-full object-cover"
             alt={project.name}
-            src={`${IMAGE_BASE_URL}${project.image_url}`}
+            src={getImageUrl(project.image_url)}
           />
         </div>
 
@@ -155,7 +155,7 @@ export function ProjectDetail() {
             <div className="mt-8 w-full max-w-4xl mx-auto h-[400px] sm:h-[500px] relative">
               <DepthCarousel
                 items={project.carousel_images.map((imgUrl, idx) => ({
-                  image: `${IMAGE_BASE_URL}${imgUrl}`,
+                  image: getImageUrl(imgUrl),
                   alt: `${project.name} screenshot ${idx + 1}`,
                 }))}
                 cardWidth={600}
@@ -183,13 +183,15 @@ export function ProjectDetail() {
             {(() => {
               const sidebarItems: string[] = [];
               const sidebarLinks: string[] = [];
-              if (project.project_flow && project.project_flow.length > 0) {
+              const visibleFlow = (project.project_flow || []).filter((f: any) => f.is_visible);
+              const visibleJobdesc = (project.jobdesc || []).filter((j: any) => j.is_visible);
+              if (visibleFlow.length > 0) {
                 sidebarItems.push(
                   settings?.language === "id" ? "Alur Proyek" : "Project Flow",
                 );
                 sidebarLinks.push("flow");
               }
-              if (project.jobdesc && project.jobdesc.length > 0) {
+              if (visibleJobdesc.length > 0) {
                 sidebarItems.push(
                   settings?.language === "id"
                     ? "Tanggung Jawab"
@@ -225,9 +227,8 @@ export function ProjectDetail() {
           </div>
         </div>
 
-        {/* Text Content */}
         <div className="md:col-span-9 space-y-16">
-          {project.project_flow && project.project_flow.length > 0 && (
+          {project.project_flow && project.project_flow.some((f: any) => f.is_visible) && (
             <>
               <div className="space-y-6" id="flow">
                 <h2 className="font-headline-lg text-headline-lg text-primary">
@@ -235,9 +236,9 @@ export function ProjectDetail() {
                 </h2>
                 <div className="bg-white p-8 rounded-xl border border-outline-variant mt-6">
                   <ul className="space-y-4 font-body-md text-body-md text-on-surface-variant pl-4">
-                    {project.project_flow.map((flow, idx) => (
+                    {project.project_flow.filter((f: any) => f.is_visible).map((flow: any, idx) => (
                       <li key={idx} className="custom-list-item">
-                        {flow}
+                        {flow.text}
                       </li>
                     ))}
                   </ul>
@@ -248,7 +249,7 @@ export function ProjectDetail() {
             </>
           )}
 
-          {project.jobdesc && project.jobdesc.length > 0 && (
+          {project.jobdesc && project.jobdesc.some((j: any) => j.is_visible) && (
             <div className="space-y-6" id="jobdesc">
               <h2 className="font-headline-lg text-headline-lg text-primary">
                 {settings?.language === "id"
@@ -257,9 +258,9 @@ export function ProjectDetail() {
               </h2>
               <div className="bg-white p-8 rounded-xl border border-outline-variant mt-6">
                 <ul className="space-y-4 font-body-md text-body-md text-on-surface-variant pl-4">
-                  {project.jobdesc.map((desc, idx) => (
+                  {project.jobdesc.filter((j: any) => j.is_visible).map((desc: any, idx) => (
                     <li key={idx} className="custom-list-item">
-                      {desc}
+                      {desc.text}
                     </li>
                   ))}
                 </ul>

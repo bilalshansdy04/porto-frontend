@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { api, IMAGE_BASE_URL } from "../services/api";
+import { api, getImageUrl } from "../services/api";
 import type {
   DashboardStats,
   Experience,
@@ -14,8 +14,6 @@ import SideRays from "../components/SideRays";
 import LightRays from "../components/LightRays";
 import Particles from "../components/Particles";
 import BorderGlow from "../components/BorderGlow";
-import meImage from "../assets/me.webp";
-
 export function Home() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -51,11 +49,10 @@ export function Home() {
         setExperiences(expData || []);
         setSkills(skillsData || []);
         setSettings(settingsData);
-        // Only show live and completed projects
+        // Only show visible projects, regardless of status
         setProjects(
           (projData || []).filter(
-            (p) =>
-              p.is_complete && (p.status === "Live" || p.status === "Done"),
+            (p) => p.is_visible
           ),
         );
       } catch (err) {
@@ -71,7 +68,7 @@ export function Home() {
     <main className="grow w-full max-w-300 mx-auto px-6 md:px-grid-margin py-10">
       {/* Hero Section */}
       <section
-        className={`relative grid grid-cols-1 ${(settings ? settings.show_photo : true) ? "md:grid-cols-2" : ""} gap-12 items-center mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30`}
+        className={`relative grid grid-cols-1 gap-12 items-center mb-section-gap-desktop py-12 md:py-20 px-8 md:px-12 rounded-4xl overflow-hidden shadow-2xl border border-outline-variant/30`}
         id="home"
       >
         <div className="absolute inset-0 z-0">
@@ -118,17 +115,6 @@ export function Home() {
             </p>
           ) : null}
         </div>
-        {(settings ? settings.show_photo : true) && (
-          <div className="relative z-10 order-1 md:order-2 flex justify-center md:justify-end">
-            <div className="relative w-full max-w-100 aspect-3/4 bg-transparent rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(59,130,246,0.3)]">
-              <img
-                alt="Bilal Shandyarta Professional Portrait"
-                className="w-full h-full object-cover object-top"
-                src={meImage}
-              />
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Technical Arsenal Section */}
@@ -370,7 +356,7 @@ export function Home() {
                         <img
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           alt={project.name}
-                          src={`${IMAGE_BASE_URL}${project.image_url}`}
+                          src={getImageUrl(project.image_url)}
                         />
                       </div>
                     </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import type { Project } from "../../services/api";
 import { toast } from "@/components/ui/toast";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +82,17 @@ export function AdminManageProjects() {
     }
   };
 
+  const handleToggleVisibility = async (project: Project, is_visible: boolean) => {
+    try {
+      await api.updateProject(project.id, { ...project, is_visible });
+      setProjects(projects.map(p => p.id === project.id ? { ...p, is_visible } : p));
+      toast.add({ title: "Success", description: "Project visibility updated", type: "success" });
+    } catch (err) {
+      console.error("Failed to update visibility", err);
+      toast.add({ title: "Error", description: "Failed to update visibility", type: "error" });
+    }
+  };
+
   return (
     <div className="flex-1 p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-max-width mx-auto w-full">
       {/* Projects Table Section */}
@@ -102,6 +114,9 @@ export function AdminManageProjects() {
                 <TableRow>
                   <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
                     Project Name
+                  </TableHead>
+                  <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
+                    Visible
                   </TableHead>
                   <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
                     Status
@@ -138,14 +153,12 @@ export function AdminManageProjects() {
                     >
                       <TableCell className="px-6 py-4 font-semibold text-primary flex items-center gap-2 border-0">
                         {project.name}
-                        {!project.is_complete && (
-                          <span
-                            className="material-symbols-outlined text-[#eab308] text-[20px]"
-                            title="Needs Completion"
-                          >
-                            warning
-                          </span>
-                        )}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 border-0">
+                        <Switch
+                          checked={project.is_visible}
+                          onCheckedChange={(checked) => handleToggleVisibility(project, checked)}
+                        />
                       </TableCell>
                       <TableCell className="px-6 py-4 border-0">
                         <span

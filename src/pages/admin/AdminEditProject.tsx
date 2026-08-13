@@ -1,14 +1,83 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../../services/api";
+import { api, getImageUrl } from "../../services/api";
 import type { Project } from "../../services/api";
 
 import { ImageCropperModal } from "../../components/admin/ImageCropperModal";
 import { toast } from "@/components/ui/toast";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+
+const SimpleArrayField = ({
+  label,
+  inputState,
+  setInputState,
+  listState,
+  setListState,
+  placeholder,
+}: any) => (
+  <div className="border-t border-outline-variant pt-4 mt-4">
+    <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+      {label}
+    </Label>
+    <div className="flex gap-2 mb-4">
+      <Input
+        className="flex-1"
+        placeholder={placeholder}
+        type="text"
+        value={inputState}
+        onChange={(e) => setInputState(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const text = inputState.trim();
+            if (text) {
+              setListState([...listState, text]);
+              setInputState("");
+            }
+          }
+        }}
+      />
+      <Button
+        variant="outline"
+        type="button"
+        onClick={() => {
+          const text = inputState.trim();
+          if (text) {
+            setListState([...listState, text]);
+            setInputState("");
+          }
+        }}
+      >
+        <span className="material-symbols-outlined text-sm mr-1">add</span> Add
+      </Button>
+    </div>
+    <ul className="flex flex-col gap-2">
+      {listState.map((item: string, idx: number) => (
+        <li
+          key={idx}
+          className="flex items-center gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
+        >
+          <div className="w-1.5 h-1.5 bg-brand-blue shrink-0 rounded-full"></div>
+          <span className="text-sm flex-1">{item}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-error hover:bg-error-container hover:text-error h-8 w-8"
+            title="Remove"
+            type="button"
+            onClick={() => setListState(listState.filter((_: any, i: number) => i !== idx))}
+          >
+            <span className="material-symbols-outlined text-sm">close</span>
+          </Button>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
 const ArrayField = ({
   label,
@@ -49,25 +118,35 @@ const ArrayField = ({
       </Button>
     </div>
     <ul className="flex flex-col gap-2">
-      {listState.map((item: string, idx: number) => (
+      {listState.map((item: any, idx: number) => (
         <li
           key={idx}
-          className="flex items-start gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
+          className="flex items-center gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
         >
-          <div className="w-1.5 h-1.5 bg-brand-blue mt-2 shrink-0 rounded-full"></div>
+          <div className="w-1.5 h-1.5 bg-brand-blue shrink-0 rounded-full"></div>
           <span className="text-sm flex-1">
-            {item}
+            {item.text}
           </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-error hover:bg-error-container hover:text-error h-6 w-6"
-            title="Remove"
-            type="button"
-            onClick={() => handleRemoveItem(idx, listState, setListState)}
-          >
-            <span className="material-symbols-outlined text-sm">close</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={item.is_visible}
+              onCheckedChange={(checked) => {
+                const newList = [...listState];
+                newList[idx].is_visible = checked;
+                setListState(newList);
+              }}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-error hover:bg-error-container hover:text-error h-8 w-8"
+              title="Remove"
+              type="button"
+              onClick={() => handleRemoveItem(idx, listState, setListState)}
+            >
+              <span className="material-symbols-outlined text-sm">close</span>
+            </Button>
+          </div>
         </li>
       ))}
     </ul>
@@ -87,9 +166,9 @@ export function AdminEditProject() {
   const [techStackInput, setTechStackInput] = useState("");
   const [techStack, setTechStack] = useState<string[]>([]);
   const [projectFlowInput, setProjectFlowInput] = useState("");
-  const [projectFlow, setProjectFlow] = useState<string[]>([]);
+  const [projectFlow, setProjectFlow] = useState<any[]>([]);
   const [jobdescInput, setJobdescInput] = useState("");
-  const [jobdesc, setJobdesc] = useState<string[]>([]);
+  const [jobdesc, setJobdesc] = useState<any[]>([]);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
 
   // Cropper states
@@ -124,20 +203,20 @@ export function AdminEditProject() {
   const handleAddItem = (
     inputState: string,
     setInputState: React.Dispatch<React.SetStateAction<string>>,
-    listState: string[],
-    setListState: React.Dispatch<React.SetStateAction<string[]>>,
+    listState: any[],
+    setListState: React.Dispatch<React.SetStateAction<any[]>>,
   ) => {
     const text = inputState.trim();
     if (text) {
-      setListState([...listState, text]);
+      setListState([...listState, { text, is_visible: true }]);
       setInputState("");
     }
   };
 
   const handleRemoveItem = (
     index: number,
-    listState: string[],
-    setListState: React.Dispatch<React.SetStateAction<string[]>>,
+    listState: any[],
+    setListState: React.Dispatch<React.SetStateAction<any[]>>,
   ) => {
     setListState(listState.filter((_, i) => i !== index));
   };
@@ -196,7 +275,7 @@ export function AdminEditProject() {
         project_flow: projectFlow,
         jobdesc: jobdesc,
         carousel_images: carouselImages,
-        is_complete: true,
+        is_visible: project?.is_visible ?? false,
       });
       // Navigate back to project list
       navigate("/admin/projects");
@@ -212,9 +291,9 @@ export function AdminEditProject() {
         <div>
           <h2 className="font-headline-lg text-headline-lg text-primary mb-2 flex items-center gap-2">
             Edit Project: {project.name}
-            {!project.is_complete && (
+            {!project.is_visible && (
               <span className="bg-[#fef08a] text-[#854d0e] text-sm px-2 py-1 rounded font-bold ml-2">
-                Needs Completion
+                Hidden
               </span>
             )}
           </h2>
@@ -279,15 +358,13 @@ export function AdminEditProject() {
             </div>
           </div>
 
-          <ArrayField
+          <SimpleArrayField
             label="Tech Stack"
             inputState={techStackInput}
             setInputState={setTechStackInput}
             listState={techStack}
             setListState={setTechStack}
             placeholder="e.g. React, Go, MySQL"
-            handleAddItem={handleAddItem}
-            handleRemoveItem={handleRemoveItem}
           />
 
           <ArrayField
@@ -319,7 +396,7 @@ export function AdminEditProject() {
               </Label>
               {project.image_url ? (
                 <div className="mb-4">
-                  <img src={`http://localhost:8080${project.image_url}`} alt="Thumbnail" className="w-full h-40 object-cover rounded-md border border-outline-variant" />
+                  <img src={getImageUrl(project.image_url)} alt="Thumbnail" className="w-full h-40 object-cover rounded-md border border-outline-variant" />
                 </div>
               ) : (
                 <div className="mb-4 text-error text-sm font-semibold">
@@ -351,7 +428,7 @@ export function AdminEditProject() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {carouselImages.map((imgUrl, idx) => (
                   <div key={idx} className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
-                    <img src={`http://localhost:8080${imgUrl}`} alt={`Carousel ${idx}`} className="w-full h-full object-cover" />
+                    <img src={getImageUrl(imgUrl)} alt={`Carousel ${idx}`} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <Button
                         type="button"

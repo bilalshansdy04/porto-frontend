@@ -1,5 +1,12 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
-export const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_API_URL;
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+const BASE_URL = API_URL;
+export const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_API_URL || "http://localhost:8080";
+
+export const getImageUrl = (url: string | undefined | null) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${IMAGE_BASE_URL}${url}`;
+};
 
 export interface Profile {
   summary: string;
@@ -12,6 +19,10 @@ export interface Setting {
   show_photo: boolean;
   language: string;
 }
+export interface ProjectItem {
+  text: string;
+  is_visible: boolean;
+}
 
 export interface Project {
   id: number;
@@ -19,11 +30,11 @@ export interface Project {
   description: string;
   status: string;
   image_url: string;
-  is_complete: boolean;
+  is_visible: boolean;
   date_modified: string;
   tech_stack: string[];
-  project_flow: string[];
-  jobdesc: string[];
+  project_flow: ProjectItem[];
+  jobdesc: ProjectItem[];
   link?: string;
   carousel_images?: string[];
 }
