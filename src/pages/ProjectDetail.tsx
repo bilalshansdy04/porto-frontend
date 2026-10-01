@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, getImageUrl } from "../services/api";
 import type { Project, Setting } from "../services/api";
-import { buttonVariants } from "@/components/ui/button";
 import DepthCarousel from "@/components/DepthCarousel";
 import LineSidebar from "@/components/LineSidebar";
+import { Magnetic } from "@/components/Magnetic";
+import { Reveal } from "@/components/Reveal";
 
 export function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [settings, setSettings] = useState<Setting | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isId = settings?.language === "id";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,125 +37,114 @@ export function ProjectDetail() {
 
   if (loading) {
     return (
-      <main className="flex-grow max-w-max-width mx-auto w-full px-grid-margin py-section-gap-mobile md:py-section-gap-desktop">
-        <p>
-          {settings?.language === "id"
-            ? "Memuat detail proyek..."
-            : "Loading project details..."}
-        </p>
+      <main className="grow max-w-300 mx-auto w-full px-6 md:px-grid-margin pt-40 pb-24 flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-full border-2 border-white/10 border-t-[var(--cyan)] animate-spin" />
+          <p className="font-mono-aurora text-sm text-[var(--muted)]">
+            {isId ? "Memuat detail proyek..." : "Loading project details..."}
+          </p>
+        </div>
       </main>
     );
   }
 
   if (!project) {
     return (
-      <main className="flex-grow max-w-max-width mx-auto w-full px-grid-margin py-section-gap-mobile md:py-section-gap-desktop">
-        <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="font-display text-display text-primary mb-4">
-            {settings?.language === "id"
-              ? "Proyek Tidak Ditemukan"
-              : "Project Not Found"}
+      <main className="grow max-w-300 mx-auto w-full px-6 md:px-grid-margin pt-40 pb-24">
+        <div className="flex flex-col items-center justify-center text-center min-h-[50vh]">
+          <p className="eyebrow mb-4">{"// 404"}</p>
+          <h1 className="font-display-aurora font-bold text-4xl md:text-5xl text-[var(--ink)] mb-8">
+            {isId ? "Proyek Tidak Ditemukan" : "Project Not Found"}
           </h1>
-          <Link
-            to="/"
-            className={buttonVariants({
-              variant: "outline",
-              className: "px-6 py-6 font-body-md text-primary",
-            })}
-          >
-            <span
-              className="material-symbols-outlined mr-2"
-              style={{ fontSize: "20px" }}
-            >
-              arrow_back
-            </span>
-            {settings?.language === "id"
-              ? "Kembali ke Proyek"
-              : "Back to Projects"}
-          </Link>
+          <Magnetic strength={0.3}>
+            <Link to="/" className="btn-ghost">
+              <span className="material-symbols-outlined text-[18px]">
+                arrow_back
+              </span>
+              {isId ? "Kembali ke Proyek" : "Back to Projects"}
+            </Link>
+          </Magnetic>
         </div>
       </main>
     );
   }
 
-  return (
-    <main className="flex-grow max-w-max-width mx-auto w-full px-grid-margin py-section-gap-mobile space-y-section-gap-mobile md:space-y-section-gap-desktop">
-      {/* Hero & Banner Section */}
-      <section className="flex flex-col gap-6">
-        {/* Top Banner (Static Image) */}
-        <div className="w-full aspect-[21/9] rounded-xl border border-outline-variant overflow-hidden bg-white project-card relative">
-          <img
-            className="w-full h-full object-cover"
-            alt={project.name}
-            src={getImageUrl(project.image_url)}
-          />
-        </div>
+  const visibleFlow = (project.project_flow || []).filter(
+    (f) => f.is_visible,
+  );
+  const visibleJobdesc = (project.jobdesc || []).filter(
+    (j) => j.is_visible,
+  );
 
-        {/* Project Info (Below Banner) */}
-        <div className="flex flex-col gap-4 mt-2">
+  return (
+    <main className="grow max-w-300 mx-auto w-full px-6 md:px-grid-margin pt-32 md:pt-40 pb-24 space-y-16 md:space-y-24">
+      {/* Hero & Banner Section */}
+      <section className="flex flex-col gap-8">
+        <Reveal>
           <Link
             to="/"
-            className={buttonVariants({
-              variant: "link",
-              className:
-                "p-0 h-auto justify-start text-[#3b82f6] hover:underline mb-2 w-fit",
-            })}
+            className="inline-flex items-center gap-2 font-mono-aurora text-sm text-[var(--muted)] hover:text-[var(--cyan)] transition-colors group w-fit"
           >
-            <span
-              className="material-symbols-outlined mr-2"
-              style={{ fontSize: "18px" }}
-            >
+            <span className="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform">
               arrow_back
             </span>
-            {settings?.language === "id"
-              ? "Kembali ke Proyek"
-              : "Back to Projects"}
+            <span className="opacity-60">{"<"}</span>
+            {isId ? "Kembali ke Proyek" : "Back to Projects"}
+            <span className="opacity-60">{"/"}</span>
           </Link>
+        </Reveal>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 className="font-display text-display text-primary">
+        <Reveal delay={0.1}>
+          <div className="w-full aspect-[21/9] rounded-3xl border border-white/10 overflow-hidden bg-white/[0.03] relative shadow-[0_24px_80px_-24px_rgba(99,102,241,0.35)]">
+            <img
+              className="w-full h-full object-cover"
+              alt={project.name}
+              src={getImageUrl(project.image_url)}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,8,16,0.35)] via-transparent to-transparent pointer-events-none" />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.15} className="flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <h1 className="font-display-aurora font-bold tracking-tight text-4xl md:text-6xl text-[var(--ink)] leading-[1.05]">
               {project.name}
             </h1>
             {project.link && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={buttonVariants({
-                  className:
-                    "bg-brand-navy hover:opacity-90 transition-opacity whitespace-nowrap",
-                })}
-              >
-                <span className="material-symbols-outlined text-sm mr-2">
-                  open_in_new
-                </span>
-                {settings?.language === "id"
-                  ? "Kunjungi Proyek"
-                  : "Visit Project"}
-              </a>
+              <Magnetic strength={0.3}>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-aurora whitespace-nowrap"
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    open_in_new
+                  </span>
+                  {isId ? "Kunjungi Proyek" : "Visit Project"}
+                </a>
+              </Magnetic>
             )}
           </div>
 
           {project.tech_stack && project.tech_stack.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div className="flex flex-wrap gap-2">
               {project.tech_stack.map((tech, idx) => (
-                <span
-                  key={idx}
-                  className="font-label-code text-label-code bg-[#f1f5f9] text-[#64748b] px-3 py-1 rounded"
-                >
+                <span key={idx} className="chip">
                   {tech}
                 </span>
               ))}
             </div>
           )}
 
-          <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-wrap max-w-4xl">
+          <p className="text-base md:text-lg text-[var(--muted)] leading-relaxed whitespace-pre-wrap max-w-4xl">
             {project.description}
           </p>
+        </Reveal>
 
-          {/* Carousel Below Description with Smaller Size */}
-          {project.carousel_images && project.carousel_images.length > 0 && (
-            <div className="mt-8 w-full max-w-4xl mx-auto h-[400px] sm:h-[500px] relative">
+        {project.carousel_images && project.carousel_images.length > 0 && (
+          <Reveal delay={0.2}>
+            <div className="w-full max-w-4xl mx-auto h-[400px] sm:h-[500px] relative">
               <DepthCarousel
                 items={project.carousel_images.map((imgUrl, idx) => ({
                   image: getImageUrl(imgUrl),
@@ -168,126 +160,110 @@ export function ProjectDetail() {
                 loop
               />
             </div>
-          )}
-        </div>
+          </Reveal>
+        )}
       </section>
 
       {/* Content Sections */}
-      <section className="grid grid-cols-1 md:grid-cols-12 gap-12">
-        {/* Sticky Navigation for Content */}
-        <div className="md:col-span-3 hidden md:block">
-          <div className="sticky top-24 space-y-4">
-            <h3 className="font-label-caps text-label-caps text-secondary tracking-widest uppercase">
-              {settings?.language === "id" ? "Daftar Isi" : "Contents"}
-            </h3>
-            {(() => {
-              const sidebarItems: string[] = [];
-              const sidebarLinks: string[] = [];
-              const visibleFlow = (project.project_flow || []).filter((f: any) => f.is_visible);
-              const visibleJobdesc = (project.jobdesc || []).filter((j: any) => j.is_visible);
-              if (visibleFlow.length > 0) {
-                sidebarItems.push(
-                  settings?.language === "id" ? "Alur Proyek" : "Project Flow",
-                );
-                sidebarLinks.push("flow");
-              }
-              if (visibleJobdesc.length > 0) {
-                sidebarItems.push(
-                  settings?.language === "id"
-                    ? "Tanggung Jawab"
-                    : "Responsibilities",
-                );
-                sidebarLinks.push("jobdesc");
-              }
-              return (
-                <div className="pl-6 pt-2">
-                  <LineSidebar
-                    items={sidebarItems}
-                    accentColor="#3b82f6" // brand-blue
-                    textColor="#94a3b8" // text-secondary
-                    markerColor="#334155" // outline-variant
-                    showIndex={false}
-                    fontSize={1}
-                    itemGap={18}
-                    onItemClick={(index) => {
-                      const id = sidebarLinks[index];
-                      const element = document.getElementById(id);
-                      if (element) {
-                        const top =
+      {((visibleFlow.length > 0) || (visibleJobdesc.length > 0)) && (
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-12">
+          {/* Sticky Navigation for Content */}
+          <div className="md:col-span-3 hidden md:block">
+            <div className="sticky top-28 glass rounded-3xl p-6 space-y-4">
+              <h3 className="eyebrow">
+                {isId ? "daftar isi" : "contents"}
+              </h3>
+              <div className="pt-2">
+                <LineSidebar
+                  items={[
+                    ...(visibleFlow.length > 0
+                      ? [isId ? "Alur Proyek" : "Project Flow"]
+                      : []),
+                    ...(visibleJobdesc.length > 0
+                      ? [isId ? "Tanggung Jawab" : "Responsibilities"]
+                      : []),
+                  ]}
+                  accentColor="#8b5cf6"
+                  textColor="#97a1b7"
+                  markerColor="#334155"
+                  showIndex={false}
+                  fontSize={1}
+                  itemGap={18}
+                  onItemClick={(index) => {
+                    const ids = [
+                      ...(visibleFlow.length > 0 ? ["flow"] : []),
+                      ...(visibleJobdesc.length > 0 ? ["jobdesc"] : []),
+                    ];
+                    const sectionId = ids[index];
+                    const element = sectionId
+                      ? document.getElementById(sectionId)
+                      : null;
+                    if (element) {
+                      window.scrollTo({
+                        top:
                           element.getBoundingClientRect().top +
                           window.scrollY -
-                          100; // offset for navbar
-                        window.scrollTo({ top, behavior: "smooth" });
-                      }
-                    }}
-                  />
-                </div>
-              );
-            })()}
-          </div>
-        </div>
-
-        <div className="md:col-span-9 space-y-16">
-          {project.project_flow && project.project_flow.some((f: any) => f.is_visible) && (
-            <>
-              <div className="space-y-6" id="flow">
-                <h2 className="font-headline-lg text-headline-lg text-primary">
-                  {settings?.language === "id" ? "Alur Proyek" : "Project Flow"}
-                </h2>
-                <div className="bg-white p-8 rounded-xl border border-outline-variant mt-6">
-                  <ul className="space-y-4 font-body-md text-body-md text-on-surface-variant pl-4">
-                    {project.project_flow.filter((f: any) => f.is_visible).map((flow: any, idx) => (
-                      <li key={idx} className="custom-list-item">
-                        {flow.text}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="w-full h-px bg-outline-variant opacity-50"></div>
-            </>
-          )}
-
-          {project.jobdesc && project.jobdesc.some((j: any) => j.is_visible) && (
-            <div className="space-y-6" id="jobdesc">
-              <h2 className="font-headline-lg text-headline-lg text-primary">
-                {settings?.language === "id"
-                  ? "Tanggung Jawab Saya"
-                  : "My Responsibilities"}
-              </h2>
-              <div className="bg-white p-8 rounded-xl border border-outline-variant mt-6">
-                <ul className="space-y-4 font-body-md text-body-md text-on-surface-variant pl-4">
-                  {project.jobdesc.filter((j: any) => j.is_visible).map((desc: any, idx) => (
-                    <li key={idx} className="custom-list-item">
-                      {desc.text}
-                    </li>
-                  ))}
-                </ul>
+                          110,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                />
               </div>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
 
-      <div className="flex justify-center pt-12 pb-8">
-        <Link
-          to="/"
-          className={buttonVariants({
-            variant: "outline",
-            className: "px-6 py-6 font-body-md text-primary",
-          })}
-        >
-          <span
-            className="material-symbols-outlined mr-2"
-            style={{ fontSize: "20px" }}
-          >
-            arrow_back
-          </span>
-          {settings?.language === "id"
-            ? "Kembali ke Proyek"
-            : "Back to Projects"}
-        </Link>
+          <div className="md:col-span-9 space-y-16">
+            {visibleFlow.length > 0 && (
+              <Reveal className="space-y-6">
+                <div className="space-y-6" id="flow">
+                  <h2 className="font-display-aurora font-bold text-3xl md:text-4xl text-[var(--ink)]">
+                    {isId ? "Alur Proyek" : "Project Flow"}
+                  </h2>
+                  <div className="glass rounded-3xl p-8">
+                    <ul className="space-y-4 text-[15px] text-[var(--muted)] leading-relaxed">
+                      {visibleFlow.map((flow, idx) => (
+                        <li key={idx} className="custom-list-item">
+                          {flow.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Reveal>
+            )}
+
+            {visibleJobdesc.length > 0 && (
+              <Reveal className="space-y-6">
+                <div className="space-y-6" id="jobdesc">
+                  <h2 className="font-display-aurora font-bold text-3xl md:text-4xl text-[var(--ink)]">
+                    {isId ? "Tanggung Jawab Saya" : "My Responsibilities"}
+                  </h2>
+                  <div className="glass rounded-3xl p-8">
+                    <ul className="space-y-4 text-[15px] text-[var(--muted)] leading-relaxed">
+                      {visibleJobdesc.map((desc, idx) => (
+                        <li key={idx} className="custom-list-item">
+                          {desc.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Reveal>
+            )}
+          </div>
+        </section>
+      )}
+
+      <div className="flex justify-center pt-4">
+        <Magnetic strength={0.3}>
+          <Link to="/" className="btn-ghost">
+            <span className="material-symbols-outlined text-[18px]">
+              arrow_back
+            </span>
+            {isId ? "Kembali ke Proyek" : "Back to Projects"}
+          </Link>
+        </Magnetic>
       </div>
     </main>
   );
