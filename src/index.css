@@ -273,7 +273,8 @@
 
 .cursor-ring.is-active .cursor-ring-inner {
   border-color: rgba(34, 211, 238, 0.9);
-  background: rgba(34, 211, 238, 0.06);
+  border-width: 2px;
+  background: transparent;
   box-shadow: 0 0 26px rgba(34, 211, 238, 0.16);
 }
 

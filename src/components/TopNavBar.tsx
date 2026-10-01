@@ -100,7 +100,7 @@ export function TopNavBar() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-0.5">
           {NAV_ITEMS.map((item) => (
-            <Magnetic key={item.id} strength={0.3}>
+            <Magnetic key={item.id} strength={0.45}>
               <button
                 onClick={() => goToSection(item.id)}
                 className={cn("nav-link", active === item.id && "is-active")}
