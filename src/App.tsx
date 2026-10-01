@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { TopNavBar } from "./components/TopNavBar";
 import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
@@ -14,6 +14,29 @@ import { AdminEditProfile } from "./pages/admin/AdminEditProfile";
 import { AdminSettings } from "./pages/admin/AdminSettings";
 import { Toaster } from "@/components/ui/toast";
 import { SecretAdminGateway } from "./components/SecretAdminGateway";
+import { CustomCursor } from "./components/CustomCursor";
+import { AuroraBackground } from "./components/AuroraBackground";
+import { ScrollProgress } from "./components/ScrollProgress";
+
+function PublicShell() {
+  const location = useLocation();
+  return (
+    <div className="public-app antialiased min-h-screen flex flex-col w-full">
+      <AuroraBackground />
+      <div className="aurora-noise" aria-hidden="true" />
+      <ScrollProgress />
+      <CustomCursor />
+      <TopNavBar />
+      <div key={location.pathname} className="page-enter relative z-10 flex flex-col grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -23,17 +46,10 @@ function App() {
         <Route
           path="*"
           element={
-            <div className="antialiased min-h-screen flex flex-col w-full">
-              <TopNavBar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/project/:id" element={<ProjectDetail />} />
-              </Routes>
-              <Footer />
-            </div>
+            <PublicShell />
           }
         />
-        
+
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
