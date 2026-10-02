@@ -148,6 +148,13 @@ export const api = {
       body: JSON.stringify(data),
     }).then((res) => handleResponse<Project>(res)),
 
+  updateScreenshotTitle: (id: number | string, title: string) =>
+    fetch(`${BASE_URL}/screenshots/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    }).then((res) => handleResponse<{ id: number, title: string }>(res)),
+
   deleteProject: (id: number | string) =>
     fetch(`${BASE_URL}/projects/${id}`, {
       method: "DELETE",
@@ -192,4 +199,5 @@ export const api = {
       method: "DELETE",
     }).then((res) => handleResponse<{ message: string }>(res)),
 };
+
 
