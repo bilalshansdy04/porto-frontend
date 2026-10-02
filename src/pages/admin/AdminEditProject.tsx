@@ -464,14 +464,26 @@ export function AdminEditProject() {
                           type="button"
                           variant={confirmedTitles.includes(idx) ? "default" : "outline"}
                           className={confirmedTitles.includes(idx) ? "bg-green-600 hover:bg-green-700 text-white" : ""}
-                          onClick={() => {
+                          onClick={async () => {
                             if (!shot.title.trim()) {
                               toast.add({ title: "Validation Error", description: "Title cannot be empty.", type: "error" });
                               return;
                             }
-                            if (!confirmedTitles.includes(idx)) {
-                              setConfirmedTitles([...confirmedTitles, idx]);
-                              toast.add({ title: "Confirmed", description: "Title marked as OK locally.", type: "success" });
+                            if (shot.id) {
+                              try {
+                                await api.updateScreenshotTitle(shot.id, shot.title);
+                                if (!confirmedTitles.includes(idx)) {
+                                  setConfirmedTitles([...confirmedTitles, idx]);
+                                }
+                                toast.add({ title: "Saved", description: "Title securely saved to database!", type: "success" });
+                              } catch (e) {
+                                toast.add({ title: "Error", description: "Failed to save title.", type: "error" });
+                              }
+                            } else {
+                               if (!confirmedTitles.includes(idx)) {
+                                  setConfirmedTitles([...confirmedTitles, idx]);
+                               }
+                               toast.add({ title: "Confirmed", description: "Title marked locally.", type: "success" });
                             }
                           }}
                         >
