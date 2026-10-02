@@ -73,7 +73,7 @@ export function ProjectDetail() {
   const displayScreenshots = project.screenshots || 
     (project.carousel_images || []).map((url, idx) => ({
       image_url: url,
-      description: isId ? `Tangkapan layar ${idx + 1}` : `Screenshot ${idx + 1}`
+      title: isId ? `Tangkapan layar ${idx + 1}` : `Screenshot ${idx + 1}`
     }));
 
   return (
