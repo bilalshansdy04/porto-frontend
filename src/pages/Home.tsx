@@ -13,7 +13,6 @@ import { Magnetic } from "../components/Magnetic";
 import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
 import { AnimatedCounter } from "../components/AnimatedCounter";
-import { TechMarquee } from "../components/TechMarquee";
 import { ScrollTrigger } from "../lib/gsap";
 import { gsap, isCoarsePointer, prefersReducedMotion } from "../lib/gsap";
 
