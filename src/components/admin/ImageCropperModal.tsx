@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 interface ImageCropperModalProps {
   imageSrc: string;
-  onCropComplete: (croppedBlob: Blob) => void;
+  onCropComplete: (croppedBlob: Blob) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -18,6 +18,7 @@ export function ImageCropperModal({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const onCropCompleteHandler = useCallback(
     (_: any, croppedAreaPixels: any) => {
@@ -28,6 +29,7 @@ export function ImageCropperModal({
 
   const handleSave = async () => {
     if (imageSrc && croppedAreaPixels) {
+      setIsUploading(true);
       try {
         const croppedImage = await getCroppedImg(
           imageSrc,
@@ -35,10 +37,12 @@ export function ImageCropperModal({
           0,
         );
         if (croppedImage) {
-          onCropComplete(croppedImage);
+          await onCropComplete(croppedImage);
         }
       } catch (e) {
         console.error("Error cropping image", e);
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -94,9 +98,17 @@ export function ImageCropperModal({
             </Button>
             <Button
               onClick={handleSave}
-              className="flex-1 sm:flex-none bg-brand-blue text-white hover:bg-brand-blue/90"
+              disabled={isUploading}
+              className="flex-1 sm:flex-none bg-brand-blue text-white hover:bg-brand-blue/90 disabled:opacity-70 flex items-center gap-2"
             >
-              Crop & Upload
+              {isUploading ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                  Uploading...
+                </>
+              ) : (
+                "Crop & Upload"
+              )}
             </Button>
           </div>
         </div>

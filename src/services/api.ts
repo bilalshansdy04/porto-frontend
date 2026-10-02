@@ -37,7 +37,7 @@ export interface Project {
   jobdesc: ProjectItem[];
   link?: string;
   carousel_images?: string[];
-    screenshots?: { image_url: string, title: string }[];
+    screenshots?: { id?: number, project_id?: number, image_url: string, title: string }[];
 }
 
 export interface Experience {

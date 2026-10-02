@@ -169,7 +169,7 @@ export function AdminEditProject() {
   const [projectFlow, setProjectFlow] = useState<any[]>([]);
   const [jobdescInput, setJobdescInput] = useState("");
   const [jobdesc, setJobdesc] = useState<any[]>([]);
-  const [screenshots, setScreenshots] = useState<{image_url: string, title: string}[]>([]);
+  const [screenshots, setScreenshots] = useState<{id?: number, project_id?: number, image_url: string, title: string}[]>([]);
   const [confirmedTitles, setConfirmedTitles] = useState<number[]>([]);
 
   // Cropper states
@@ -188,7 +188,7 @@ export function AdminEditProject() {
           setTechStack(data.tech_stack || []);
           setProjectFlow(data.project_flow || []);
           setJobdesc(data.jobdesc || []);
-          setScreenshots(data.screenshots || (data.carousel_images || []).map(url => ({ image_url: url, title: "" })));
+          setScreenshots(data.screenshots || []);
           setLoading(false);
         })
         .catch((err) => {
