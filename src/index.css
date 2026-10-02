@@ -389,30 +389,32 @@ body.custom-cursor-active .public-app [role="button"] {
 
 /* ---------- Timeline ---------- */
 
-.timeline-rail {
-  position: absolute;
-  left: 7px;
-  top: 16px;
-  bottom: 40px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--indigo), var(--violet) 55%, var(--cyan));
-  transform-origin: top center;
+/* Legacy rail element — hidden; replaced by per-segment connectors */
+/* Legacy rail and segments — replaced by SVG */
+.timeline-rail, .timeline-segment {
+  display: none;
 }
 
+/* Invisible anchor points that emit glow when reached/hovered */
 .timeline-dot {
   position: absolute;
+  z-index: 2;
   left: 0;
   top: 8px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--abyss);
-  border: 2px solid rgba(99, 102, 241, 0.5);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  background: transparent;
+  border: none;
+  box-shadow: 0 0 0 transparent;
+  transition: box-shadow 0.4s ease;
+}
+
+.timeline-dot.is-reached {
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.25);
 }
 
 .timeline-item:hover .timeline-dot {
-  border-color: var(--cyan);
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
 }
 

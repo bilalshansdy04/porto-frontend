@@ -14,6 +14,7 @@ import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
 import { AnimatedCounter } from "../components/AnimatedCounter";
 import { TechMarquee } from "../components/TechMarquee";
+import { ScrollTrigger } from "../lib/gsap";
 import { gsap, isCoarsePointer, prefersReducedMotion } from "../lib/gsap";
 
 const SKILL_CATEGORIES = [
@@ -173,35 +174,161 @@ export function Home() {
 
   useEffect(() => {
     const timeline = timelineRef.current;
-    const rail = railRef.current;
-    if (!timeline || !rail) return;
+    if (!timeline) return;
 
-    const dotCenterY = (dot: HTMLElement) => {
+    const items = Array.from(timeline.querySelectorAll<HTMLElement>(".timeline-item"));
+    const dots = Array.from(timeline.querySelectorAll<HTMLElement>(".timeline-dot"));
+    if (dots.length === 0) return;
+
+    /** Get a dot's center (x, y) relative to the timeline container */
+    const dotCenter = (dot: HTMLElement) => {
+      let x = dot.offsetLeft + dot.offsetWidth / 2;
       let y = dot.offsetTop + dot.offsetHeight / 2;
       let parent = dot.offsetParent as HTMLElement | null;
       while (parent && parent !== timeline) {
+        x += parent.offsetLeft;
         y += parent.offsetTop;
         parent = parent.offsetParent as HTMLElement | null;
       }
-      return y;
+      return { x, y };
     };
 
-    const alignRail = () => {
-      const dots = timeline.querySelectorAll<HTMLElement>(".timeline-dot");
-      const first = dots[0];
-      const last = dots[dots.length - 1];
-      if (!first || !last) return;
-      const firstY = dotCenterY(first);
-      const lastY = dotCenterY(last);
-      rail.style.top = `${firstY}px`;
-      rail.style.bottom = "auto";
-      rail.style.height = `${Math.max(lastY - firstY, 2)}px`;
+    const svgns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgns, "svg");
+    svg.style.position = "absolute";
+    svg.style.top = "0";
+    svg.style.left = "0";
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    svg.style.pointerEvents = "none";
+    svg.style.zIndex = "1";
+    svg.setAttribute("aria-hidden", "true");
+    timeline.appendChild(svg);
+
+    // Create Gradient
+    const defs = document.createElementNS(svgns, "defs");
+    const grad = document.createElementNS(svgns, "linearGradient");
+    grad.id = "timeline-grad";
+    grad.setAttribute("x1", "0");
+    grad.setAttribute("y1", "0");
+    grad.setAttribute("x2", "0");
+    grad.setAttribute("y2", "1");
+    
+    const stop1 = document.createElementNS(svgns, "stop");
+    stop1.setAttribute("offset", "0%");
+    stop1.setAttribute("stop-color", "var(--indigo)");
+    const stop2 = document.createElementNS(svgns, "stop");
+    stop2.setAttribute("offset", "100%");
+    stop2.setAttribute("stop-color", "var(--cyan)");
+    
+    grad.appendChild(stop1);
+    grad.appendChild(stop2);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    const R = 7; // Radius of drawn circle
+    const CIRCUMFERENCE = 2 * Math.PI * R;
+    const triggers: ScrollTrigger[] = [];
+    const elements: SVGElement[] = [];
+
+    const buildSVG = () => {
+      // Clear previous drawing
+      elements.forEach((el) => el.remove());
+      elements.length = 0;
+      triggers.forEach((t) => t.kill());
+      triggers.length = 0;
+
+      for (let i = 0; i < dots.length; i++) {
+        const dot = dots[i];
+        const item = items[i];
+        const nextItem = items[i + 1];
+        const nextDot = dots[i + 1];
+        const { x, y } = dotCenter(dot);
+
+        // 1. Circle Path (approximated with full arc)
+        const circle = document.createElementNS(svgns, "path");
+        circle.setAttribute("d", `M ${x} ${y - R} A ${R} ${R} 0 1 1 ${x - 0.01} ${y - R}`);
+        circle.setAttribute("fill", "var(--abyss)");
+        circle.setAttribute("stroke", "url(#timeline-grad)");
+        circle.setAttribute("stroke-width", "2");
+        circle.setAttribute("stroke-dasharray", `${CIRCUMFERENCE}`);
+        circle.setAttribute("stroke-dashoffset", `${CIRCUMFERENCE}`);
+        svg.appendChild(circle);
+        elements.push(circle);
+
+        let line: SVGPathElement | null = null;
+
+        // 2. Beautiful S-Curve Line Path to next dot
+        if (nextDot) {
+          const nextC = dotCenter(nextDot);
+          line = document.createElementNS(svgns, "path");
+          
+          // Organic curved dropdown connecting the bottom of this circle to the top of the next
+          const curveOffset = Math.min(24, (nextC.y - y) * 0.3);
+          const d = `
+            M ${x} ${y + R} 
+            C ${x - 4} ${y + R + curveOffset}, 
+              ${nextC.x - 4} ${nextC.y - R - curveOffset}, 
+              ${nextC.x} ${nextC.y - R}
+          `;
+          
+          line.setAttribute("d", d.trim());
+          line.setAttribute("fill", "none");
+          line.setAttribute("stroke", "url(#timeline-grad)");
+          line.setAttribute("stroke-width", "2");
+          
+          // Estimate length for dasharray (close enough for smooth GSAP scrub)
+          const lineLen = (nextC.y - y) * 1.1;
+          line.setAttribute("stroke-dasharray", `${lineLen}`);
+          line.setAttribute("stroke-dashoffset", `${lineLen}`);
+          svg.appendChild(line);
+          elements.push(line);
+        }
+
+        // GSAP Timeline to sequentially draw the circle, then the line
+        const tl = gsap.timeline();
+
+        tl.to(circle, {
+          strokeDashoffset: 0,
+          duration: line ? 0.3 : 1, // Draw circle fast if line follows
+          ease: "power1.inOut",
+          onStart: () => dot.classList.add("is-reached"),
+          onReverseComplete: () => dot.classList.remove("is-reached")
+        });
+
+        if (line) {
+          tl.to(line, {
+            strokeDashoffset: 0,
+            duration: 0.7,
+            ease: "none"
+          });
+        }
+
+        const st = ScrollTrigger.create({
+          trigger: item,
+          start: "top 68%",
+          endTrigger: nextItem || item,
+          end: nextItem ? "top 68%" : "bottom 40%",
+          scrub: 0.5,
+          animation: tl
+        });
+        triggers.push(st);
+      }
     };
 
-    alignRail();
-    const ro = new ResizeObserver(alignRail);
+    buildSVG();
+
+    const ro = new ResizeObserver(() => {
+      buildSVG();
+    });
     ro.observe(timeline);
-    return () => ro.disconnect();
+
+    return () => {
+      ro.disconnect();
+      triggers.forEach((st) => st.kill());
+      svg.remove();
+      dots.forEach((d) => d.classList.remove("is-reached"));
+    };
   }, [loading, experiences.length]);
 
   const scrollTo = (id: string) => {
