@@ -155,6 +155,11 @@ export const api = {
       body: JSON.stringify({ title }),
     }).then((res) => handleResponse<{ id: number, title: string }>(res)),
 
+  deleteScreenshot: (id: number | string) =>
+    fetch(`${BASE_URL}/screenshots/${id}`, {
+      method: "DELETE",
+    }).then((res) => handleResponse<{ message: string }>(res)),
+
   deleteProject: (id: number | string) =>
     fetch(`${BASE_URL}/projects/${id}`, {
       method: "DELETE",

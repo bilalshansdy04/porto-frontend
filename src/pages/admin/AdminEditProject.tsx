@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 
 const SimpleArrayField = ({
   label,
@@ -171,6 +173,9 @@ export function AdminEditProject() {
   const [jobdesc, setJobdesc] = useState<any[]>([]);
   const [screenshots, setScreenshots] = useState<{id?: number, project_id?: number, image_url: string, title: string}[]>([]);
   const [confirmedTitles, setConfirmedTitles] = useState<number[]>([]);
+  const [screenshotToDelete, setScreenshotToDelete] = useState<{ index: number, id?: number } | null>(null);
+  const [isDeletingScreenshot, setIsDeletingScreenshot] = useState(false);
+
 
   // Cropper states
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
@@ -436,7 +441,7 @@ export function AdminEditProject() {
                           type="button"
                           variant="destructive"
                           size="icon"
-                          onClick={() => setScreenshots(screenshots.filter((_, i) => i !== idx))}
+                          onClick={() => setScreenshotToDelete({ index: idx, id: shot.id })}
                           title="Remove Image"
                         >
                           <span className="material-symbols-outlined text-sm">delete</span>
@@ -526,6 +531,49 @@ export function AdminEditProject() {
           onCropComplete={handleCropComplete}
           onCancel={() => setCropImageSrc(null)}
         />
+      )}
+
+      {screenshotToDelete && (
+        <Dialog open={true} onOpenChange={(open) => { if (!open) setScreenshotToDelete(null); }}>
+          <DialogContent className="max-w-sm p-6 bg-surface sm:rounded-xl">
+            <DialogHeader className="mb-4">
+              <DialogTitle className="font-headline-md text-headline-md text-error flex items-center gap-2">
+                <span className="material-symbols-outlined">warning</span>
+                Delete Screenshot?
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-secondary mb-6">
+              Are you sure you want to delete this screenshot? This action cannot be undone and will permanently remove the image from the database and Cloudinary.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" type="button" onClick={() => setScreenshotToDelete(null)} disabled={isDeletingScreenshot}>Cancel</Button>
+              <Button
+                variant="destructive"
+                type="button"
+                className="bg-error text-white hover:bg-error/90 disabled:opacity-70 flex items-center gap-2"
+                disabled={isDeletingScreenshot}
+                onClick={async () => {
+                  setIsDeletingScreenshot(true);
+                  try {
+                    if (screenshotToDelete.id) {
+                      await api.deleteScreenshot(screenshotToDelete.id);
+                    }
+                    setScreenshots(screenshots.filter((_, i) => i !== screenshotToDelete.index));
+                    toast.add({ title: "Deleted", description: "Screenshot removed successfully.", type: "success" });
+                    setScreenshotToDelete(null);
+                  } catch (e) {
+                    toast.add({ title: "Error", description: "Failed to delete screenshot.", type: "error" });
+                  } finally {
+                    setIsDeletingScreenshot(false);
+                  }
+                }}
+              >
+                {isDeletingScreenshot ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">delete</span>}
+                {isDeletingScreenshot ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </main>
   );
