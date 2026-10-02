@@ -37,6 +37,7 @@ export interface Project {
   jobdesc: ProjectItem[];
   link?: string;
   carousel_images?: string[];
+    screenshots?: { image_url: string, description: string }[];
 }
 
 export interface Experience {
@@ -191,3 +192,4 @@ export const api = {
       method: "DELETE",
     }).then((res) => handleResponse<{ message: string }>(res)),
 };
+

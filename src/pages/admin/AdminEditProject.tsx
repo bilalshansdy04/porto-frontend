@@ -169,7 +169,7 @@ export function AdminEditProject() {
   const [projectFlow, setProjectFlow] = useState<any[]>([]);
   const [jobdescInput, setJobdescInput] = useState("");
   const [jobdesc, setJobdesc] = useState<any[]>([]);
-  const [carouselImages, setCarouselImages] = useState<string[]>([]);
+  const [screenshots, setScreenshots] = useState<{image_url: string, description: string}[]>([]);
 
   // Cropper states
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
@@ -187,7 +187,7 @@ export function AdminEditProject() {
           setTechStack(data.tech_stack || []);
           setProjectFlow(data.project_flow || []);
           setJobdesc(data.jobdesc || []);
-          setCarouselImages(data.carousel_images || []);
+          setScreenshots(data.screenshots || (data.carousel_images || []).map(url => ({ image_url: url, description: "" })));
           setLoading(false);
         })
         .catch((err) => {
@@ -238,7 +238,7 @@ export function AdminEditProject() {
     formData.append("images", croppedBlob, "carousel-image.jpg");
     try {
       const updatedProject = await api.uploadProjectImages(id!, formData);
-      setCarouselImages(updatedProject.carousel_images || []);
+      setScreenshots(updatedProject.screenshots || []);
       setCropImageSrc(null); // Close modal
       toast.add({ title: "Success", description: "Image cropped and uploaded successfully!", type: "success" });
     } catch (err) {
@@ -274,7 +274,7 @@ export function AdminEditProject() {
         tech_stack: techStack,
         project_flow: projectFlow,
         jobdesc: jobdesc,
-        carousel_images: carouselImages,
+        screenshots: screenshots,
         is_visible: project?.is_visible ?? false,
       });
       // Navigate back to project list
@@ -414,7 +414,7 @@ export function AdminEditProject() {
 
           <div className="border-t border-outline-variant pt-4 mt-4">
             <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
-              Add Carousel Image (21:9)
+              Add Screenshot Image (21:9)
             </Label>
             <div className="mb-4">
               <Input
@@ -424,21 +424,36 @@ export function AdminEditProject() {
                 className="cursor-pointer file:cursor-pointer"
               />
             </div>
-            {carouselImages.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {carouselImages.map((imgUrl, idx) => (
-                  <div key={idx} className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
-                    <img src={getImageUrl(imgUrl)} alt={`Carousel ${idx}`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => setCarouselImages(carouselImages.filter((_, i) => i !== idx))}
-                        title="Remove Image"
-                      >
-                        <span className="material-symbols-outlined text-sm">delete</span>
-                      </Button>
+            {screenshots.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {screenshots.map((shot, idx) => (
+                  <div key={idx} className="flex flex-col gap-2 p-3 border border-outline-variant rounded-lg bg-surface-container">
+                    <div className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
+                      <img src={getImageUrl(shot.image_url)} alt={`Screenshot ${idx}`} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => setScreenshots(screenshots.filter((_, i) => i !== idx))}
+                          title="Remove Image"
+                        >
+                          <span className="material-symbols-outlined text-sm">delete</span>
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <Label className="block text-secondary mb-1 text-xs font-semibold uppercase">Description</Label>
+                      <Input
+                        type="text"
+                        placeholder="Image description (mandatory)"
+                        value={shot.description}
+                        onChange={(e) => {
+                          const newScreenshots = [...screenshots];
+                          newScreenshots[idx].description = e.target.value;
+                          setScreenshots(newScreenshots);
+                        }}
+                      />
                     </div>
                   </div>
                 ))}
