@@ -397,7 +397,9 @@ export function Home() {
           </h1>
 
           <p className="hero-anim mt-8 text-base md:text-xl text-[var(--muted)] leading-relaxed max-w-xl">
-            {stats?.summary || (isId ? "Tidak ada ringkasan" : "No summary")}
+            {loading
+              ? (isId ? "Memuat ringkasan..." : "Loading summary...")
+              : stats?.summary || (isId ? "Tidak ada ringkasan" : "No summary")}
           </p>
 
           <div className="hero-anim mt-10 flex flex-wrap items-center gap-4">
@@ -466,36 +468,48 @@ export function Home() {
             }
           />
 
-          <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SKILL_CATEGORIES.map((cat) => {
-              const catSkills = skills.filter((s) => s.category === cat.name);
-              if (catSkills.length === 0) return null;
-
-              return (
-                <TiltCard
-                  key={cat.name}
-                  className="glass-gradient-border rounded-3xl p-7 h-full group"
-                >
-                  <div className="w-12 h-12 rounded-2xl mb-5 flex items-center justify-center bg-white/[0.05] border border-white/10 text-[var(--cyan)] group-hover:border-[rgba(139,92,246,0.5)] group-hover:text-[var(--violet)] transition-colors duration-300">
-                    <span className="material-symbols-outlined">{cat.icon}</span>
-                  </div>
-                  <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] mb-2">
-                    {isId ? cat.name : cat.nameEn}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)] mb-5 leading-relaxed">
-                    {isId ? cat.desc : cat.descEn}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {catSkills.map((skill) => (
-                      <span key={skill.id} className="chip">
-                        {skill.name}
-                      </span>
-                    ))}
-                  </div>
-                </TiltCard>
-              );
-            })}
-          </Reveal>
+          {loading ? (
+            <p className="text-[var(--muted)] font-mono-aurora text-sm">
+              {isId ? "Memuat kemampuan..." : "Loading skills..."}
+            </p>
+          ) : skills.length === 0 ? (
+            <p className="text-[var(--muted)] font-mono-aurora text-sm">
+              {isId
+                ? "Belum ada kemampuan yang ditambahkan."
+                : "No skills added yet."}
+            </p>
+          ) : (
+            <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {SKILL_CATEGORIES.map((cat) => {
+                const catSkills = skills.filter((s) => s.category === cat.name);
+                if (catSkills.length === 0) return null;
+  
+                return (
+                  <TiltCard
+                    key={cat.name}
+                    className="glass-gradient-border rounded-3xl p-7 h-full group"
+                  >
+                    <div className="w-12 h-12 rounded-2xl mb-5 flex items-center justify-center bg-white/[0.05] border border-white/10 text-[var(--cyan)] group-hover:border-[rgba(139,92,246,0.5)] group-hover:text-[var(--violet)] transition-colors duration-300">
+                      <span className="material-symbols-outlined">{cat.icon}</span>
+                    </div>
+                    <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] mb-2">
+                      {isId ? cat.name : cat.nameEn}
+                    </h3>
+                    <p className="text-sm text-[var(--muted)] mb-5 leading-relaxed">
+                      {isId ? cat.desc : cat.descEn}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {catSkills.map((skill) => (
+                        <span key={skill.id} className="chip">
+                          {skill.name}
+                        </span>
+                      ))}
+                    </div>
+                  </TiltCard>
+                );
+              })}
+            </Reveal>
+          )}
         </div>
       </section>
 
