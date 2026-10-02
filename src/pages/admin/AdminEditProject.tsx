@@ -170,6 +170,7 @@ export function AdminEditProject() {
   const [jobdescInput, setJobdescInput] = useState("");
   const [jobdesc, setJobdesc] = useState<any[]>([]);
   const [screenshots, setScreenshots] = useState<{image_url: string, title: string}[]>([]);
+  const [confirmedTitles, setConfirmedTitles] = useState<number[]>([]);
 
   // Cropper states
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
@@ -444,16 +445,43 @@ export function AdminEditProject() {
                     </div>
                     <div className="mt-2">
                       <Label className="block text-secondary mb-1 text-xs font-semibold uppercase">Title</Label>
-                      <Input
-                        type="text"
-                        placeholder="Screenshot title (mandatory)"
-                        value={shot.title}
-                        onChange={(e) => {
-                          const newScreenshots = [...screenshots];
-                          newScreenshots[idx].title = e.target.value;
-                          setScreenshots(newScreenshots);
-                        }}
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          className="flex-1"
+                          type="text"
+                          placeholder="Screenshot title (mandatory)"
+                          value={shot.title}
+                          onChange={(e) => {
+                            const newScreenshots = [...screenshots];
+                            newScreenshots[idx].title = e.target.value;
+                            setScreenshots(newScreenshots);
+                            if (confirmedTitles.includes(idx)) {
+                              setConfirmedTitles(confirmedTitles.filter(id => id !== idx));
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant={confirmedTitles.includes(idx) ? "default" : "outline"}
+                          className={confirmedTitles.includes(idx) ? "bg-green-600 hover:bg-green-700 text-white" : ""}
+                          onClick={() => {
+                            if (!shot.title.trim()) {
+                              toast.add({ title: "Validation Error", description: "Title cannot be empty.", type: "error" });
+                              return;
+                            }
+                            if (!confirmedTitles.includes(idx)) {
+                              setConfirmedTitles([...confirmedTitles, idx]);
+                              toast.add({ title: "Confirmed", description: "Title marked as OK locally.", type: "success" });
+                            }
+                          }}
+                        >
+                          {confirmedTitles.includes(idx) ? (
+                            <span className="material-symbols-outlined text-sm">check</span>
+                          ) : (
+                            "OK"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
