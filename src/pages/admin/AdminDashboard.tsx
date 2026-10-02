@@ -16,17 +16,32 @@ import {
 export function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api
       .getDashboardStats()
       .then((data) => setStats(data))
-      .catch((err) => console.error("Failed to load stats", err))
+      .catch((err) => {
+        console.error("Failed to load stats", err);
+        setError(err instanceof Error ? err.message : String(err));
+      })
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return <div className="p-8">Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-error">
+        <h3 className="font-bold text-lg mb-2">Failed to load dashboard statistics</h3>
+        <div className="bg-error/10 p-4 rounded-md font-mono text-sm">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   if (!stats) {
