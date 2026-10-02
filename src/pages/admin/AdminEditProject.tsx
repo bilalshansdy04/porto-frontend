@@ -169,7 +169,7 @@ export function AdminEditProject() {
   const [projectFlow, setProjectFlow] = useState<any[]>([]);
   const [jobdescInput, setJobdescInput] = useState("");
   const [jobdesc, setJobdesc] = useState<any[]>([]);
-  const [screenshots, setScreenshots] = useState<{image_url: string, description: string}[]>([]);
+  const [screenshots, setScreenshots] = useState<{image_url: string, title: string}[]>([]);
 
   // Cropper states
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
@@ -187,7 +187,7 @@ export function AdminEditProject() {
           setTechStack(data.tech_stack || []);
           setProjectFlow(data.project_flow || []);
           setJobdesc(data.jobdesc || []);
-          setScreenshots(data.screenshots || (data.carousel_images || []).map(url => ({ image_url: url, description: "" })));
+          setScreenshots(data.screenshots || (data.carousel_images || []).map(url => ({ image_url: url, title: "" })));
           setLoading(false);
         })
         .catch((err) => {
@@ -443,14 +443,14 @@ export function AdminEditProject() {
                       </div>
                     </div>
                     <div className="mt-2">
-                      <Label className="block text-secondary mb-1 text-xs font-semibold uppercase">Description</Label>
+                      <Label className="block text-secondary mb-1 text-xs font-semibold uppercase">Title</Label>
                       <Input
                         type="text"
-                        placeholder="Image description (mandatory)"
-                        value={shot.description}
+                        placeholder="Screenshot title (mandatory)"
+                        value={shot.title}
                         onChange={(e) => {
                           const newScreenshots = [...screenshots];
-                          newScreenshots[idx].description = e.target.value;
+                          newScreenshots[idx].title = e.target.value;
                           setScreenshots(newScreenshots);
                         }}
                       />

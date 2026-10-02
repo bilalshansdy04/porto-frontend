@@ -195,7 +195,7 @@ export function ProjectDetail() {
                       0{idx + 1} //
                     </span>
                     <p className="text-xl md:text-2xl text-[var(--muted)] leading-relaxed font-light">
-                      {shot.description}
+                      {shot.title}
                     </p>
                   </div>
                 </div>
