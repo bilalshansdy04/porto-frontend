@@ -7,6 +7,7 @@ import type {
   Project,
   Skill,
   Setting,
+  Category,
 } from "../services/api";
 import { TiltCard } from "../components/TiltCard";
 import { Magnetic } from "../components/Magnetic";
@@ -54,10 +55,140 @@ const SKILL_CATEGORIES = [
   },
 ];
 
+function ProjectCard({ project, isId }: { project: Project; isId: boolean }) {
+  const isDirect = project.target_type === "direct";
+  const destination = isDirect && project.link ? project.link : `/project/${project.id}`;
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isDirect && project.link?.startsWith("http")) {
+      e.preventDefault();
+      window.open(project.link, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <Link
+      to={destination}
+      onClick={handleClick}
+      className="group block h-full cursor-pointer"
+    >
+      <TiltCard
+        className="glass rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.2] flex flex-col"
+        maxTilt={4}
+      >
+        <div className="relative overflow-hidden bg-white/[0.03] aspect-video">
+          <img
+            className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700 ease-out"
+            alt={project.name}
+            src={getImageUrl(project.image_url)}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,8,16,0.65)] via-transparent to-transparent" />
+
+          {/* Badges */}
+          <div className="absolute top-4 left-4 flex gap-2">
+            {project.category && (
+              <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10">
+                {project.category}
+              </span>
+            )}
+            {isDirect && (
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500/90 text-black shadow-sm">
+                {isId ? "Demo Langsung" : "Direct Demo"}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="p-7 flex-1 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-3 gap-4">
+              <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
+                {project.name}
+              </h3>
+              <span className="shrink-0 w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
+                <span className="material-symbols-outlined text-[18px]">
+                  north_east
+                </span>
+              </span>
+            </div>
+            <p className="text-sm text-[var(--muted)] mb-5 line-clamp-3 leading-relaxed">
+              {project.description}
+            </p>
+          </div>
+
+          {project.tech_stack && project.tech_stack.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+              {project.tech_stack.map((tech, i) => (
+                <span key={i} className="chip text-[11px]">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </TiltCard>
+    </Link>
+  );
+}
+
+function ShowAllCard({
+  title,
+  count,
+  linkTo,
+  isId,
+}: {
+  title: string;
+  count: number;
+  linkTo: string;
+  isId: boolean;
+}) {
+  return (
+    <Link to={linkTo} className="group block h-full cursor-pointer">
+      <TiltCard
+        className="glass-gradient-border rounded-3xl overflow-hidden h-full p-8 flex flex-col justify-between transition-all duration-300 hover:border-[var(--cyan)]/40 min-h-[300px] bg-gradient-to-br from-white/[0.03] to-[var(--cyan)]/[0.05]"
+        maxTilt={4}
+      >
+        <div className="flex items-center justify-between">
+          <span className="w-12 h-12 rounded-2xl bg-[var(--cyan)]/10 border border-[var(--cyan)]/25 flex items-center justify-center text-[var(--cyan)] group-hover:scale-110 transition-transform duration-300">
+            <span className="material-symbols-outlined text-2xl">
+              grid_view
+            </span>
+          </span>
+          <span className="font-mono-aurora text-xs text-[var(--muted)] uppercase tracking-widest px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
+            {count} {isId ? "Proyek" : "Projects"}
+          </span>
+        </div>
+
+        <div className="my-6">
+          <p className="font-mono-aurora text-xs text-[var(--cyan)] uppercase tracking-wider mb-2">
+            {isId ? "Jelajahi Arsip" : "Explore Archive"}
+          </p>
+          <h3 className="font-display-aurora font-bold text-2xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
+            {title}
+          </h3>
+          <p className="text-sm text-[var(--muted)] mt-2 leading-relaxed">
+            {isId
+              ? `Lihat seluruh daftar proyek dan demo interaktif dalam ${title}.`
+              : `View complete index, live interactive demos, and case studies for ${title}.`}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm font-semibold text-[var(--cyan)] group-hover:translate-x-1 transition-transform duration-300">
+          <span>{isId ? "Lihat Semua" : "Show All"}</span>
+          <span className="material-symbols-outlined text-[18px]">
+            arrow_forward
+          </span>
+        </div>
+      </TiltCard>
+    </Link>
+  );
+}
+
 export function Home() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [settings, setSettings] = useState<Setting | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,21 +211,45 @@ export function Home() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [statsData, expData, projData, skillsData, settingsData] =
+        const [statsData, expData, projData, skillsData, settingsData, catsData] =
           await Promise.all([
             api.getDashboardStats(),
             api.getExperiences(),
             api.getProjects(),
             api.getSkills(),
             api.getSettings(),
+            api.getCategories(),
           ]);
         setStats(statsData);
         setExperiences(expData || []);
         setSkills(skillsData || []);
         setSettings(settingsData);
-        setProjects(
-          (projData || []).filter((p) => p.is_visible),
-        );
+        setCategories(catsData || []);
+
+        let loadedProjects = (projData || []).filter((p) => p.is_visible);
+        // Include Nova AI dummy landing page demo so it is immediately visible & clickable
+        if (!loadedProjects.some((p) => p.link === "/demos/landingpage1" || p.link === "/landingpage1")) {
+          loadedProjects = [
+            {
+              id: 99901,
+              name: "Nova AI - SaaS Platform",
+              description:
+                "High-converting, responsive AI analytics platform landing page with real-time telemetry, autonomous agents, and interactive live demo.",
+              status: "Live",
+              image_url: "/stitch_downloads/admin_overview.png",
+              is_visible: true,
+              date_modified: "2026-10-06",
+              tech_stack: ["React 19", "Tailwind CSS", "TypeScript", "Lucide"],
+              project_flow: [],
+              jobdesc: [],
+              category: "Dummy Landing Page",
+              target_type: "direct",
+              link: "/demos/landingpage1",
+            },
+            ...loadedProjects,
+          ];
+        }
+        setProjects(loadedProjects);
       } catch (err) {
         console.error("Failed to load home data", err);
       } finally {
@@ -594,26 +749,42 @@ export function Home() {
         className="relative py-24 md:py-36"
         id="works"
       >
-        <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin">
-          <SectionHeading
-            eyebrow={isId ? "portofolio" : "portfolio"}
-            title={
-              isId ? (
-                <>
-                  Karya <span className="text-aurora">Pilihan</span>
-                </>
-              ) : (
-                <>
-                  Selected <span className="text-aurora">Works</span>
-                </>
-              )
-            }
-            description={
-              isId
-                ? "Kumpulan proyek yang paling saya banggakan — klik untuk melihat cerita di baliknya."
-                : "A collection of projects I'm most proud of — click through to see the story behind each one."
-            }
-          />
+        <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin space-y-20">
+          <div>
+            <SectionHeading
+              eyebrow={isId ? "portofolio" : "portfolio"}
+              title={
+                isId ? (
+                  <>
+                    Karya <span className="text-aurora">Pilihan</span>
+                  </>
+                ) : (
+                  <>
+                    Selected <span className="text-aurora">Works</span>
+                  </>
+                )
+              }
+              description={
+                isId
+                  ? "Kumpulan proyek yang paling saya banggakan — jelajahi per kategori atau buka demo langsung."
+                  : "A curated collection of systems and interactive landing pages — explore by category or launch live demos directly."
+              }
+            />
+
+            {/* View All Categories Pill Button */}
+            <div className="mt-6 flex items-center justify-between">
+              <span className="font-mono-aurora text-xs text-[var(--muted)]">
+                {isId ? "Menampilkan ikhtisar kategori" : "Displaying category highlights"}
+              </span>
+              <Link
+                to="/all-category"
+                className="inline-flex items-center gap-1.5 font-mono-aurora text-xs text-[var(--cyan)] hover:underline"
+              >
+                <span>{isId ? "Buka Direktori Lengkap" : "Browse All Categories"}</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </div>
+          </div>
 
           {loading ? (
             <p className="text-[var(--muted)] font-mono-aurora text-sm">
@@ -626,69 +797,88 @@ export function Home() {
                 : "No live projects to display."}
             </p>
           ) : (
-            <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {projects.map((project, idx) => (
-                <Link
-                  key={project.id}
-                  className={`group block ${idx % 3 === 2 ? "md:col-span-2" : ""}`}
-                  to={`/project/${project.id}`}
-                >
-                  <TiltCard
-                    className="glass rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.16]"
-                    maxTilt={5}
-                  >
-                    <div
-                      className={`flex flex-col h-full ${
-                        idx % 3 === 2 ? "md:flex-row" : ""
-                      }`}
-                    >
-                      <div
-                        className={`relative overflow-hidden bg-white/[0.03] aspect-video ${
-                          idx % 3 === 2 ? "md:w-1/2 md:aspect-auto md:min-h-[300px]" : ""
-                        }`}
-                      >
-                        <img
-                          className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700 ease-out"
-                          alt={project.name}
-                          src={getImageUrl(project.image_url)}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,8,16,0.55)] via-transparent to-transparent" />
-                      </div>
-                      <div
-                        className={`p-7 ${
-                          idx % 3 === 2
-                            ? "md:w-1/2 flex flex-col justify-center"
-                            : "flex-1"
-                        }`}
-                      >
-                        <div className="flex justify-between items-start mb-3 gap-4">
-                          <h3 className="font-display-aurora font-semibold text-xl md:text-2xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
-                            {project.name}
-                          </h3>
-                          <span className="shrink-0 w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
-                            <span className="material-symbols-outlined text-[18px]">
-                              north_east
-                            </span>
-                          </span>
-                        </div>
-                        <p className="text-sm md:text-[15px] text-[var(--muted)] mb-5 line-clamp-3 leading-relaxed">
-                          {project.description}
-                        </p>
-                        {project.tech_stack && project.tech_stack.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {project.tech_stack.map((tech, i) => (
-                              <span key={i} className="chip">
-                                {tech}
-                              </span>
-                            ))}
+            <div className="space-y-24">
+              {/* --- 1. All Projects 2x2 Showcase (Top 3 items + Show All Slot) --- */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--cyan)]" />
+                    <h3 className="font-display-aurora font-bold text-xl md:text-2xl text-[var(--ink)]">
+                      {isId ? "Semua Proyek" : "All Projects"}
+                    </h3>
+                  </div>
+                  <span className="font-mono-aurora text-xs text-[var(--muted)]">
+                    {projects.length} {isId ? "total proyek" : "total projects"}
+                  </span>
+                </div>
+
+                <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {projects.slice(0, 3).map((project) => (
+                    <ProjectCard key={project.id} project={project} isId={isId} />
+                  ))}
+                  {/* Slot 4: Show All Card */}
+                  <ShowAllCard
+                    title={isId ? "Semua Proyek" : "All Projects"}
+                    count={projects.length}
+                    linkTo="/all-category"
+                    isId={isId}
+                  />
+                </Reveal>
+              </div>
+
+              {/* --- 2. Per-Category Sections (e.g. Dummy Landing Page, MSJ, etc.) --- */}
+              {categories
+                .filter((cat) => cat.show_on_home)
+                .sort((a, b) => a.display_order - b.display_order)
+                .map((cat) => {
+                  const catProjects = projects.filter(
+                    (p) =>
+                      p.category?.toLowerCase() === cat.name.toLowerCase() ||
+                      p.category?.toLowerCase() === cat.slug.toLowerCase()
+                  );
+
+                  if (catProjects.length === 0) return null;
+
+                  return (
+                    <div key={cat.id} className="space-y-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
+                        <div className="flex items-center gap-3">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[var(--violet)]" />
+                          <div>
+                            <h3 className="font-display-aurora font-bold text-xl md:text-2xl text-[var(--ink)]">
+                              {cat.name}
+                            </h3>
+                            {cat.description && (
+                              <p className="text-xs text-[var(--muted)] mt-0.5">
+                                {cat.description}
+                              </p>
+                            )}
                           </div>
-                        )}
+                        </div>
+                        <Link
+                          to={`/category/${cat.slug}`}
+                          className="font-mono-aurora text-xs text-[var(--muted)] hover:text-[var(--cyan)] transition-colors self-start sm:self-center"
+                        >
+                          {catProjects.length} {isId ? "proyek" : "projects"} →
+                        </Link>
                       </div>
+
+                      <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {catProjects.slice(0, 3).map((project) => (
+                          <ProjectCard key={project.id} project={project} isId={isId} />
+                        ))}
+                        {/* Slot 4: Show All Category Card */}
+                        <ShowAllCard
+                          title={cat.name}
+                          count={catProjects.length}
+                          linkTo={`/category/${cat.slug}`}
+                          isId={isId}
+                        />
+                      </Reveal>
                     </div>
-                  </TiltCard>
-                </Link>
-              ))}
-            </Reveal>
+                  );
+                })}
+            </div>
           )}
         </div>
       </section>

@@ -19,6 +19,18 @@ export interface Setting {
   show_photo: boolean;
   language: string;
 }
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  display_order: number;
+  show_on_home: boolean;
+  project_count?: number;
+}
+
+export type ProjectTargetType = "detail" | "direct";
+
 export interface ProjectItem {
   text: string;
   is_visible: boolean;
@@ -37,7 +49,10 @@ export interface Project {
   jobdesc: ProjectItem[];
   link?: string;
   carousel_images?: string[];
-    screenshots?: { id?: number, project_id?: number, image_url: string, title: string }[];
+  screenshots?: { id?: number, project_id?: number, image_url: string, title: string }[];
+  category?: string;
+  category_id?: number;
+  target_type?: ProjectTargetType;
 }
 
 export interface Experience {
@@ -203,6 +218,126 @@ export const api = {
     fetch(`${BASE_URL}/skills/${id}`, {
       method: "DELETE",
     }).then((res) => handleResponse<{ message: string }>(res)),
+
+  getCategories: async (): Promise<Category[]> => {
+    try {
+      const res = await fetch(`${BASE_URL}/categories`);
+      if (res.ok) {
+        return await handleResponse<Category[]>(res);
+      }
+    } catch {
+      // Backend route not available yet; fallback gracefully
+    }
+    return getStoredCategories();
+  },
+
+  createCategory: async (data: Partial<Category>): Promise<Category> => {
+    try {
+      const res = await fetch(`${BASE_URL}/categories`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        return await handleResponse<Category>(res);
+      }
+    } catch {
+      // Fallback
+    }
+    const current = getStoredCategories();
+    const newCat: Category = {
+      id: Date.now(),
+      name: data.name || "New Category",
+      slug: data.slug || (data.name || "new-category").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      description: data.description || "",
+      display_order: data.display_order ?? (current.length + 1),
+      show_on_home: data.show_on_home ?? true,
+    };
+    const updated = [...current, newCat];
+    saveStoredCategories(updated);
+    return newCat;
+  },
+
+  updateCategory: async (id: number | string, data: Partial<Category>): Promise<Category> => {
+    try {
+      const res = await fetch(`${BASE_URL}/categories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        return await handleResponse<Category>(res);
+      }
+    } catch {
+      // Fallback
+    }
+    const current = getStoredCategories();
+    const updated = current.map((c) => (c.id === Number(id) ? { ...c, ...data } : c));
+    saveStoredCategories(updated);
+    return updated.find((c) => c.id === Number(id)) || (data as Category);
+  },
+
+  deleteCategory: async (id: number | string): Promise<{ message: string }> => {
+    try {
+      const res = await fetch(`${BASE_URL}/categories/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        return await handleResponse<{ message: string }>(res);
+      }
+    } catch {
+      // Fallback
+    }
+    const current = getStoredCategories();
+    const updated = current.filter((c) => c.id !== Number(id));
+    saveStoredCategories(updated);
+    return { message: "Category deleted" };
+  },
 };
+
+const DEFAULT_CATEGORIES: Category[] = [
+  {
+    id: 1,
+    name: "MSJ",
+    slug: "msj",
+    description: "Enterprise solutions & business platform initiatives for MSJ.",
+    display_order: 1,
+    show_on_home: true,
+  },
+  {
+    id: 2,
+    name: "Dummy Landing Page",
+    slug: "dummy-landing-page",
+    description: "High-converting, interactive promotional & SaaS landing page prototypes.",
+    display_order: 2,
+    show_on_home: true,
+  },
+  {
+    id: 3,
+    name: "Web Applications",
+    slug: "web-applications",
+    description: "Scalable fullstack applications and developer tools.",
+    display_order: 3,
+    show_on_home: true,
+  },
+];
+
+function getStoredCategories(): Category[] {
+  try {
+    const raw = localStorage.getItem("porto_categories");
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.warn("Could not read stored categories", e);
+  }
+  return DEFAULT_CATEGORIES;
+}
+
+function saveStoredCategories(cats: Category[]) {
+  try {
+    localStorage.setItem("porto_categories", JSON.stringify(cats));
+  } catch (e) {
+    console.warn("Could not save categories", e);
+  }
+}
 
 

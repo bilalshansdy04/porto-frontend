@@ -50,6 +50,25 @@ export function AdminLayout() {
               </>
             )}
           </NavLink>
+
+          <NavLink
+            to="/admin/categories"
+            className={({ isActive }) =>
+              cn(
+                "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-6 text-base font-medium transition-colors",
+                isActive 
+                  ? "bg-primary text-white" 
+                  : "text-on-surface hover:bg-surface-container-highest"
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <span className="material-symbols-outlined" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>category</span>
+                Manage Categories
+              </>
+            )}
+          </NavLink>
           
           <NavLink
             to="/admin/journey"

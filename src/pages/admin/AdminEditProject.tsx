@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api, getImageUrl } from "../../services/api";
-import type { Project } from "../../services/api";
+import type { Project, Category, ProjectTargetType } from "../../services/api";
 
 import { ImageCropperModal } from "../../components/admin/ImageCropperModal";
 import { toast } from "@/components/ui/toast";
@@ -21,8 +21,8 @@ const SimpleArrayField = ({
   setListState,
   placeholder,
 }: any) => (
-  <div className="border-t border-outline-variant pt-4 mt-4">
-    <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+  <div className="mt-4 pt-4 border-t border-outline-variant">
+    <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
       {label}
     </Label>
     <div className="flex gap-2 mb-4">
@@ -54,26 +54,26 @@ const SimpleArrayField = ({
           }
         }}
       >
-        <span className="material-symbols-outlined text-sm mr-1">add</span> Add
+        <span className="mr-1 text-sm material-symbols-outlined">add</span> Add
       </Button>
     </div>
     <ul className="flex flex-col gap-2">
       {listState.map((item: string, idx: number) => (
         <li
           key={idx}
-          className="flex items-center gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
+          className="flex items-center gap-3 bg-surface-container-low p-3 border rounded border-outline-variant animate-fade-in"
         >
-          <div className="w-1.5 h-1.5 bg-brand-blue shrink-0 rounded-full"></div>
-          <span className="text-sm flex-1">{item}</span>
+          <div className="bg-brand-blue rounded-full w-1.5 h-1.5 shrink-0"></div>
+          <span className="flex-1 text-sm">{item}</span>
           <Button
             variant="ghost"
             size="icon"
-            className="text-error hover:bg-error-container hover:text-error h-8 w-8"
+            className="hover:bg-error-container w-8 h-8 text-error hover:text-error"
             title="Remove"
             type="button"
             onClick={() => setListState(listState.filter((_: any, i: number) => i !== idx))}
           >
-            <span className="material-symbols-outlined text-sm">close</span>
+            <span className="text-sm material-symbols-outlined">close</span>
           </Button>
         </li>
       ))}
@@ -91,8 +91,8 @@ const ArrayField = ({
   handleAddItem,
   handleRemoveItem,
 }: any) => (
-  <div className="border-t border-outline-variant pt-4 mt-4">
-    <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+  <div className="mt-4 pt-4 border-t border-outline-variant">
+    <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
       {label}
     </Label>
     <div className="flex gap-2 mb-4">
@@ -116,17 +116,17 @@ const ArrayField = ({
           handleAddItem(inputState, setInputState, listState, setListState)
         }
       >
-        <span className="material-symbols-outlined text-sm mr-1">add</span> Add
+        <span className="mr-1 text-sm material-symbols-outlined">add</span> Add
       </Button>
     </div>
     <ul className="flex flex-col gap-2">
       {listState.map((item: any, idx: number) => (
         <li
           key={idx}
-          className="flex items-center gap-3 p-3 bg-surface-container-low rounded border border-outline-variant animate-fade-in"
+          className="flex items-center gap-3 bg-surface-container-low p-3 border rounded border-outline-variant animate-fade-in"
         >
-          <div className="w-1.5 h-1.5 bg-brand-blue shrink-0 rounded-full"></div>
-          <span className="text-sm flex-1">
+          <div className="bg-brand-blue rounded-full w-1.5 h-1.5 shrink-0"></div>
+          <span className="flex-1 text-sm">
             {item.text}
           </span>
           <div className="flex items-center gap-2">
@@ -141,12 +141,12 @@ const ArrayField = ({
             <Button
               variant="ghost"
               size="icon"
-              className="text-error hover:bg-error-container hover:text-error h-8 w-8"
+              className="hover:bg-error-container w-8 h-8 text-error hover:text-error"
               title="Remove"
               type="button"
               onClick={() => handleRemoveItem(idx, listState, setListState)}
             >
-              <span className="material-symbols-outlined text-sm">close</span>
+              <span className="text-sm material-symbols-outlined">close</span>
             </Button>
           </div>
         </li>
@@ -164,6 +164,9 @@ export function AdminEditProject() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("Draft");
+  const [category, setCategory] = useState("General");
+  const [categoriesList, setCategoriesList] = useState<Category[]>([]);
+  const [targetType, setTargetType] = useState<ProjectTargetType>("detail");
   const [link, setLink] = useState("");
   const [techStackInput, setTechStackInput] = useState("");
   const [techStack, setTechStack] = useState<string[]>([]);
@@ -176,11 +179,13 @@ export function AdminEditProject() {
   const [screenshotToDelete, setScreenshotToDelete] = useState<{ index: number, id?: number } | null>(null);
   const [isDeletingScreenshot, setIsDeletingScreenshot] = useState(false);
 
-
   // Cropper states
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
+    // Fetch categories
+    api.getCategories().then((cats) => setCategoriesList(cats || [])).catch(console.error);
+
     if (id) {
       api
         .getProject(id)
@@ -189,6 +194,8 @@ export function AdminEditProject() {
           setName(data.name || "");
           setDescription(data.description || "");
           setStatus(data.status || "Draft");
+          setCategory(data.category || "General");
+          setTargetType(data.target_type || "detail");
           setLink(data.link || "");
           setTechStack(data.tech_stack || []);
           setProjectFlow(data.project_flow || []);
@@ -276,6 +283,8 @@ export function AdminEditProject() {
         name,
         description,
         status,
+        category,
+        target_type: targetType,
         link,
         tech_stack: techStack,
         project_flow: projectFlow,
@@ -292,13 +301,13 @@ export function AdminEditProject() {
   };
 
   return (
-    <main className="flex-1 p-8 max-w-max-width mx-auto w-full">
-      <div className="mb-8 flex justify-between items-center">
+    <main className="flex-1 mx-auto p-8 w-full max-w-max-width">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="font-headline-lg text-headline-lg text-primary mb-2 flex items-center gap-2">
+          <h2 className="flex items-center gap-2 mb-2 font-headline-lg text-headline-lg text-primary">
             Edit Project: {project.name}
             {!project.is_visible && (
-              <span className="bg-[#fef08a] text-[#854d0e] text-sm px-2 py-1 rounded font-bold ml-2">
+              <span className="bg-[#fef08a] ml-2 px-2 py-1 rounded font-bold text-[#854d0e] text-sm">
                 Hidden
               </span>
             )}
@@ -309,11 +318,11 @@ export function AdminEditProject() {
         </div>
       </div>
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-sm">
+      <div className="bg-surface-container-lowest shadow-sm p-6 border rounded-lg border-outline-variant">
         <form onSubmit={handleSave} className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="md:col-span-2">
-              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+              <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
                 Project Name
               </Label>
               <Input
@@ -325,7 +334,7 @@ export function AdminEditProject() {
             </div>
 
             <div className="md:col-span-2">
-              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+              <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
                 Description
               </Label>
               <Textarea
@@ -338,11 +347,41 @@ export function AdminEditProject() {
             </div>
 
             <div>
-              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+              <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
+                Category
+              </Label>
+              <div className="flex gap-2">
+                <select
+                  className="flex-1 bg-surface px-3 py-2 border rounded-md border-outline-variant focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-sm transition-all"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="General">General</option>
+                  {categoriesList.map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                  {!categoriesList.some((c) => c.name === category) && category !== "General" && (
+                    <option value={category}>{category}</option>
+                  )}
+                </select>
+                <Input
+                  type="text"
+                  placeholder="Or custom..."
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="max-w-[160px]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
                 Status
               </Label>
               <select
-                className="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
+                className="bg-surface px-3 py-2 border rounded-md border-outline-variant focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-full text-sm transition-all"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
@@ -351,16 +390,66 @@ export function AdminEditProject() {
                 <option value="Done">Done</option>
               </select>
             </div>
-            <div className="md:col-span-2">
-              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
-                External Link (Optional)
-              </Label>
-              <Input
-                type="url"
-                placeholder="https://example.com"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-              />
+
+            <div className="space-y-4 md:col-span-2 bg-surface-container-low p-4 border rounded-lg border-outline-variant">
+              <div>
+                <Label className="block mb-1 font-bold text-primary text-sm">
+                  Card Click Navigation Mode
+                </Label>
+                <p className="mb-3 text-secondary text-xs">
+                  Control where clicking this project card leads (e.g. standard case study vs. direct dummy landing page).
+                </p>
+                <div className="gap-3 grid grid-cols-1 sm:grid-cols-2">
+                  <label className="flex items-center gap-3 bg-surface hover:bg-surface-container-highest p-3 border rounded border-outline-variant text-sm transition-colors cursor-pointer">
+                    <input
+                      type="radio"
+                      name="targetType"
+                      value="detail"
+                      checked={targetType === "detail"}
+                      onChange={() => setTargetType("detail")}
+                      className="accent-primary"
+                    />
+                    <div>
+                      <span className="block font-semibold text-primary">Detail Page</span>
+                      <span className="text-secondary text-xs">Opens case study at /project/{id}</span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-3 bg-surface hover:bg-surface-container-highest p-3 border rounded border-outline-variant text-sm transition-colors cursor-pointer">
+                    <input
+                      type="radio"
+                      name="targetType"
+                      value="direct"
+                      checked={targetType === "direct"}
+                      onChange={() => setTargetType("direct")}
+                      className="accent-primary"
+                    />
+                    <div>
+                      <span className="block font-semibold text-primary">Direct Page</span>
+                      <span className="text-secondary text-xs">Opens actual page directly</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="pt-1">
+                <div>
+                  <Label className="block mb-1 font-semibold text-secondary text-xs uppercase">
+                    Destination URL (Route or Link)
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g. /demos/topup, /demos/landingpage1 or https://example.com"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
+                  <span className="block mt-1 text-[11px] text-secondary">
+                    {targetType === "direct"
+                      ? "For in-portfolio dummy demos, use /demos/slug (e.g. /demos/topup or /demos/landingpage1)."
+                      : "Optional external live demo link."}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -395,17 +484,17 @@ export function AdminEditProject() {
             handleRemoveItem={handleRemoveItem}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border border-outline-variant p-4 rounded-lg bg-surface-container-lowest">
-              <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
+            <div className="bg-surface-container-lowest p-4 border rounded-lg border-outline-variant">
+              <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
                 Main Thumbnail
               </Label>
               {project.image_url ? (
                 <div className="mb-4">
-                  <img src={getImageUrl(project.image_url)} alt="Thumbnail" className="w-full h-40 object-cover rounded-md border border-outline-variant" />
+                  <img src={getImageUrl(project.image_url)} alt="Thumbnail" className="border rounded-md border-outline-variant w-full h-40 object-cover" />
                 </div>
               ) : (
-                <div className="mb-4 text-error text-sm font-semibold">
+                <div className="mb-4 font-semibold text-error text-sm">
                   No Thumbnail Uploaded
                 </div>
               )}
@@ -418,8 +507,8 @@ export function AdminEditProject() {
             </div>
           </div>
 
-          <div className="border-t border-outline-variant pt-4 mt-4">
-            <Label className="block text-secondary mb-2 uppercase font-semibold text-xs">
+          <div className="mt-4 pt-4 border-t border-outline-variant">
+            <Label className="block mb-2 font-semibold text-secondary text-xs uppercase">
               Add Screenshot Image (21:9)
             </Label>
             <div className="mb-4">
@@ -431,12 +520,12 @@ export function AdminEditProject() {
               />
             </div>
             {screenshots.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
                 {screenshots.map((shot, idx) => (
-                  <div key={idx} className="flex flex-col gap-2 p-3 border border-outline-variant rounded-lg bg-surface-container">
-                    <div className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-[21/9]">
+                  <div key={idx} className="flex flex-col gap-2 bg-surface-container p-3 border rounded-lg border-outline-variant">
+                    <div className="group relative border rounded-lg border-outline-variant aspect-[21/9] overflow-hidden">
                       <img src={getImageUrl(shot.image_url)} alt={`Screenshot ${idx}`} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div className="absolute inset-0 flex justify-center items-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button
                           type="button"
                           variant="destructive"
@@ -444,12 +533,12 @@ export function AdminEditProject() {
                           onClick={() => setScreenshotToDelete({ index: idx, id: shot.id })}
                           title="Remove Image"
                         >
-                          <span className="material-symbols-outlined text-sm">delete</span>
+                          <span className="text-sm material-symbols-outlined">delete</span>
                         </Button>
                       </div>
                     </div>
                     <div className="mt-2">
-                      <Label className="block text-secondary mb-1 text-xs font-semibold uppercase">Title</Label>
+                      <Label className="block mb-1 font-semibold text-secondary text-xs uppercase">Title</Label>
                       <div className="flex gap-2">
                         <Input
                           className="flex-1"
@@ -493,7 +582,7 @@ export function AdminEditProject() {
                           }}
                         >
                           {confirmedTitles.includes(idx) ? (
-                            <span className="material-symbols-outlined text-sm">check</span>
+                            <span className="text-sm material-symbols-outlined">check</span>
                           ) : (
                             "OK"
                           )}
@@ -515,10 +604,10 @@ export function AdminEditProject() {
               Cancel
             </Button>
             <Button
-              className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white"
               type="submit"
             >
-              <span className="material-symbols-outlined text-sm">save</span>
+              <span className="text-sm material-symbols-outlined">save</span>
               Save Details
             </Button>
           </div>
@@ -535,14 +624,14 @@ export function AdminEditProject() {
 
       {screenshotToDelete && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) setScreenshotToDelete(null); }}>
-          <DialogContent className="max-w-sm p-6 bg-surface sm:rounded-xl">
+          <DialogContent className="bg-surface p-6 sm:rounded-xl max-w-sm">
             <DialogHeader className="mb-4">
-              <DialogTitle className="font-headline-md text-headline-md text-error flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 font-headline-md text-error text-headline-md">
                 <span className="material-symbols-outlined">warning</span>
                 Delete Screenshot?
               </DialogTitle>
             </DialogHeader>
-            <p className="text-sm text-secondary mb-6">
+            <p className="mb-6 text-secondary text-sm">
               Are you sure you want to delete this screenshot? This action cannot be undone and will permanently remove the image from the database and Cloudinary.
             </p>
             <div className="flex justify-end gap-3">
@@ -550,7 +639,7 @@ export function AdminEditProject() {
               <Button
                 variant="destructive"
                 type="button"
-                className="bg-error text-white hover:bg-error/90 disabled:opacity-70 flex items-center gap-2"
+                className="flex items-center gap-2 bg-error hover:bg-error/90 disabled:opacity-70 text-white"
                 disabled={isDeletingScreenshot}
                 onClick={async () => {
                   setIsDeletingScreenshot(true);
@@ -568,7 +657,7 @@ export function AdminEditProject() {
                   }
                 }}
               >
-                {isDeletingScreenshot ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">delete</span>}
+                {isDeletingScreenshot ? <span className="text-sm animate-spin material-symbols-outlined">progress_activity</span> : <span className="text-sm material-symbols-outlined">delete</span>}
                 {isDeletingScreenshot ? "Deleting..." : "Delete"}
               </Button>
             </div>

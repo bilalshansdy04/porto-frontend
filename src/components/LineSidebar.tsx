@@ -37,7 +37,7 @@ const DEFAULT_ITEMS = [
   'Backgrounds',
   'Showcase',
   'Playground',
-  'Templates',
+  'Prototypes',
   'Changelog',
   'Community',
   'Resources',
