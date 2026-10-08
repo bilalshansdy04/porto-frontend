@@ -3,6 +3,7 @@
 
 @import "tailwindcss";
 @config "../tailwind.config.js";
+@source "./**/*.{js,ts,jsx,tsx}";
 
 /* ============================================================
    AURORA PREMIUM DESIGN SYSTEM — public pages

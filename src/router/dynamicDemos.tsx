@@ -4,10 +4,11 @@ import { useParams } from "react-router-dom";
 // Vite glob importer for all demo entry files:
 // 1. Single-file demos at src/pages/demos/*.tsx
 // 2. Multi-page mini-app entry points at src/pages/demos/*/{Index,App,index,main}.tsx
-const rawDemos = import.meta.glob<{ default: React.ComponentType<any> }>([
-  "/src/pages/demos/*.{tsx,jsx}",
-  "/src/pages/demos/*/{Index,App,index,main}.{tsx,jsx}",
-]);
+// Vite glob importer for folder-based demo entries ONLY:
+// e.g. src/pages/demos/<DemoFolder>/{Index,App,index,main}.tsx
+const rawDemos = import.meta.glob<{ default: React.ComponentType<any> }>(
+  "/src/pages/demos/*/{Index,App,index,main}.{tsx,jsx}"
+);
 
 function toKebabCase(str: string): string {
   return str
@@ -36,31 +37,22 @@ export function getDemoRegistry(): Map<string, DemoRegistryEntry> {
   const registry = new Map<string, DemoRegistryEntry>();
 
   for (const path in rawDemos) {
-    const singleFileMatch = path.match(/\/src\/pages\/demos\/([^/]+)\.(tsx|jsx)$/);
     const folderMatch = path.match(/\/src\/pages\/demos\/([^/]+)\/(Index|App|index|main)\.(tsx|jsx)$/);
+    if (!folderMatch) continue;
 
-    let name = "";
-    let isMiniApp = false;
+    const folderName = folderMatch[1];
+    // Ignore internal public folder used for static assets
+    if (folderName.toLowerCase() === "public") continue;
 
-    if (singleFileMatch) {
-      name = singleFileMatch[1];
-      isMiniApp = false;
-    } else if (folderMatch) {
-      name = folderMatch[1];
-      isMiniApp = true;
-    } else {
-      continue;
-    }
-
-    const kebab = toKebabCase(name);
-    const lower = name.toLowerCase();
+    const kebab = toKebabCase(folderName);
+    const lower = folderName.toLowerCase();
     const title = toDisplayTitle(kebab);
 
     const entry: DemoRegistryEntry = {
       slug: kebab,
-      name,
+      name: folderName,
       title,
-      isMiniApp,
+      isMiniApp: true,
       loadComponent: rawDemos[path],
     };
 
@@ -68,9 +60,15 @@ export function getDemoRegistry(): Map<string, DemoRegistryEntry> {
     registry.set(kebab, entry);
     registry.set(lower, entry);
 
-    // Aliases: if NovaLandingPage, also support "landingpage1"
-    if (name.toLowerCase() === "novalandingpage") {
+    // Backward compatibility aliases
+    if (lower === "nova" || lower === "novalandingpage") {
       registry.set("landingpage1", entry);
+      registry.set("novalandingpage", entry);
+      registry.set("nova-landing-page", entry);
+    }
+    if (lower === "positivus" || lower === "positivuslandingpage") {
+      registry.set("positivuslandingpage", entry);
+      registry.set("positivus-landing-page", entry);
     }
   }
 
