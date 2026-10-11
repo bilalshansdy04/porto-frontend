@@ -14,6 +14,7 @@ import { Magnetic } from "../components/Magnetic";
 import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
 import { AnimatedCounter } from "../components/AnimatedCounter";
+import { TechMarquee } from "../components/TechMarquee";
 import { ScrollTrigger } from "../lib/gsap";
 import { gsap, isCoarsePointer, prefersReducedMotion } from "../lib/gsap";
 
@@ -70,10 +71,10 @@ function ProjectCard({ project, isId }: { project: Project; isId: boolean }) {
     <Link
       to={destination}
       onClick={handleClick}
-      className="group block h-full cursor-pointer"
+      className="group block h-full cursor-pointer active:scale-[0.99] transition-transform duration-200"
     >
       <TiltCard
-        className="glass rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.2] flex flex-col"
+        className="glass rounded-2xl sm:rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.2] flex flex-col"
         maxTilt={4}
       >
         <div className="relative overflow-hidden bg-white/[0.03] aspect-video">
@@ -81,45 +82,46 @@ function ProjectCard({ project, isId }: { project: Project; isId: boolean }) {
             className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700 ease-out"
             alt={project.name}
             src={getImageUrl(project.image_url)}
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,8,16,0.65)] via-transparent to-transparent" />
 
           {/* Badges */}
-          <div className="absolute top-4 left-4 flex gap-2">
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex gap-1.5 sm:gap-2 flex-wrap">
             {project.category && (
-              <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10">
+              <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10">
                 {project.category}
               </span>
             )}
             {isDirect && (
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500/90 text-black shadow-sm">
+              <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-cyan-500/90 text-black shadow-sm">
                 {isId ? "Demo Langsung" : "Direct Demo"}
               </span>
             )}
           </div>
         </div>
 
-        <div className="p-7 flex-1 flex flex-col justify-between">
+        <div className="p-5 sm:p-6 md:p-7 flex-1 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-start mb-3 gap-4">
-              <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
+            <div className="flex justify-between items-start mb-2.5 sm:mb-3 gap-3 sm:gap-4">
+              <h3 className="font-display-aurora font-semibold text-lg sm:text-xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
                 {project.name}
               </h3>
-              <span className="shrink-0 w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
-                <span className="material-symbols-outlined text-[18px]">
+              <span className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
+                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">
                   north_east
                 </span>
               </span>
             </div>
-            <p className="text-sm text-[var(--muted)] mb-5 line-clamp-3 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--muted)] mb-4 sm:mb-5 line-clamp-2 sm:line-clamp-3 leading-relaxed">
               {project.description}
             </p>
           </div>
 
           {project.tech_stack && project.tech_stack.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-2 border-t border-white/5">
               {project.tech_stack.map((tech, i) => (
-                <span key={i} className="chip text-[11px]">
+                <span key={i} className="chip text-[10px] sm:text-[11px] px-2.5 py-0.5 sm:py-1">
                   {tech}
                 </span>
               ))}
@@ -143,39 +145,39 @@ function ShowAllCard({
   isId: boolean;
 }) {
   return (
-    <Link to={linkTo} className="group block h-full cursor-pointer">
+    <Link to={linkTo} className="group block h-full cursor-pointer active:scale-[0.99] transition-transform duration-200">
       <TiltCard
-        className="glass-gradient-border rounded-3xl overflow-hidden h-full p-8 flex flex-col justify-between transition-all duration-300 hover:border-[var(--cyan)]/40 min-h-[300px] bg-gradient-to-br from-white/[0.03] to-[var(--cyan)]/[0.05]"
+        className="glass-gradient-border rounded-2xl sm:rounded-3xl overflow-hidden h-full p-5 sm:p-7 md:p-8 flex flex-col justify-between transition-all duration-300 hover:border-[var(--cyan)]/40 min-h-[220px] sm:min-h-[260px] md:min-h-[300px] bg-gradient-to-br from-white/[0.03] to-[var(--cyan)]/[0.05]"
         maxTilt={4}
       >
         <div className="flex items-center justify-between">
-          <span className="w-12 h-12 rounded-2xl bg-[var(--cyan)]/10 border border-[var(--cyan)]/25 flex items-center justify-center text-[var(--cyan)] group-hover:scale-110 transition-transform duration-300">
-            <span className="material-symbols-outlined text-2xl">
+          <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[var(--cyan)]/10 border border-[var(--cyan)]/25 flex items-center justify-center text-[var(--cyan)] group-hover:scale-110 transition-transform duration-300">
+            <span className="material-symbols-outlined text-xl sm:text-2xl">
               grid_view
             </span>
           </span>
-          <span className="font-mono-aurora text-xs text-[var(--muted)] uppercase tracking-widest px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
+          <span className="font-mono-aurora text-[11px] sm:text-xs text-[var(--muted)] uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
             {count} {isId ? "Proyek" : "Projects"}
           </span>
         </div>
 
-        <div className="my-6">
-          <p className="font-mono-aurora text-xs text-[var(--cyan)] uppercase tracking-wider mb-2">
+        <div className="my-4 sm:my-6">
+          <p className="font-mono-aurora text-[11px] sm:text-xs text-[var(--cyan)] uppercase tracking-wider mb-1.5 sm:mb-2">
             {isId ? "Jelajahi Arsip" : "Explore Archive"}
           </p>
-          <h3 className="font-display-aurora font-bold text-2xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
+          <h3 className="font-display-aurora font-bold text-xl sm:text-2xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
             {title}
           </h3>
-          <p className="text-sm text-[var(--muted)] mt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[var(--muted)] mt-1.5 sm:mt-2 leading-relaxed">
             {isId
               ? `Lihat seluruh daftar proyek dan demo interaktif dalam ${title}.`
               : `View complete index, live interactive demos, and case studies for ${title}.`}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-sm font-semibold text-[var(--cyan)] group-hover:translate-x-1 transition-transform duration-300">
+        <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[var(--cyan)] group-hover:translate-x-1 transition-transform duration-300">
           <span>{isId ? "Lihat Semua" : "Show All"}</span>
-          <span className="material-symbols-outlined text-[18px]">
+          <span className="material-symbols-outlined text-[16px] sm:text-[18px]">
             arrow_forward
           </span>
         </div>
@@ -456,7 +458,15 @@ export function Home() {
     });
     ro.observe(timeline);
 
+    const onResize = () => {
+      buildSVG();
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("orientationchange", onResize, { passive: true });
+
     return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
       ro.disconnect();
       triggers.forEach((st) => st.kill());
       svg.remove();
@@ -468,7 +478,7 @@ export function Home() {
     const el = document.getElementById(id);
     if (el) {
       window.scrollTo({
-        top: el.getBoundingClientRect().top + window.scrollY - 90,
+        top: el.getBoundingClientRect().top + window.scrollY - 80,
         behavior: "smooth",
       });
     }
@@ -501,27 +511,27 @@ export function Home() {
       <section
         ref={heroRef}
         id="home"
-        className="relative min-h-[100svh] flex items-center pt-36 pb-24 overflow-hidden"
+        className="relative min-h-[100svh] flex items-center pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden"
       >
         <div className="dot-grid" aria-hidden="true" />
         <div className="relative w-full max-w-300 mx-auto px-6 md:px-grid-margin">
-          <div className="hero-anim inline-flex items-center gap-2.5 glass rounded-full px-4 py-2 mb-8">
-            <span className="relative flex h-2 w-2">
+          <div className="hero-anim inline-flex items-center gap-2.5 glass rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 mb-6 sm:mb-8 max-w-full">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--cyan)] opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--cyan)]" />
             </span>
-            <span className="font-mono-aurora text-xs text-[var(--muted)] tracking-wide">
+            <span className="font-mono-aurora text-[11px] sm:text-xs text-[var(--muted)] tracking-wide truncate">
               {isId ? "Tersedia untuk proyek baru" : "Available for new projects"}
             </span>
           </div>
 
-          <p className="hero-anim eyebrow mb-5">
+          <p className="hero-anim eyebrow mb-3.5 sm:mb-5 text-xs sm:text-sm">
             <span className="opacity-60">{"//"}</span>{" "}
             {isId ? "halo, saya" : "hello, i am"}
           </p>
 
           <h1
-            className="hero-anim font-display-aurora font-bold tracking-tight leading-[0.98] cursor-default select-none text-[clamp(2.8rem,9vw,7rem)] text-[var(--ink)]"
+            className="hero-anim font-display-aurora font-bold tracking-tight leading-[0.98] cursor-default select-none text-[clamp(2.3rem,8vw,6.5rem)] text-[var(--ink)] break-words"
             onClick={handleSecretClick}
           >
             Bilal{" "}
@@ -530,15 +540,15 @@ export function Home() {
             Syamsudin
           </h1>
 
-          <p className="hero-anim mt-8 text-base md:text-xl text-[var(--muted)] leading-relaxed max-w-xl">
+          <p className="hero-anim mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-[var(--muted)] leading-relaxed max-w-xl">
             {loading
               ? (isId ? "Memuat ringkasan..." : "Loading summary...")
               : stats?.summary || (isId ? "Tidak ada ringkasan" : "No summary")}
           </p>
 
-          <div className="hero-anim mt-10 flex flex-wrap items-center gap-4">
+          <div className="hero-anim mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
             <Magnetic strength={0.3}>
-              <button onClick={() => scrollTo("works")} className="btn-aurora">
+              <button onClick={() => scrollTo("works")} className="btn-aurora justify-center w-full sm:w-auto text-center">
                 <span className="material-symbols-outlined text-[18px]">
                   north_east
                 </span>
@@ -546,20 +556,20 @@ export function Home() {
               </button>
             </Magnetic>
             <Magnetic strength={0.3}>
-              <button onClick={() => scrollTo("contact")} className="btn-ghost">
+              <button onClick={() => scrollTo("contact")} className="btn-ghost justify-center w-full sm:w-auto text-center">
                 {isId ? "Hubungi Saya" : "Get in Touch"}
               </button>
             </Magnetic>
           </div>
 
           {statItems.length > 0 && (
-            <div className="hero-anim mt-16 md:mt-20 flex flex-wrap gap-x-16 gap-y-8">
+            <div className="hero-anim mt-12 sm:mt-16 md:mt-20 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
               {statItems.map((stat) => (
                 <div key={stat.label}>
-                  <div className="font-display-aurora text-4xl md:text-5xl font-bold text-aurora">
+                  <div className="font-display-aurora text-3xl sm:text-4xl md:text-5xl font-bold text-aurora">
                     <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                   </div>
-                  <div className="font-mono-aurora text-[11px] tracking-[0.15em] uppercase mt-2 text-[var(--muted)]">
+                  <div className="font-mono-aurora text-[10px] sm:text-[11px] tracking-[0.14em] uppercase mt-2 text-[var(--muted)]">
                     {stat.label}
                   </div>
                 </div>
@@ -568,7 +578,7 @@ export function Home() {
           )}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-70">
+        <div className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-3 opacity-70 pointer-events-none">
           <span className="font-mono-aurora text-[10px] tracking-[0.35em] text-[var(--muted)]">
             SCROLL
           </span>
@@ -576,9 +586,16 @@ export function Home() {
         </div>
       </section>
 
+      {/* ================= TECH MARQUEE BANNER ================= */}
+      {skills.length > 0 && (
+        <div className="w-full relative z-10 -mt-6 sm:-mt-8 mb-4 sm:mb-8">
+          <TechMarquee items={skills.map((s) => s.name)} />
+        </div>
+      )}
+
       {/* ================= SKILLS ================= */}
       <section
-        className="relative py-24 md:py-36"
+        className="relative py-16 sm:py-24 md:py-36"
         id="skills"
       >
         <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin">
@@ -613,7 +630,7 @@ export function Home() {
                 : "No skills added yet."}
             </p>
           ) : (
-            <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {SKILL_CATEGORIES.map((cat) => {
                 const catSkills = skills.filter((s) => s.category === cat.name);
                 if (catSkills.length === 0) return null;
@@ -621,20 +638,20 @@ export function Home() {
                 return (
                   <TiltCard
                     key={cat.name}
-                    className="glass-gradient-border rounded-3xl p-7 h-full group"
+                    className="glass-gradient-border rounded-2xl sm:rounded-3xl p-6 sm:p-7 h-full group active:scale-[0.99] transition-transform duration-200"
                   >
-                    <div className="w-12 h-12 rounded-2xl mb-5 flex items-center justify-center bg-white/[0.05] border border-white/10 text-[var(--cyan)] group-hover:border-[rgba(139,92,246,0.5)] group-hover:text-[var(--violet)] transition-colors duration-300">
-                      <span className="material-symbols-outlined">{cat.icon}</span>
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl mb-4 sm:mb-5 flex items-center justify-center bg-white/[0.05] border border-white/10 text-[var(--cyan)] group-hover:border-[rgba(139,92,246,0.5)] group-hover:text-[var(--violet)] transition-colors duration-300">
+                      <span className="material-symbols-outlined text-xl sm:text-2xl">{cat.icon}</span>
                     </div>
-                    <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] mb-2">
+                    <h3 className="font-display-aurora font-semibold text-lg sm:text-xl text-[var(--ink)] mb-2">
                       {isId ? cat.name : cat.nameEn}
                     </h3>
-                    <p className="text-sm text-[var(--muted)] mb-5 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[var(--muted)] mb-4 sm:mb-5 leading-relaxed">
                       {isId ? cat.desc : cat.descEn}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {catSkills.map((skill) => (
-                        <span key={skill.id} className="chip">
+                        <span key={skill.id} className="chip text-xs">
                           {skill.name}
                         </span>
                       ))}
@@ -649,7 +666,7 @@ export function Home() {
 
       {/* ================= EXPERIENCE ================= */}
       <section
-        className="relative py-24 md:py-36"
+        className="relative py-16 sm:py-24 md:py-36"
         id="experience"
       >
         <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin">
@@ -679,26 +696,26 @@ export function Home() {
                 : "No experiences added yet."}
             </p>
           ) : (
-            <div ref={timelineRef} className="relative pl-1">
+            <div ref={timelineRef} className="relative pl-1 sm:pl-2">
               <div ref={railRef} className="timeline-rail" aria-hidden="true" />
-              <div className="space-y-14">
+              <div className="space-y-12 sm:space-y-14">
                 {experiences.map((exp, idx) => (
-                  <Reveal key={exp.id} delay={idx * 0.06} className="timeline-item relative pl-10 md:pl-14">
+                  <Reveal key={exp.id} delay={idx * 0.06} className="timeline-item relative pl-9 sm:pl-12 md:pl-14">
                     <div
                       className={`timeline-dot ${
                         exp.is_current ? "!border-[var(--cyan)] shadow-[0_0_16px_rgba(34,211,238,0.4)]" : ""
                       }`}
                       aria-hidden="true"
                     />
-                    <div className="flex flex-col md:flex-row md:items-baseline gap-1.5 md:gap-4 mb-1.5">
-                      <h3 className="font-display-aurora font-semibold text-2xl md:text-[28px] text-[var(--ink)]">
+                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 md:gap-4 mb-1.5">
+                      <h3 className="font-display-aurora font-semibold text-xl sm:text-2xl md:text-[28px] text-[var(--ink)] leading-snug">
                         {exp.company_name}
                       </h3>
-                      <span className="font-mono-aurora text-sm text-[var(--cyan)]">
+                      <span className="font-mono-aurora text-xs sm:text-sm text-[var(--cyan)]">
                         {exp.role}
                       </span>
                     </div>
-                    <p className="font-mono-aurora text-xs tracking-wide text-[var(--muted)] mb-5">
+                    <p className="font-mono-aurora text-xs tracking-wide text-[var(--muted)] mb-3.5 sm:mb-5">
                       {exp.start_date} —{" "}
                       {exp.is_current
                         ? isId
@@ -707,7 +724,7 @@ export function Home() {
                         : exp.end_date}
                     </p>
                     {exp.responsibilities && exp.responsibilities.length > 0 && (
-                      <ul className="space-y-3 text-[15px] text-[var(--muted)] leading-relaxed max-w-2xl">
+                      <ul className="space-y-2.5 sm:space-y-3 text-sm sm:text-[15px] text-[var(--muted)] leading-relaxed max-w-2xl">
                         {exp.responsibilities.map((resp, i) => (
                           <li key={i} className="custom-list-item">
                             {resp}
@@ -725,10 +742,10 @@ export function Home() {
 
       {/* ================= WORKS ================= */}
       <section
-        className="relative py-24 md:py-36"
+        className="relative py-16 sm:py-24 md:py-36"
         id="works"
       >
-        <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin space-y-20">
+        <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin space-y-14 sm:space-y-20">
           <div>
             <SectionHeading
               eyebrow={isId ? "portofolio" : "portfolio"}
@@ -751,13 +768,13 @@ export function Home() {
             />
 
             {/* View All Categories Pill Button */}
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="font-mono-aurora text-xs text-[var(--muted)]">
                 {isId ? "Menampilkan ikhtisar kategori" : "Displaying category highlights"}
               </span>
               <Link
                 to="/all-category"
-                className="inline-flex items-center gap-1.5 font-mono-aurora text-xs text-[var(--cyan)] hover:underline"
+                className="inline-flex items-center gap-1.5 font-mono-aurora text-xs text-[var(--cyan)] hover:underline py-1"
               >
                 <span>{isId ? "Buka Direktori Lengkap" : "Browse All Categories"}</span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -776,22 +793,22 @@ export function Home() {
                 : "No live projects to display."}
             </p>
           ) : (
-            <div className="space-y-24">
+            <div className="space-y-16 sm:space-y-24">
               {/* --- 1. All Projects 2x2 Showcase (Top 3 items + Show All Slot) --- */}
-              <div className="space-y-6">
+              <div className="space-y-5 sm:space-y-6">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-[var(--cyan)]" />
-                    <h3 className="font-display-aurora font-bold text-xl md:text-2xl text-[var(--ink)]">
+                    <h3 className="font-display-aurora font-bold text-lg sm:text-xl md:text-2xl text-[var(--ink)]">
                       {isId ? "Semua Proyek" : "All Projects"}
                     </h3>
                   </div>
-                  <span className="font-mono-aurora text-xs text-[var(--muted)]">
+                  <span className="font-mono-aurora text-[11px] sm:text-xs text-[var(--muted)]">
                     {projects.length} {isId ? "total proyek" : "total projects"}
                   </span>
                 </div>
 
-                <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                   {projects.slice(0, 3).map((project) => (
                     <ProjectCard key={project.id} project={project} isId={isId} />
                   ))}
@@ -819,16 +836,16 @@ export function Home() {
                   if (catProjects.length === 0) return null;
 
                   return (
-                    <div key={cat.id} className="space-y-6">
+                    <div key={cat.id} className="space-y-5 sm:space-y-6">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
                           <span className="w-2.5 h-2.5 rounded-full bg-[var(--violet)]" />
                           <div>
-                            <h3 className="font-display-aurora font-bold text-xl md:text-2xl text-[var(--ink)]">
+                            <h3 className="font-display-aurora font-bold text-lg sm:text-xl md:text-2xl text-[var(--ink)]">
                               {cat.name}
                             </h3>
                             {cat.description && (
-                              <p className="text-xs text-[var(--muted)] mt-0.5">
+                              <p className="text-xs text-[var(--muted)] mt-0.5 line-clamp-1">
                                 {cat.description}
                               </p>
                             )}
@@ -836,13 +853,13 @@ export function Home() {
                         </div>
                         <Link
                           to={`/category/${cat.slug}`}
-                          className="font-mono-aurora text-xs text-[var(--muted)] hover:text-[var(--cyan)] transition-colors self-start sm:self-center"
+                          className="font-mono-aurora text-xs text-[var(--muted)] hover:text-[var(--cyan)] transition-colors self-start sm:self-center py-1"
                         >
                           {catProjects.length} {isId ? "proyek" : "projects"} →
                         </Link>
                       </div>
 
-                      <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                         {catProjects.slice(0, 3).map((project) => (
                           <ProjectCard key={project.id} project={project} isId={isId} />
                         ))}

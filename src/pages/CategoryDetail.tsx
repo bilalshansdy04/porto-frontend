@@ -77,20 +77,20 @@ export function CategoryDetail() {
   };
 
   return (
-    <main className="grow w-full pt-36 pb-32">
+    <main className="grow w-full pt-28 sm:pt-36 pb-20 sm:pb-32">
       <div className="w-full max-w-300 mx-auto px-6 md:px-grid-margin">
         {/* Navigation Breadcrumbs */}
         <Reveal>
-          <div className="flex items-center gap-2 font-mono-aurora text-xs text-[var(--muted)] mb-8">
-            <Link to="/" className="hover:text-[var(--cyan)] transition-colors">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-mono-aurora text-xs text-[var(--muted)] mb-6 sm:mb-8">
+            <Link to="/" className="hover:text-[var(--cyan)] transition-colors active:scale-95">
               {isId ? "Beranda" : "Home"}
             </Link>
-            <span>/</span>
-            <Link to="/all-category" className="hover:text-[var(--cyan)] transition-colors">
+            <span className="opacity-50">/</span>
+            <Link to="/all-category" className="hover:text-[var(--cyan)] transition-colors active:scale-95">
               {isId ? "Kategori" : "Categories"}
             </Link>
-            <span>/</span>
-            <span className="text-white font-medium">{category?.name}</span>
+            <span className="opacity-50">/</span>
+            <span className="text-white font-medium truncate max-w-[200px] sm:max-w-none">{category?.name}</span>
           </div>
         </Reveal>
 
@@ -110,16 +110,17 @@ export function CategoryDetail() {
           }
         />
 
-        {/* Counter Badge */}
-        <div className="mt-6 mb-12 flex items-center gap-3">
+        {/* Counter Badge & Back Link */}
+        <div className="mt-4 sm:mt-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-3">
           <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] border border-white/10 text-[var(--cyan)] font-mono-aurora">
             {projects.length} {projects.length === 1 ? "Project" : "Projects"}
           </span>
           <Link
             to="/all-category"
-            className="text-xs text-[var(--muted)] hover:text-white transition-colors"
+            className="text-xs text-[var(--muted)] hover:text-white transition-colors py-1 inline-flex items-center gap-1"
           >
-            {isId ? "Lihat semua kategori →" : "View all categories →"}
+            <span>{isId ? "Lihat semua kategori" : "View all categories"}</span>
+            <span className="text-sm">→</span>
           </Link>
         </div>
 
@@ -129,23 +130,23 @@ export function CategoryDetail() {
             {isId ? "Memuat proyek kategori..." : "Loading category projects..."}
           </div>
         ) : projects.length === 0 ? (
-          <div className="py-24 text-center rounded-3xl glass p-8">
-            <p className="text-lg font-medium text-white mb-2">
+          <div className="py-16 sm:py-24 text-center rounded-3xl glass p-6 sm:p-8">
+            <p className="text-base sm:text-lg font-medium text-white mb-2">
               {isId
                 ? "Belum ada proyek dalam kategori ini"
                 : "No projects in this category yet"}
             </p>
-            <p className="text-sm text-[var(--muted)] mb-6">
+            <p className="text-xs sm:text-sm text-[var(--muted)] mb-6">
               {isId
                 ? "Tambahkan proyek ke kategori ini melalui panel admin."
                 : "Assign projects to this category in the admin panel to showcase them here."}
             </p>
-            <Link to="/all-category" className="btn-ghost text-xs">
+            <Link to="/all-category" className="btn-ghost text-xs !py-2.5 !px-5">
               {isId ? "Jelajahi Semua Kategori" : "Browse All Categories"}
             </Link>
           </div>
         ) : (
-          <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Reveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {projects.map((project) => {
               const isDirect = project.target_type === "direct";
               const destination = isDirect && project.link ? project.link : `/project/${project.id}`;
@@ -155,10 +156,10 @@ export function CategoryDetail() {
                   key={project.id}
                   to={destination}
                   onClick={(e) => handleCardClick(e, project)}
-                  className="group block cursor-pointer"
+                  className="group block cursor-pointer active:scale-[0.99] transition-transform duration-200"
                 >
                   <TiltCard
-                    className="glass rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.2] flex flex-col"
+                    className="glass rounded-2xl sm:rounded-3xl overflow-hidden h-full transition-colors duration-300 hover:border-white/[0.2] flex flex-col"
                     maxTilt={4}
                   >
                     <div className="relative overflow-hidden bg-white/[0.03] aspect-video">
@@ -166,25 +167,26 @@ export function CategoryDetail() {
                         className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700 ease-out"
                         alt={project.name}
                         src={getImageUrl(project.image_url)}
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,8,16,0.6)] via-transparent to-transparent" />
 
                       {isDirect && (
-                        <div className="absolute top-4 left-4">
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500/90 text-black shadow-sm">
+                        <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                          <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-cyan-500/90 text-black shadow-sm">
                             Live Demo
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="p-7 flex-1 flex flex-col justify-between">
+                    <div className="p-5 sm:p-6 md:p-7 flex-1 flex flex-col justify-between">
                       <div>
-                        <div className="flex justify-between items-start mb-3 gap-4">
-                          <h3 className="font-display-aurora font-semibold text-xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
+                        <div className="flex justify-between items-start mb-2.5 sm:mb-3 gap-3 sm:gap-4">
+                          <h3 className="font-display-aurora font-semibold text-lg sm:text-xl text-[var(--ink)] group-hover:text-[var(--cyan)] transition-colors duration-300">
                             {project.name}
                           </h3>
-                          <span className="shrink-0 w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
+                          <span className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:border-[var(--cyan)] group-hover:rotate-45 transition-all duration-300">
                             {isDirect ? (
                               <ExternalLink className="w-4 h-4" />
                             ) : (
@@ -192,15 +194,15 @@ export function CategoryDetail() {
                             )}
                           </span>
                         </div>
-                        <p className="text-sm text-[var(--muted)] mb-5 line-clamp-3 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[var(--muted)] mb-4 sm:mb-5 line-clamp-2 sm:line-clamp-3 leading-relaxed">
                           {project.description}
                         </p>
                       </div>
 
                       {project.tech_stack && project.tech_stack.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-2 border-t border-white/5">
                           {project.tech_stack.map((tech, i) => (
-                            <span key={i} className="chip text-[11px]">
+                            <span key={i} className="chip text-[10px] sm:text-[11px] px-2.5 py-0.5 sm:py-1">
                               {tech}
                             </span>
                           ))}

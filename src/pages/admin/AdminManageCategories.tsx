@@ -188,7 +188,7 @@ export function AdminManageCategories() {
   };
 
   return (
-    <div className="flex-1 p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-max-width mx-auto w-full">
+    <div className="flex-1 p-4 sm:p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-max-width mx-auto w-full">
       {/* Category List Section */}
       <div className="lg:col-span-2 space-y-6">
         <div className="flex justify-between items-center mb-6">
@@ -204,7 +204,8 @@ export function AdminManageCategories() {
 
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <Table>
+            <div className="overflow-x-auto">
+              <Table>
               <TableHeader className="bg-surface-container-low">
                 <TableRow>
                   <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
@@ -305,6 +306,7 @@ export function AdminManageCategories() {
                 )}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

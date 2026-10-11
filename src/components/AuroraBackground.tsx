@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { prefersReducedMotion } from "../lib/gsap";
+import { prefersReducedMotion, isCoarsePointer } from "../lib/gsap";
 
 export function AuroraBackground() {
   const layer1 = useRef<HTMLDivElement>(null);
@@ -7,7 +7,7 @@ export function AuroraBackground() {
   const layer3 = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || isCoarsePointer()) return;
 
     let mx = 0;
     let my = 0;

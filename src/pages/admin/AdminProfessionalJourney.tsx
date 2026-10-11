@@ -106,8 +106,8 @@ export function AdminProfessionalJourney() {
   };
 
   return (
-    <main className="flex-1 p-8 max-w-max-width mx-auto w-full">
-      <div className="mb-8">
+    <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-max-width mx-auto w-full">
+      <div className="mb-6 sm:mb-8">
         <h2 className="font-headline-lg text-headline-lg text-primary mb-2">
           Professional Journey
         </h2>
@@ -135,7 +135,7 @@ export function AdminProfessionalJourney() {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDelete(exp.id)}
-                  className="absolute top-2 right-2 text-error opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 hover:text-error hover:bg-error/10"
+                  className="absolute top-2 right-2 text-error opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity h-8 w-8 hover:text-error hover:bg-error/10 active:scale-90"
                   title="Delete"
                 >
                   <span className="material-symbols-outlined text-sm">
@@ -143,11 +143,11 @@ export function AdminProfessionalJourney() {
                   </span>
                 </Button>
                 <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2 pr-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between items-start mb-2 pr-7 gap-1">
                     <h4 className="font-body-lg text-body-lg font-bold text-primary">
                       {exp.role}
                     </h4>
-                    <span className="font-label-code text-label-code bg-surface-container px-2 py-1 rounded text-secondary whitespace-nowrap ml-2">
+                    <span className="font-label-code text-label-code bg-surface-container px-2 py-0.5 rounded text-secondary whitespace-nowrap text-xs">
                       {exp.start_date} -{" "}
                       {exp.is_current ? "Present" : exp.end_date}
                     </span>

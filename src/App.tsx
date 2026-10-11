@@ -25,7 +25,7 @@ import { ScrollProgress } from "./components/ScrollProgress";
 function PublicShell() {
   const location = useLocation();
   return (
-    <div className="public-app antialiased min-h-screen flex flex-col w-full">
+    <div className="public-app antialiased min-h-screen flex flex-col w-full overflow-x-hidden">
       <AuroraBackground />
       <div className="aurora-noise" aria-hidden="true" />
       <ScrollProgress />

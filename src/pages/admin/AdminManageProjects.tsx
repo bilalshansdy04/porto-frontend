@@ -153,7 +153,7 @@ export function AdminManageProjects() {
   };
 
   return (
-    <div className="flex-1 gap-8 grid grid-cols-1 lg:grid-cols-3 mx-auto p-8 w-full max-w-max-width">
+    <div className="flex-1 gap-8 grid grid-cols-1 lg:grid-cols-3 mx-auto p-4 sm:p-6 md:p-8 w-full max-w-max-width">
       {/* Projects Table Section */}
       <div className="space-y-6 lg:col-span-2">
         <div className="flex justify-between items-center mb-6">
@@ -168,7 +168,8 @@ export function AdminManageProjects() {
         </div>
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <Table>
+            <div className="overflow-x-auto">
+              <Table>
               <TableHeader className="bg-surface-container-low">
                 <TableRow>
                   <TableHead className="px-6 font-semibold text-secondary text-xs uppercase">
@@ -286,6 +287,7 @@ export function AdminManageProjects() {
                 )}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -51,22 +51,22 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="p-8 max-w-max-width mx-auto w-full space-y-8">
+    <div className="p-4 sm:p-6 md:p-8 max-w-max-width mx-auto w-full space-y-6 sm:space-y-8">
       {/* Hero Section */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 border-outline-variant bg-surface-container-lowest">
-        <div className="flex-1">
-          <h2 className="text-display font-display text-primary mb-4">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 p-5 sm:p-6 md:p-8 border-outline-variant bg-surface-container-lowest">
+        <div className="flex-1 w-full">
+          <h2 className="text-2xl sm:text-3xl md:text-display font-display text-primary mb-3 sm:mb-4">
             Welcome back, Bilal.
           </h2>
-          <p className="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mb-6">
+          <p className="text-sm sm:text-base md:text-body-lg text-on-surface-variant max-w-2xl mb-5 sm:mb-6 leading-relaxed">
             Here is an overview of your portfolio performance, recent
             activities, and system alerts. Everything is running smoothly.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <Link
               to="/admin/projects"
               className={buttonVariants({
-                className: "px-6 rounded-lg text-white",
+                className: "px-6 rounded-lg text-white justify-center",
               })}
             >
               Add New Project
@@ -75,14 +75,14 @@ export function AdminDashboard() {
               to="/"
               className={buttonVariants({
                 variant: "outline",
-                className: "px-6 rounded-lg",
+                className: "px-6 rounded-lg justify-center",
               })}
             >
               View Live Portfolio
             </Link>
           </div>
         </div>
-        <div className="w-48 h-48 md:w-64 md:h-64 rounded-xl overflow-hidden border border-outline-variant shadow-sm flex-shrink-0">
+        <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-xl overflow-hidden border border-outline-variant shadow-sm flex-shrink-0">
           <img
             alt="Bilal Shandyarta Portrait"
             className="w-full h-full object-cover"
@@ -166,76 +166,78 @@ export function AdminDashboard() {
           </Link>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader className="bg-surface-bright">
-              <TableRow className="border-b border-outline-variant hover:bg-surface-bright">
-                <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
-                  Project Name
-                </TableHead>
-                <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
-                  Tech Stack
-                </TableHead>
-                <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
-                  Status
-                </TableHead>
-                <TableHead className="uppercase text-xs font-semibold text-secondary text-right px-6">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {stats.recent_projects && stats.recent_projects.length > 0 ? (
-                stats.recent_projects.map((project) => (
-                  <TableRow
-                    key={project.id}
-                    className="border-b border-outline-variant hover:bg-surface-container-low transition-colors"
-                  >
-                    <TableCell className="font-semibold text-primary px-6 py-4">
-                      {project.name}
-                    </TableCell>
-                    <TableCell className="text-on-surface-variant px-6 py-4">
-                      {project.tech_stack ? project.tech_stack.join(", ") : "-"}
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          project.status === "Live" || project.status === "Done"
-                            ? "bg-[#f1f5f9] text-[#64748b]"
-                            : "bg-surface-container-high text-on-surface-variant"
-                        }`}
-                      >
-                        {project.status || "Draft"}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right px-6 py-4">
-                      <Link
-                        to={`/admin/projects/${project.id}/edit`}
-                        className={buttonVariants({
-                          variant: "ghost",
-                          size: "icon",
-                          className:
-                            "h-8 w-8 text-secondary hover:text-primary",
-                        })}
-                      >
-                        <span className="material-symbols-outlined text-sm">
-                          edit
+          <div className="overflow-x-auto w-full">
+            <Table>
+              <TableHeader className="bg-surface-bright">
+                <TableRow className="border-b border-outline-variant hover:bg-surface-bright">
+                  <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
+                    Project Name
+                  </TableHead>
+                  <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
+                    Tech Stack
+                  </TableHead>
+                  <TableHead className="uppercase text-xs font-semibold text-secondary px-6">
+                    Status
+                  </TableHead>
+                  <TableHead className="uppercase text-xs font-semibold text-secondary text-right px-6">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stats.recent_projects && stats.recent_projects.length > 0 ? (
+                  stats.recent_projects.map((project) => (
+                    <TableRow
+                      key={project.id}
+                      className="border-b border-outline-variant hover:bg-surface-container-low transition-colors"
+                    >
+                      <TableCell className="font-semibold text-primary px-6 py-4">
+                        {project.name}
+                      </TableCell>
+                      <TableCell className="text-on-surface-variant px-6 py-4">
+                        {project.tech_stack ? project.tech_stack.join(", ") : "-"}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            project.status === "Live" || project.status === "Done"
+                              ? "bg-[#f1f5f9] text-[#64748b]"
+                              : "bg-surface-container-high text-on-surface-variant"
+                          }`}
+                        >
+                          {project.status || "Draft"}
                         </span>
-                      </Link>
+                      </TableCell>
+                      <TableCell className="text-right px-6 py-4">
+                        <Link
+                          to={`/admin/projects/${project.id}/edit`}
+                          className={buttonVariants({
+                            variant: "ghost",
+                            size: "icon",
+                            className:
+                              "h-8 w-8 text-secondary hover:text-primary",
+                          })}
+                        >
+                          <span className="material-symbols-outlined text-sm">
+                            edit
+                          </span>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="text-center text-secondary h-24"
+                    >
+                      No recent projects.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center text-secondary h-24"
-                  >
-                    No recent projects.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

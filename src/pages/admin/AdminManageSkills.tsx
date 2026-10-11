@@ -87,7 +87,7 @@ export function AdminManageSkills() {
   );
 
   return (
-    <div className="flex-1 p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-max-width mx-auto w-full">
+    <div className="flex-1 p-4 sm:p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-max-width mx-auto w-full">
       {/* Skills List Section */}
       <div className="lg:col-span-2 space-y-6">
         <div className="flex justify-between items-center mb-6">
@@ -114,7 +114,7 @@ export function AdminManageSkills() {
                     {cat}
                   </h3>
                 </div>
-                <CardContent className="p-6 flex flex-wrap gap-3">
+                <CardContent className="p-4 sm:p-6 flex flex-wrap gap-2.5 sm:gap-3">
                   {skillsByCategory[cat].length === 0 ? (
                     <span className="text-body-md text-secondary italic">
                       No skills added yet.
@@ -123,14 +123,14 @@ export function AdminManageSkills() {
                     skillsByCategory[cat].map((skill) => (
                       <div
                         key={skill.id}
-                        className="group flex items-center gap-2 bg-surface border border-outline-variant rounded-full px-3 py-1.5 transition-all hover:bg-surface-container hover:border-error"
+                        className="group flex items-center gap-2 bg-surface border border-outline-variant rounded-full px-3 py-1.5 transition-all hover:bg-surface-container hover:border-error active:scale-95"
                       >
-                        <span className="font-body-md text-primary">
+                        <span className="font-body-md text-primary text-sm sm:text-base">
                           {skill.name}
                         </span>
                         <button
                           onClick={() => handleDeleteSkill(skill.id)}
-                          className="opacity-0 group-hover:opacity-100 text-secondary hover:text-error transition-all"
+                          className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-secondary hover:text-error transition-all"
                           title="Delete skill"
                         >
                           <span className="material-symbols-outlined text-[16px]">

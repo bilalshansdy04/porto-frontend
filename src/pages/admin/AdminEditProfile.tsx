@@ -53,8 +53,8 @@ export function AdminEditProfile() {
   }
 
   return (
-    <div className="flex-1 p-8 max-w-3xl mx-auto w-full">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="flex-1 p-4 sm:p-6 md:p-8 max-w-3xl mx-auto w-full">
+      <div className="flex items-center gap-4 mb-6 sm:mb-8">
         <Link to="/admin" className="text-secondary hover:text-primary transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
@@ -68,7 +68,7 @@ export function AdminEditProfile() {
         </div>
       </div>
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           
           <div>
@@ -108,17 +108,17 @@ export function AdminEditProfile() {
             />
           </div>
 
-          <div className="pt-6 border-t border-outline-variant flex justify-end gap-4">
+          <div className="pt-6 border-t border-outline-variant flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
             <Link
               to="/admin"
-              className="px-6 py-2.5 rounded-lg font-label-code text-secondary hover:bg-surface-container transition-colors"
+              className="px-6 py-2.5 rounded-lg font-label-code text-secondary hover:bg-surface-container transition-colors text-center"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`bg-primary text-white px-6 py-2.5 rounded-lg font-label-code flex items-center gap-2 transition-colors ${
+              className={`bg-primary text-white px-6 py-2.5 rounded-lg font-label-code flex items-center justify-center gap-2 transition-colors ${
                 isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
               }`}
             >

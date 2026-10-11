@@ -7,7 +7,12 @@ interface TechMarqueeProps {
 export function TechMarquee({ items }: TechMarqueeProps) {
   const unique = [...new Set(items)];
   if (unique.length === 0) return null;
-  const loop = [...unique, ...unique];
+
+  let base = [...unique];
+  while (base.length < 12) {
+    base = [...base, ...unique];
+  }
+  const loop = [...base, ...base];
 
   return (
     <div className="tech-marquee" aria-hidden="true">
@@ -15,7 +20,7 @@ export function TechMarquee({ items }: TechMarqueeProps) {
         className="tech-marquee-track"
         style={
           {
-            "--marquee-duration": `${Math.max(30, unique.length * 5)}s`,
+            "--marquee-duration": `${Math.max(25, base.length * 2.8)}s`,
           } as CSSProperties
         }
       >

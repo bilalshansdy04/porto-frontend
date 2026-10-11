@@ -13,7 +13,8 @@ export function ScrollProgress() {
       raf = 0;
       const doc = document.documentElement;
       const max = doc.scrollHeight - doc.clientHeight;
-      const progress = max > 0 ? doc.scrollTop / max : 0;
+      const scrollTop = window.scrollY || doc.scrollTop || document.body.scrollTop || 0;
+      const progress = max > 0 ? Math.min(1, Math.max(0, scrollTop / max)) : 0;
       el.style.transform = `scaleX(${progress})`;
     };
 

@@ -301,13 +301,13 @@ export function AdminEditProject() {
   };
 
   return (
-    <main className="flex-1 mx-auto p-8 w-full max-w-max-width">
-      <div className="flex justify-between items-center mb-8">
+    <main className="flex-1 mx-auto p-4 sm:p-6 md:p-8 w-full max-w-max-width">
+      <div className="flex justify-between items-center mb-6 sm:mb-8">
         <div>
-          <h2 className="flex items-center gap-2 mb-2 font-headline-lg text-headline-lg text-primary">
+          <h2 className="flex flex-wrap items-center gap-2 mb-2 text-2xl sm:text-3xl font-bold text-primary">
             Edit Project: {project.name}
             {!project.is_visible && (
-              <span className="bg-[#fef08a] ml-2 px-2 py-1 rounded font-bold text-[#854d0e] text-sm">
+              <span className="bg-[#fef08a] ml-1 sm:ml-2 px-2 py-0.5 rounded font-bold text-[#854d0e] text-xs sm:text-sm">
                 Hidden
               </span>
             )}
@@ -318,7 +318,7 @@ export function AdminEditProject() {
         </div>
       </div>
 
-      <div className="bg-surface-container-lowest shadow-sm p-6 border rounded-lg border-outline-variant">
+      <div className="bg-surface-container-lowest shadow-sm p-4 sm:p-6 md:p-8 border rounded-lg border-outline-variant">
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="md:col-span-2">
@@ -595,7 +595,7 @@ export function AdminEditProject() {
             )}
           </div>
 
-          <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-outline-variant">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t border-outline-variant">
             <Button
               variant="ghost"
               type="button"
@@ -604,7 +604,7 @@ export function AdminEditProject() {
               Cancel
             </Button>
             <Button
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white"
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white"
               type="submit"
             >
               <span className="text-sm material-symbols-outlined">save</span>

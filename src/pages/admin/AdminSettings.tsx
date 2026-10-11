@@ -52,8 +52,8 @@ export function AdminSettings() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-grid-margin bg-surface dark:bg-surface-container-highest">
-      <div className="max-w-3xl mx-auto space-y-8">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-surface dark:bg-surface-container-highest">
+      <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
         <div>
           <h2 className="text-display-sm font-display-sm font-bold text-primary mb-2">
             Settings
@@ -63,7 +63,7 @@ export function AdminSettings() {
           </p>
         </div>
 
-        <div className="bg-surface-container-low dark:bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant dark:border-outline space-y-8">
+        <div className="bg-surface-container-low dark:bg-surface-container-lowest rounded-2xl p-4 sm:p-6 border border-outline-variant dark:border-outline space-y-6 sm:space-y-8">
           {/* Display Settings */}
           <section>
             <h3 className="text-title-lg font-title-lg font-bold text-primary mb-4 flex items-center gap-2">
@@ -71,7 +71,7 @@ export function AdminSettings() {
               Display Settings
             </h3>
 
-            <div className="flex items-center justify-between p-4 bg-surface dark:bg-surface-container-highest rounded-xl border border-outline-variant dark:border-outline">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-surface dark:bg-surface-container-highest rounded-xl border border-outline-variant dark:border-outline">
               <div>
                 <h4 className="text-title-md font-title-md font-bold text-primary">
                   Show Experience Section
@@ -82,11 +82,13 @@ export function AdminSettings() {
                 </p>
               </div>
 
-              <Switch
-                id="show-experience"
-                checked={showExperience}
-                onCheckedChange={setShowExperience}
-              />
+              <div className="self-end sm:self-center">
+                <Switch
+                  id="show-experience"
+                  checked={showExperience}
+                  onCheckedChange={setShowExperience}
+                />
+              </div>
             </div>
           </section>
 
@@ -138,7 +140,7 @@ export function AdminSettings() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
           <Button variant="outline" className="rounded-full px-6">
             Cancel
           </Button>

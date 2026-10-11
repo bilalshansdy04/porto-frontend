@@ -15,7 +15,8 @@ export function CustomCursor() {
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isCoarsePointer()) return;
+    const hasTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    if (isCoarsePointer() || (hasTouch && window.matchMedia("(hover: none)").matches)) return;
 
     document.body.classList.add("custom-cursor-active");
     const dot = dotRef.current;
@@ -182,11 +183,19 @@ export function CustomCursor() {
       raf = requestAnimationFrame(loop);
     };
 
+    const onTouchStart = () => {
+      visible = false;
+      dot.style.opacity = "0";
+      ring.style.opacity = "0";
+      document.body.classList.remove("custom-cursor-active");
+    };
+
     window.addEventListener("mousemove", onMove, { passive: true });
     document.documentElement.addEventListener("mouseleave", onLeave);
     window.addEventListener("mouseover", onOver, { passive: true });
     window.addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("magnetic-capture", onCapture);
     window.addEventListener("magnetic-release", onRelease);
     raf = requestAnimationFrame(loop);
@@ -198,6 +207,7 @@ export function CustomCursor() {
       window.removeEventListener("mouseover", onOver);
       window.removeEventListener("mousedown", onDown);
       window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("magnetic-capture", onCapture);
       window.removeEventListener("magnetic-release", onRelease);
       cancelAnimationFrame(raf);
