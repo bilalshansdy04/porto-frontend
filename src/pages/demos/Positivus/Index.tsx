@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ServiceItem {
   id: number;
@@ -40,7 +40,7 @@ const SERVICES: ServiceItem[] = [
   },
   {
     id: 3,
-    title: ["Sosial Media", "Marketing"],
+    title: ["Social Media", "Marketing"],
     theme: "dark",
     src: "3.svg",
   },
@@ -52,7 +52,7 @@ const SERVICES: ServiceItem[] = [
   },
   {
     id: 5,
-    title: ["Content", "Creator"],
+    title: ["Content", "Creation"],
     theme: "green",
     src: "5.svg",
   },
@@ -229,21 +229,28 @@ interface SectionHeadingProps {
 function SectionHeading({
   title,
   description,
-  className = "mb-20",
+  className = "mb-10 sm:mb-14 lg:mb-20",
 }: SectionHeadingProps) {
   return (
-    <div className={`flex items-center gap-10 ${className}`}>
-      <div className="flex justify-center items-center bg-[#B9FF66] px-1.75 rounded-[5px] shrink-0">
-        <h2 className="font-medium text-[40px] leading-tight">{title}</h2>
+    <div
+      className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 lg:gap-10 ${className}`}
+    >
+      <div className="flex justify-center items-center bg-[#B9FF66] px-2.5 py-1 rounded-[7px] shrink-0">
+        <h2 className="font-medium text-2xl sm:text-3xl lg:text-[40px] leading-tight text-black">
+          {title}
+        </h2>
       </div>
-      <div className="max-w-145">
-        <p className="text-[12pt] leading-normal">{description}</p>
+      <div className="max-w-xl">
+        <p className="text-sm sm:text-base lg:text-[18px] text-black/80 leading-relaxed">
+          {description}
+        </p>
       </div>
     </div>
   );
 }
 
 export default function PositivusLandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openStep, setOpenStep] = useState<number | null>(1);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -256,6 +263,41 @@ export default function PositivusLandingPage() {
     message: "",
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  const scrollToSection = (id: string) => {
+    setMobileMenuOpen(false);
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -318,710 +360,952 @@ export default function PositivusLandingPage() {
   ];
 
   return (
-    <div className="bg-white px-24 pt-16 min-h-screen font-['Space_Grotesk',sans-serif] text-black">
-      {/* Google Fonts: Montserrat & Space Grotesk */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
-      `}</style>
-
-      {/* ================= HEADER / NAVBAR ================= */}
-      <nav className="flex justify-between items-center">
-        <img src="Positivus Logo.svg" alt="Positivus Logo" className="" />
-        <div className="flex items-center gap-10">
-          <div className="flex gap-10">
-            <a
-              href="#about-us"
-              className="hover:text-[#75b329] transition-colors"
+    <div className="bg-white min-h-screen font-['Space_Grotesk',sans-serif] text-black overflow-x-hidden selection:bg-[#B9FF66] selection:text-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 pt-4 sm:pt-6 lg:pt-10">
+        {/* ================= HEADER / NAVBAR ================= */}
+        <header className="relative mb-6 sm:mb-10 lg:mb-14">
+          <nav className="flex justify-between items-center py-2 sm:py-4">
+            <button
+              onClick={() => scrollToSection("hero")}
+              className="flex items-center cursor-pointer focus:outline-none"
             >
-              About Us
-            </a>
-            <a
-              href="#services"
-              className="hover:text-[#75b329] transition-colors"
-            >
-              Services
-            </a>
-            <a
-              href="#use-cases"
-              className="hover:text-[#75b329] transition-colors"
-            >
-              Use Cases
-            </a>
-            <a
-              href="#pricing"
-              className="hover:text-[#75b329] transition-colors"
-            >
-              Pricing
-            </a>
-            <a href="#blog" className="hover:text-[#75b329] transition-colors">
-              Blog
-            </a>
-          </div>
-          <button
-            onClick={() => {
-              setContactType("get-quote");
-              document
-                .getElementById("contact-us")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="bg-transparent hover:bg-[#e5fcca] px-8.75 py-5 rounded-[14px] outline-1 transition-colors cursor-pointer"
-          >
-            Request a quote
-          </button>
-        </div>
-      </nav>
-
-      <main>
-        {/* ================= 1. HERO SECTION ================= */}
-        <section className="flex justify-between my-17.5">
-          <div className="flex flex-col items-start gap-8.75 w-1/2">
-            <h1 className="font-medium text-[60px] leading-15">
-              Navigating the digital landscape for success
-            </h1>
-            <p className="font-normal text-[20px] leading-7">
-              Our digital marketing agency helps businesses grow and succeed
-              online through a range of services including SEO, PPC, social
-              media marketing, and content creation.
-            </p>
-            <button className="bg-[#191A23] px-8.75 py-8.75 rounded-[14px] text-white transition-colors cursor-pointer">
-              Book a consultation
+              <img
+                src="Positivus Logo.svg"
+                alt="Positivus Logo"
+                className="h-7 sm:h-9 w-auto object-contain"
+                decoding="async"
+              />
             </button>
-          </div>
-          <div className="flex justify-end items-center w-1/2">
-            <img src="Illustration.jpg" alt="Illustration" className="h-100" />
-          </div>
-        </section>
 
-        {/* ================= 2. CLIENT LOGOS SECTION ================= */}
-        <section className="flex justify-between items-center mb-35 w-full">
-          <img src="amazon.jpg" alt="amazon" />
-          <img src="dribble.jpg" alt="dribble" />
-          <img src="hubspot.jpg" alt="hubspot" />
-          <img src="notion.jpg" alt="notion" />
-          <img src="netflix.jpg" alt="netflix" />
-          <img src="zoom.jpg" alt="zoom" />
-        </section>
-
-        {/* ================= 3. SERVICES SECTION ================= */}
-        <section id="services" className="mb-35">
-          <SectionHeading
-            title="Services"
-            description="At our digital marketing agency, we offer a range of services to help businesses grow and succeed online. These services include:"
-            className="mb-20"
-          />
-
-          <div className="gap-10 grid grid-cols-1 md:grid-cols-2 mx-auto w-full">
-            {SERVICES.map((service) => {
-              const theme = SERVICE_THEMES[service.theme];
-              const isDark = service.theme === "dark";
-
-              return (
-                <div
-                  key={service.id}
-                  className={`flex justify-between gap-17.25 ${theme.cardBg} shadow-[0_5px_0_0_rgba(25,26,35,100%)] p-12.75 border border-black rounded-[45px] min-h-77.5`}
+            {/* Desktop Navigation Links */}
+            <div className="hidden lg:flex items-center gap-8 xl:gap-10">
+              <div className="flex gap-6 xl:gap-10 text-base xl:text-lg font-normal">
+                <button
+                  onClick={() => scrollToSection("about-us")}
+                  className="hover:text-[#75b329] transition-colors cursor-pointer"
                 >
-                  <div className="flex flex-col justify-between gap-5.25">
-                    <div className="flex flex-col items-start">
-                      {service.title.map((line, idx) => (
-                        <div
-                          key={idx}
-                          className={`flex justify-center items-center ${theme.badgeBg} px-2 py-0.5 rounded-[5px] whitespace-nowrap`}
-                        >
-                          <h3 className="font-medium text-[20px] leading-none">
-                            {line}
-                          </h3>
-                        </div>
-                      ))}
-                    </div>
-                    <button className="group flex items-center gap-2.5 cursor-pointer">
-                      {isDark ? (
-                        <img
-                          src="icons/Arrow 2.svg"
-                          alt="Arrow"
-                          className="w-9 h-9 group-hover:rotate-30 group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                        />
-                      ) : (
-                        <img
-                          src="icons/Arrow 1.svg"
-                          alt="Arrow"
-                          className="w-9 h-9 group-hover:rotate-30 group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                        />
-                      )}
-                      <span
-                        className={`${theme.textColor} group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]`}
-                      >
-                        Learn More
-                      </span>
-                    </button>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <img src={service.src} alt="Illustration" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                  About Us
+                </button>
+                <button
+                  onClick={() => scrollToSection("services")}
+                  className="hover:text-[#75b329] transition-colors cursor-pointer"
+                >
+                  Services
+                </button>
+                <button
+                  onClick={() => scrollToSection("use-cases")}
+                  className="hover:text-[#75b329] transition-colors cursor-pointer"
+                >
+                  Use Cases
+                </button>
+                <button
+                  onClick={() => scrollToSection("process")}
+                  className="hover:text-[#75b329] transition-colors cursor-pointer"
+                >
+                  Process
+                </button>
+                <button
+                  onClick={() => scrollToSection("team")}
+                  className="hover:text-[#75b329] transition-colors cursor-pointer"
+                >
+                  Team
+                </button>
+              </div>
+              <button
+                onClick={() => {
+                  setContactType("get-quote");
+                  scrollToSection("contact-us");
+                }}
+                className="bg-transparent hover:bg-[#e5fcca] px-6 xl:px-8.75 py-3 xl:py-4 rounded-[14px] border border-black transition-all cursor-pointer font-medium text-sm xl:text-base active:scale-95"
+              >
+                Request a quote
+              </button>
+            </div>
 
-        {/* ================= 4. CTA BANNER SECTION ================= */}
-        <section className="mb-35 py-[23.5]">
-          <div className="relative flex justify-between bg-[#F3F3F3] px-15 rounded-[45px] w-full h-87.5">
-            <div className="flex flex-col justify-center w-125">
-              <div className="space-y-6.5">
-                <h3 className="font-medium text-[30px]">
-                  Let’s make things happen
-                </h3>
-                <p className="text-[12pt]">
-                  Contact us today to learn more about how our digital marketing
-                  services can help your business grow and succeed online.
-                </p>
-                <button className="bg-black px-8.75 py-5 rounded-[14px] text-white cursor-pointer">
-                  Get your free proposal
+            {/* Mobile / Tablet Menu Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl border border-black/20 hover:bg-black/5 active:scale-90 transition-transform cursor-pointer"
+              aria-label="Toggle Navigation Menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {mobileMenuOpen ? (
+                  <path d="M18 6L6 18M6 6l12 12" />
+                ) : (
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </nav>
+
+          {/* Mobile Drawer Menu Modal */}
+          {mobileMenuOpen && (
+            <div
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden flex flex-col justify-start pt-16 px-5 transition-opacity duration-200"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <div
+                className="bg-white rounded-[24px] p-6 border-2 border-black shadow-2xl flex flex-col gap-5 w-full max-w-sm mx-auto animate-fade-in"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center pb-3 border-b border-black/10">
+                  <img
+                    src="Positivus Logo.svg"
+                    alt="Positivus Logo"
+                    className="h-6 w-auto"
+                  />
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1 rounded-full hover:bg-black/10 active:scale-90 transition-transform cursor-pointer"
+                    aria-label="Close menu"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-2 font-medium text-lg">
+                  <button
+                    onClick={() => scrollToSection("about-us")}
+                    className="p-3 text-left hover:bg-[#B9FF66] rounded-xl transition-colors cursor-pointer"
+                  >
+                    About Us
+                  </button>
+                  <button
+                    onClick={() => scrollToSection("services")}
+                    className="p-3 text-left hover:bg-[#B9FF66] rounded-xl transition-colors cursor-pointer"
+                  >
+                    Services
+                  </button>
+                  <button
+                    onClick={() => scrollToSection("use-cases")}
+                    className="p-3 text-left hover:bg-[#B9FF66] rounded-xl transition-colors cursor-pointer"
+                  >
+                    Use Cases
+                  </button>
+                  <button
+                    onClick={() => scrollToSection("process")}
+                    className="p-3 text-left hover:bg-[#B9FF66] rounded-xl transition-colors cursor-pointer"
+                  >
+                    Process
+                  </button>
+                  <button
+                    onClick={() => scrollToSection("team")}
+                    className="p-3 text-left hover:bg-[#B9FF66] rounded-xl transition-colors cursor-pointer"
+                  >
+                    Team
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setContactType("get-quote");
+                    scrollToSection("contact-us");
+                  }}
+                  className="w-full bg-[#191A23] hover:bg-[#B9FF66] text-white hover:text-black py-3.5 rounded-[14px] font-medium transition-colors cursor-pointer text-center active:scale-95"
+                >
+                  Request a quote
                 </button>
               </div>
             </div>
-            <div className="-top-10 right-15 absolute flex items-center h-[calc(100%+80px)]">
-              <img src="Illustration 2.svg" alt="" />
-            </div>
-          </div>
-        </section>
+          )}
+        </header>
 
-        {/* ================= 5. CASE STUDIES SECTION ================= */}
-        <section id="use-cases" className="mb-35">
-          <SectionHeading
-            title="Case Studies"
-            description="Explore Real-Life Examples of Our Proven Digital Marketing Success through Our Case Studies"
-            className="mb-20"
-          />
-
-          <div className="flex gap-15 bg-[#191A23] px-15 py-17.5 rounded-[45px] h-81.5">
-            <div className="space-y-5">
-              <p className="text-[12pt] text-white">
-                For a local restaurant, we implemented a targeted PPC campaign
-                that resulted in a 50% increase in website traffic and a 25%
-                increase in sales.
+        <main>
+          {/* ================= 1. HERO SECTION ================= */}
+          <section
+            id="hero"
+            className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 sm:gap-12 lg:gap-8 my-6 sm:my-10 lg:my-14"
+          >
+            <div className="flex flex-col items-start gap-5 sm:gap-7 lg:gap-8 w-full lg:w-1/2">
+              <h1 className="font-medium text-3xl sm:text-4xl md:text-5xl lg:text-[60px] leading-tight lg:leading-[1.15]">
+                Navigating the digital landscape for success
+              </h1>
+              <p className="font-normal text-base sm:text-lg lg:text-[20px] text-black/80 leading-relaxed">
+                Our digital marketing agency helps businesses grow and succeed
+                online through a range of services including SEO, PPC, social
+                media marketing, and content creation.
               </p>
-              <button className="group space-x-3.75 text-[#B9FF66] text-[20px] cursor-pointer">
-                <span className="inline-block group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]">
-                  Learn More
-                </span>
-                <img
-                  src="Icons/Arrow Single.svg"
-                  alt="Arrow"
-                  className="inline-block group-hover:rotate-30 group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                />
+              <button
+                onClick={() => scrollToSection("contact-us")}
+                className="bg-[#191A23] hover:bg-[#2e303d] px-6 sm:px-8.75 py-4 sm:py-5 rounded-[14px] text-white font-medium text-base sm:text-lg transition-all active:scale-95 cursor-pointer w-full sm:w-auto text-center"
+              >
+                Book a consultation
               </button>
             </div>
-            <div className="bg-white w-px h-full" />
-            <div className="space-y-5">
-              <p className="text-[12pt] text-white">
-                For a local restaurant, we implemented a targeted PPC campaign
-                that resulted in a 50% increase in website traffic and a 25%
-                increase in sales.
-              </p>
-              <button className="group space-x-3.75 text-[#B9FF66] text-[20px] cursor-pointer">
-                <span className="inline-block group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]">
-                  Learn More
-                </span>
-                <img
-                  src="Icons/Arrow Single.svg"
-                  alt="Arrow"
-                  className="inline-block group-hover:rotate-30 group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                />
-              </button>
+            <div className="flex justify-center lg:justify-end items-center w-full lg:w-1/2">
+              <img
+                src="Illustration.jpg"
+                alt="Digital marketing navigation illustration"
+                fetchPriority="high"
+                decoding="async"
+                className="w-full max-w-[320px] sm:max-w-[440px] lg:max-w-[560px] h-auto object-contain"
+              />
             </div>
-            <div className="bg-white w-px h-full" />
-            <div className="space-y-5">
-              <p className="text-[12pt] text-white">
-                For a local restaurant, we implemented a targeted PPC campaign
-                that resulted in a 50% increase in website traffic and a 25%
-                increase in sales.
-              </p>
-              <button className="group space-x-3.75 text-[#B9FF66] text-[20px] cursor-pointer">
-                <span className="inline-block group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]">
-                  Learn More
-                </span>
-                <img
-                  src="Icons/Arrow Single.svg"
-                  alt="Arrow"
-                  className="inline-block group-hover:rotate-30 group-hover:scale-[1.11] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                />
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* ================= 6. OUR WORKING PROCESS SECTION ================= */}
-        <section id="process" className="mb-35">
-          <SectionHeading
-            title="Our Working Process"
-            description="Step-by-Step Guide to Achieving Your Business Goals"
-            className="mb-20"
-          />
+          {/* ================= 2. CLIENT LOGOS SECTION ================= */}
+          <section
+            id="about-us"
+            className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10 items-center justify-items-center mb-16 sm:mb-24 lg:mb-32 w-full py-4 overflow-hidden"
+          >
+            <img
+              src="amazon.jpg"
+              alt="amazon"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+            <img
+              src="dribble.jpg"
+              alt="dribble"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+            <img
+              src="hubspot.jpg"
+              alt="hubspot"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+            <img
+              src="notion.jpg"
+              alt="notion"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+            <img
+              src="netflix.jpg"
+              alt="netflix"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+            <img
+              src="zoom.jpg"
+              alt="zoom"
+              loading="lazy"
+              decoding="async"
+              className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all max-h-7 sm:max-h-9 w-auto object-contain"
+            />
+          </section>
 
-          <div className="space-y-7.5">
-            {WORKING_PROCESS.map((step) => {
-              const isOpen = openStep === step.id;
+          {/* ================= 3. SERVICES SECTION ================= */}
+          <section id="services" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Services"
+              description="At our digital marketing agency, we offer a range of services to help businesses grow and succeed online. These services include:"
+            />
 
-              return (
-                <div
-                  key={step.id}
-                  className={`px-15 py-10.25 rounded-[45px] w-full border border-black shadow-[0_5px_0_0_rgba(25,26,35,100%)] transition-colors duration-300 ease-out ${
-                    isOpen ? "bg-[#B9FF66]" : "bg-[#f5f5f5]"
-                  }`}
-                >
+            <div className="gap-6 sm:gap-8 lg:gap-10 grid grid-cols-1 lg:grid-cols-2 mx-auto w-full">
+              {SERVICES.map((service) => {
+                const theme = SERVICE_THEMES[service.theme];
+                const isDark = service.theme === "dark";
+
+                return (
                   <div
-                    className="group flex justify-between items-center cursor-pointer select-none"
-                    onClick={() => setOpenStep(isOpen ? null : step.id)}
+                    key={service.id}
+                    className={`flex flex-col sm:flex-row justify-between gap-6 sm:gap-8 ${theme.cardBg} shadow-[0_5px_0_0_rgba(25,26,35,100%)] p-6 sm:p-8 md:p-10 lg:p-12 border border-black rounded-[30px] sm:rounded-[45px] transition-transform duration-300 hover:-translate-y-1`}
                   >
-                    <div className="flex items-center gap-6.25">
-                      <h1 className="font-medium text-[60px]">{step.step}</h1>
-                      <h2 className="font-medium text-[30px]">{step.title}</h2>
+                    <div className="flex flex-col justify-between gap-6 sm:gap-8">
+                      <div className="flex flex-col items-start gap-1">
+                        {service.title.map((line, idx) => (
+                          <div
+                            key={idx}
+                            className={`flex justify-center items-center ${theme.badgeBg} px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-[5px]`}
+                          >
+                            <h3 className="font-medium text-lg sm:text-xl lg:text-[24px] leading-tight text-black">
+                              {line}
+                            </h3>
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => scrollToSection("contact-us")}
+                        className="group flex items-center gap-3 cursor-pointer select-none w-fit"
+                      >
+                        {isDark ? (
+                          <img
+                            src="icons/Arrow 2.svg"
+                            alt="Arrow"
+                            loading="lazy"
+                            decoding="async"
+                            className="w-8 h-8 sm:w-9 sm:h-9 group-hover:rotate-30 group-hover:scale-110 transition-transform duration-300 ease-out"
+                          />
+                        ) : (
+                          <img
+                            src="icons/Arrow 1.svg"
+                            alt="Arrow"
+                            loading="lazy"
+                            decoding="async"
+                            className="w-8 h-8 sm:w-9 sm:h-9 group-hover:rotate-30 group-hover:scale-110 transition-transform duration-300 ease-out"
+                          />
+                        )}
+                        <span
+                          className={`${theme.textColor} font-medium text-base sm:text-lg group-hover:underline`}
+                        >
+                          Learn More
+                        </span>
+                      </button>
                     </div>
-                    <div className="relative flex justify-center items-center w-14.5 h-14.5 active:scale-90 group-hover:scale-110 transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] shrink-0">
+                    <div className="flex justify-center sm:justify-end items-center self-center sm:self-auto shrink-0">
                       <img
-                        src="icons/Plus icon.svg"
-                        alt="Plus"
-                        className={`absolute inset-0 w-full h-full transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] transform ${
-                          isOpen
-                            ? "opacity-0 rotate-90 scale-50 pointer-events-none"
-                            : "opacity-100 rotate-0 scale-100"
-                        }`}
-                      />
-                      <img
-                        src="icons/Minus icon.svg"
-                        alt="Minus"
-                        className={`absolute inset-0 w-full h-full transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] transform ${
-                          isOpen
-                            ? "opacity-100 rotate-0 scale-100"
-                            : "opacity-0 -rotate-90 scale-50 pointer-events-none"
-                        }`}
+                        src={service.src}
+                        alt="Service illustration"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-36 sm:w-40 md:w-48 lg:w-52 h-auto object-contain"
                       />
                     </div>
                   </div>
+                );
+              })}
+            </div>
+          </section>
 
+          {/* ================= 4. CTA BANNER SECTION ================= */}
+          <section className="mb-16 sm:mb-24 lg:mb-32">
+            <div className="relative flex flex-col md:flex-row items-center justify-between bg-[#F3F3F3] p-8 sm:p-12 lg:px-15 lg:py-14 rounded-[30px] sm:rounded-[45px] w-full overflow-hidden">
+              <div className="flex flex-col justify-center w-full md:max-w-md lg:max-w-lg z-10">
+                <div className="space-y-4 sm:space-y-6">
+                  <h3 className="font-medium text-2xl sm:text-3xl lg:text-[30px] leading-tight">
+                    Let’s make things happen
+                  </h3>
+                  <p className="text-sm sm:text-base text-black/80 leading-relaxed">
+                    Contact us today to learn more about how our digital
+                    marketing services can help your business grow and succeed
+                    online.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setContactType("get-quote");
+                      scrollToSection("contact-us");
+                    }}
+                    className="bg-black hover:bg-[#2e303d] px-6 sm:px-8.75 py-4 sm:py-5 rounded-[14px] text-white font-medium transition-colors cursor-pointer w-full sm:w-auto text-center active:scale-95"
+                  >
+                    Get your free proposal
+                  </button>
+                </div>
+              </div>
+              <div className="hidden md:flex justify-end items-center md:w-1/2 lg:w-auto shrink-0">
+                <img
+                  src="Illustration 2.svg"
+                  alt="Let's make things happen illustration"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-64 sm:w-72 lg:w-96 h-auto object-contain"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ================= 5. CASE STUDIES SECTION ================= */}
+          <section id="use-cases" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Case Studies"
+              description="Explore Real-Life Examples of Our Proven Digital Marketing Success through Our Case Studies"
+            />
+
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 bg-[#191A23] p-6 sm:p-10 lg:px-15 lg:py-16 rounded-[30px] sm:rounded-[45px]">
+              {[
+                "For a local restaurant, we implemented a targeted PPC campaign that resulted in a 50% increase in website traffic and a 25% increase in sales.",
+                "For a B2B software company, we revamped the SEO strategy and achieved a 120% increase in qualified organic demo requests within 4 months.",
+                "For an e-commerce retail brand, our multi-channel social media campaign drove a 4x return on ad spend and doubled monthly online orders.",
+              ].map((desc, idx) => (
+                <div key={idx} className="contents lg:block lg:flex-1">
+                  <div className="flex flex-col justify-between space-y-4 lg:space-y-6">
+                    <p className="text-sm sm:text-base text-white/90 leading-relaxed">
+                      {desc}
+                    </p>
+                    <button
+                      onClick={() => scrollToSection("contact-us")}
+                      className="group flex items-center gap-2 text-[#B9FF66] text-base sm:text-lg cursor-pointer w-fit"
+                    >
+                      <span className="group-hover:underline font-medium">
+                        Learn More
+                      </span>
+                      <img
+                        src="icons/Arrow Single.svg"
+                        alt="Arrow"
+                        loading="lazy"
+                        decoding="async"
+                        className="inline-block group-hover:translate-x-1 transition-transform"
+                      />
+                    </button>
+                  </div>
+                  {idx < 2 && (
+                    <div className="bg-white/20 h-px w-full lg:h-full lg:w-px my-2 lg:my-0 lg:mx-6 shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ================= 6. OUR WORKING PROCESS SECTION ================= */}
+          <section id="process" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Our Working Process"
+              description="Step-by-Step Guide to Achieving Your Business Goals"
+            />
+
+            <div className="space-y-4 sm:space-y-6 lg:space-y-7.5">
+              {WORKING_PROCESS.map((step) => {
+                const isOpen = openStep === step.id;
+
+                return (
                   <div
-                    className={`grid transition-[grid-template-rows,padding] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                      isOpen ? "grid-rows-[1fr] pt-7.5" : "grid-rows-[0fr] pt-0"
+                    key={step.id}
+                    className={`px-5 sm:px-8 lg:px-15 py-5 sm:py-8 lg:py-10 rounded-[25px] sm:rounded-[45px] w-full border border-black shadow-[0_5px_0_0_rgba(25,26,35,100%)] transition-colors duration-300 ease-out ${
+                      isOpen ? "bg-[#B9FF66]" : "bg-[#f5f5f5]"
                     }`}
                   >
-                    <div className="overflow-hidden">
-                      <div
-                        className={`transition-all duration-350 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] transform ${
-                          isOpen
-                            ? "opacity-100 translate-y-0 scale-100"
-                            : "opacity-0 -translate-y-3 scale-95"
-                        }`}
-                      >
-                        <div className="bg-black mb-7.5 w-full h-px" />
-                        <div>
-                          <p className="text-[12pt] leading-relaxed">
+                    <div
+                      className="group flex justify-between items-center gap-3 cursor-pointer select-none"
+                      onClick={() => setOpenStep(isOpen ? null : step.id)}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-6">
+                        <span className="font-medium text-3xl sm:text-4xl lg:text-[60px] leading-none">
+                          {step.step}
+                        </span>
+                        <h3 className="font-medium text-base sm:text-xl lg:text-[30px] leading-snug">
+                          {step.title}
+                        </h3>
+                      </div>
+                      <div className="relative flex justify-center items-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14.5 lg:h-14.5 active:scale-90 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <img
+                          src="icons/Plus icon.svg"
+                          alt="Plus"
+                          loading="lazy"
+                          decoding="async"
+                          className={`absolute inset-0 w-full h-full transition-all duration-300 transform ${
+                            isOpen
+                              ? "opacity-0 rotate-90 scale-50 pointer-events-none"
+                              : "opacity-100 rotate-0 scale-100"
+                          }`}
+                        />
+                        <img
+                          src="icons/Minus icon.svg"
+                          alt="Minus"
+                          loading="lazy"
+                          decoding="async"
+                          className={`absolute inset-0 w-full h-full transition-all duration-300 transform ${
+                            isOpen
+                              ? "opacity-100 rotate-0 scale-100"
+                              : "opacity-0 -rotate-90 scale-50 pointer-events-none"
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      className={`grid transition-[grid-template-rows,padding] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        isOpen
+                          ? "grid-rows-[1fr] pt-4 sm:pt-6 lg:pt-7.5"
+                          : "grid-rows-[0fr] pt-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div
+                          className={`transition-all duration-300 transform ${
+                            isOpen
+                              ? "opacity-100 translate-y-0"
+                              : "opacity-0 -translate-y-2"
+                          }`}
+                        >
+                          <div className="bg-black/20 mb-4 sm:mb-6 lg:mb-7.5 w-full h-px" />
+                          <p className="text-sm sm:text-base lg:text-[18px] text-black/90 leading-relaxed">
                             {step.description}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* ================= 7. TEAM SECTION ================= */}
-        <section id="team" className="mb-35">
-          <SectionHeading
-            title="Team"
-            description="Meet the skilled and experienced team behind our successful digital marketing strategies"
-            className="mb-20"
-          />
+          {/* ================= 7. TEAM SECTION ================= */}
+          <section id="team" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Team"
+              description="Meet the skilled and experienced team behind our successful digital marketing strategies"
+            />
 
-          <div className="gap-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {TEAM_MEMBERS.map((member) => (
-              <div
-                key={member.id}
-                className="space-y-7 bg-white shadow-[0_5px_0_0_rgba(25,26,35,100%)] px-8.75 py-10 border border-black rounded-[45px] w-full"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex items-end gap-5">
-                    <img
-                      src={member.src}
-                      alt={member.name}
-                      className="h-25 object-contain shrink-0"
-                    />
-                    <div>
-                      <h3 className="font-medium text-[20px] text-black leading-tight">
-                        {member.name}
-                      </h3>
-                      <p className="text-[16px] text-black/80">{member.role}</p>
+            <div className="gap-6 sm:gap-8 lg:gap-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {TEAM_MEMBERS.map((member) => (
+                <div
+                  key={member.id}
+                  className="space-y-5 sm:space-y-6 bg-white shadow-[0_5px_0_0_rgba(25,26,35,100%)] p-6 sm:p-8 lg:p-10 border border-black rounded-[30px] sm:rounded-[45px] w-full"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-end gap-4 sm:gap-5">
+                      <img
+                        src={member.src}
+                        alt={member.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain shrink-0"
+                      />
+                      <div>
+                        <h3 className="font-medium text-lg sm:text-[20px] text-black leading-tight">
+                          {member.name}
+                        </h3>
+                        <p className="text-sm sm:text-[16px] text-black/80">
+                          {member.role}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <a
-                    href="#linkedin"
-                    className="flex justify-center items-center bg-black hover:bg-[#2e303d] rounded-full w-8.5 h-8.5 transition-colors cursor-pointer shrink-0"
-                    aria-label={`${member.name} LinkedIn`}
-                  >
-                    <img
-                      src="icons/linkedin.svg"
-                      alt="LinkedIn"
-                      className="w-4 h-4"
-                    />
-                  </a>
-                </div>
-
-                <div className="bg-black w-full h-px" />
-
-                <p className="font-normal text-[12pt] text-black leading-relaxed">
-                  {member.description}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-end mt-10">
-            <button className="bg-[#191A23] hover:bg-[#2e303d] px-8.75 py-5 rounded-[14px] w-full sm:w-auto text-white transition-colors cursor-pointer">
-              See all team
-            </button>
-          </div>
-        </section>
-        {/* ================= 8. TESTIMONIALS SECTION ================= */}
-        <section id="testimonials" className="mb-35">
-          <SectionHeading
-            title="Testimonials"
-            description="Hear from Our Satisfied Clients: Read Our Testimonials to Learn More about Our Digital Marketing Services"
-            className="mb-20"
-          />
-
-          <div className="bg-[#191A23] py-16 sm:py-21 rounded-[45px] overflow-hidden select-none">
-            {/* Sliding Track Container */}
-            <div
-              className="w-full overflow-hidden [--carousel-card-width:min(606px,82vw)] [--carousel-gap:24px] md:[--carousel-card-width:606px] md:[--carousel-gap:50px]"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-            >
-              <div
-                className="flex items-center transition-transform duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] will-change-transform"
-                style={{
-                  gap: "var(--carousel-gap)",
-                  transform: `translateX(calc(50% - (var(--carousel-card-width) / 2) - ${
-                    currentTestimonial + 1
-                  } * (var(--carousel-card-width) + var(--carousel-gap))))`,
-                }}
-              >
-                {carouselDisplayItems.map((item) => {
-                  const isActive =
-                    currentTestimonial === item.originalIndex && !item.isClone;
-                  return (
-                    <div
-                      key={item.uniqueKey}
-                      onClick={() => setCurrentTestimonial(item.originalIndex)}
-                      style={{ width: "var(--carousel-card-width)" }}
-                      className={`shrink-0 transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                        isActive
-                          ? "opacity-100 scale-100 cursor-default"
-                          : "opacity-40 scale-90 sm:scale-95 hover:opacity-75 cursor-pointer"
-                      }`}
+                    <a
+                      href="#linkedin"
+                      className="flex justify-center items-center bg-black hover:bg-[#2e303d] rounded-full w-8 h-8 sm:w-8.5 sm:h-8.5 transition-colors cursor-pointer shrink-0"
+                      aria-label={`${member.name} LinkedIn`}
                     >
-                      <div className="mx-auto w-full max-w-151.5">
-                        {/* Speech Bubble Box with Bubble.svg */}
-                        <div className="relative drop-shadow-[0_4px_14px_rgba(0,0,0,0.3)] w-full hover:scale-[1.01] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] filter">
-                          <img
-                            src="icons/Bubble.svg"
-                            alt="Testimonial bubble"
-                            className="block w-full h-auto pointer-events-none select-none"
-                          />
-                          <div className="top-0 bottom-[11%] absolute inset-x-0 flex justify-center items-center px-6 sm:px-10 md:px-12 py-4 sm:py-6">
-                            <p className="text-[12px] text-white sm:text-[15px] md:text-[17px] lg:text-[18px] text-left leading-relaxed">
-                              "{item.quote}"
+                      <img
+                        src="icons/linkedin.svg"
+                        alt="LinkedIn"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                      />
+                    </a>
+                  </div>
+
+                  <div className="bg-black/20 w-full h-px" />
+
+                  <p className="font-normal text-sm sm:text-base text-black/90 leading-relaxed">
+                    {member.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end mt-8 sm:mt-10">
+              <button
+                onClick={() => scrollToSection("contact-us")}
+                className="bg-[#191A23] hover:bg-[#2e303d] px-8.75 py-4 sm:py-5 rounded-[14px] w-full sm:w-auto text-white font-medium transition-colors cursor-pointer text-center active:scale-95"
+              >
+                See all team
+              </button>
+            </div>
+          </section>
+
+          {/* ================= 8. TESTIMONIALS SECTION ================= */}
+          <section id="testimonials" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Testimonials"
+              description="Hear from Our Satisfied Clients: Read Our Testimonials to Learn More about Our Digital Marketing Services"
+            />
+
+            <div className="bg-[#191A23] py-12 sm:py-16 md:py-20 rounded-[30px] sm:rounded-[45px] overflow-hidden select-none">
+              {/* Sliding Track Container */}
+              <div
+                className="w-full overflow-hidden [--carousel-card-width:min(606px,84vw)] [--carousel-gap:16px] sm:[--carousel-gap:24px] md:[--carousel-card-width:606px] md:[--carousel-gap:50px]"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div
+                  className="flex items-center transition-transform duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] will-change-transform"
+                  style={{
+                    gap: "var(--carousel-gap)",
+                    transform: `translateX(calc(50% - (var(--carousel-card-width) / 2) - ${
+                      currentTestimonial + 1
+                    } * (var(--carousel-card-width) + var(--carousel-gap))))`,
+                  }}
+                >
+                  {carouselDisplayItems.map((item) => {
+                    const isActive =
+                      currentTestimonial === item.originalIndex &&
+                      !item.isClone;
+                    return (
+                      <div
+                        key={item.uniqueKey}
+                        onClick={() =>
+                          setCurrentTestimonial(item.originalIndex)
+                        }
+                        style={{ width: "var(--carousel-card-width)" }}
+                        className={`shrink-0 transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                          isActive
+                            ? "opacity-100 scale-100 cursor-default"
+                            : "opacity-40 scale-90 sm:scale-95 hover:opacity-75 cursor-pointer"
+                        }`}
+                      >
+                        <div className="mx-auto w-full max-w-151.5">
+                          {/* Speech Bubble Box with Bubble.svg */}
+                          <div className="relative drop-shadow-[0_4px_14px_rgba(0,0,0,0.3)] w-full hover:scale-[1.01] transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]">
+                            <img
+                              src="icons/Bubble.svg"
+                              alt="Testimonial bubble"
+                              loading="lazy"
+                              decoding="async"
+                              className="block w-full h-auto pointer-events-none select-none"
+                            />
+                            <div className="top-0 bottom-[12%] absolute inset-x-0 flex justify-center items-center px-4 sm:px-8 md:px-12 py-3 sm:py-6">
+                              <p className="text-[11px] sm:text-[14px] md:text-[16px] lg:text-[17px] text-white text-left leading-relaxed">
+                                "{item.quote}"
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Author Info */}
+                          <div className="mt-4 sm:mt-6 ml-[13.7%]">
+                            <h4 className="font-medium text-[#B9FF66] text-base sm:text-lg lg:text-[20px] leading-tight">
+                              {item.author}
+                            </h4>
+                            <p className="text-xs sm:text-sm lg:text-[16px] text-white/90 leading-normal">
+                              {item.role}
                             </p>
                           </div>
                         </div>
-
-                        {/* Author Info (Aligned under the Bubble tail peak at ~13.7%) */}
-                        <div className="mt-5 sm:mt-6 ml-[13.7%]">
-                          <h4 className="font-medium text-[#B9FF66] text-[18px] sm:text-[20px] leading-tight">
-                            {item.author}
-                          </h4>
-                          <p className="text-[14px] text-white/90 sm:text-[16px] leading-normal">
-                            {item.role}
-                          </p>
-                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Carousel Controls (Arrows + 5 Sparkle/Star Dots) */}
-            <div className="flex justify-center items-center gap-16 sm:gap-24 mt-16 sm:mt-24">
-              {/* Left Arrow Button */}
-              <button
-                type="button"
-                onClick={prevTestimonial}
-                aria-label="Previous Testimonial"
-                className="p-2 text-white hover:text-[#B9FF66] hover:scale-125 active:scale-75 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] cursor-pointer"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              {/* Carousel Controls (Arrows + Indicator Stars) */}
+              <div className="flex justify-center items-center gap-6 sm:gap-16 lg:gap-24 mt-8 sm:mt-14 lg:mt-20">
+                <button
+                  type="button"
+                  onClick={prevTestimonial}
+                  aria-label="Previous Testimonial"
+                  className="p-2 text-white hover:text-[#B9FF66] hover:scale-125 active:scale-75 transition-all duration-300 cursor-pointer"
                 >
-                  <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              {/* 5 Sparkle / Star Indicator Dots */}
-              <div className="flex items-center gap-4 sm:gap-5">
-                {TESTIMONIALS.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentTestimonial(idx)}
-                    aria-label={`Go to testimonial ${idx + 1}`}
-                    className="p-1 focus:outline-none hover:scale-125 active:scale-90 transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] cursor-pointer"
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 14 14"
-                      className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                        currentTestimonial === idx
-                          ? "text-[#B9FF66] scale-135 drop-shadow-[0_0_8px_rgba(185,255,102,0.6)]"
-                          : "text-white opacity-70 hover:opacity-100 hover:scale-110"
-                      }`}
-                      fill="currentColor"
-                    >
-                      <path d="M7 0L8.5 5.5L14 7L8.5 8.5L7 14L5.5 8.5L0 7L5.5 5.5L7 0Z" />
-                    </svg>
-                  </button>
-                ))}
-              </div>
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                  </svg>
+                </button>
 
-              {/* Right Arrow Button */}
-              <button
-                type="button"
-                onClick={nextTestimonial}
-                aria-label="Next Testimonial"
-                className="p-2 text-white hover:text-[#B9FF66] hover:scale-125 active:scale-75 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] cursor-pointer"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <div className="flex items-center gap-3 sm:gap-5">
+                  {TESTIMONIALS.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentTestimonial(idx)}
+                      aria-label={`Go to testimonial ${idx + 1}`}
+                      className="p-1 focus:outline-none hover:scale-125 active:scale-90 transition-transform cursor-pointer"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        className={`transition-all duration-300 ${
+                          currentTestimonial === idx
+                            ? "text-[#B9FF66] scale-125 drop-shadow-[0_0_8px_rgba(185,255,102,0.6)]"
+                            : "text-white opacity-70 hover:opacity-100"
+                        }`}
+                        fill="currentColor"
+                      >
+                        <path d="M7 0L8.5 5.5L14 7L8.5 8.5L7 14L5.5 8.5L0 7L5.5 5.5L7 0Z" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={nextTestimonial}
+                  aria-label="Next Testimonial"
+                  className="p-2 text-white hover:text-[#B9FF66] hover:scale-125 active:scale-75 transition-all duration-300 cursor-pointer"
                 >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </section>
-        {/* ================= 9. CONTACT US SECTION =================  */}
-        <section id="contact-us" className="mb-35">
-          <SectionHeading
-            title="Contact Us"
-            description="Connect with Us: Let's Discuss Your Digital Marketing Needs"
-            className="mb-20"
-          />
-          <div className="relative flex justify-between items-center bg-[#F3F3F3] px-8 sm:px-14 md:px-20 lg:px-25 pt-12 sm:pt-15 pb-16 sm:pb-20 rounded-[45px] overflow-hidden">
-            {/* Left Column: Form */}
-            <div className="z-10 relative w-full lg:max-w-139">
-              <form onSubmit={handleContactSubmit}>
-                {/* Radio Buttons (Say Hi / Get a Quote) */}
-                <div className="flex items-center gap-9 mb-10">
-                  <label
-                    onClick={() => setContactType("say-hi")}
-                    className="group flex items-center gap-3.5 cursor-pointer select-none"
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <div className="relative flex justify-center items-center bg-white border border-black rounded-full w-7 h-7 transition-all">
-                      {contactType === "say-hi" && (
-                        <div className="bg-[#B9FF66] rounded-full w-4 h-4 scale-100 transition-transform duration-200" />
-                      )}
-                    </div>
-                    <span className="text-[12pt] text-black">Say Hi</span>
-                  </label>
-
-                  <label
-                    onClick={() => setContactType("get-quote")}
-                    className="group flex items-center gap-3.5 cursor-pointer select-none"
-                  >
-                    <div className="relative flex justify-center items-center bg-white border border-black rounded-full w-7 h-7 transition-all">
-                      {contactType === "get-quote" && (
-                        <div className="bg-[#B9FF66] rounded-full w-4 h-4 scale-100 transition-transform duration-200" />
-                      )}
-                    </div>
-                    <span className="text-[12pt] text-black">Get a Quote</span>
-                  </label>
-                </div>
-
-                {/* Form Inputs */}
-                <div className="space-y-6.25">
-                  {/* Name Field */}
-                  <div>
-                    <label
-                      htmlFor="contact-name"
-                      className="block mb-1.25 font-normal text-[16px] text-black"
-                    >
-                      Name
-                    </label>
-                    <input
-                      id="contact-name"
-                      type="text"
-                      name="name"
-                      placeholder="Name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="bg-white px-7.5 py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full text-[12pt] text-black placeholder:text-[#898989] transition-all"
-                    />
-                  </div>
-
-                  {/* Email Field */}
-                  <div>
-                    <label
-                      htmlFor="contact-email"
-                      className="block mb-1.25 font-normal text-[16px] text-black"
-                    >
-                      Email*
-                    </label>
-                    <input
-                      id="contact-email"
-                      type="email"
-                      name="email"
-                      required
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="bg-white px-7.5 py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full text-[12pt] text-black placeholder:text-[#898989] transition-all"
-                    />
-                  </div>
-
-                  {/* Message Field */}
-                  <div>
-                    <label
-                      htmlFor="contact-message"
-                      className="block mb-1.25 font-normal text-[16px] text-black"
-                    >
-                      Message*
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      required
-                      rows={6}
-                      placeholder="Message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      className="bg-white px-7.5 py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full min-h-47.5 text-[12pt] text-black placeholder:text-[#898989] transition-all resize-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="mt-10">
-                  <button
-                    type="submit"
-                    className="bg-[#191A23] hover:bg-[#B9FF66] px-9 py-5 rounded-[14px] w-full font-medium text-[20px] text-white hover:text-black active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] cursor-pointer"
-                  >
-                    {formSubmitted ? "Message Sent! ✓" : "Send Message"}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Right Column: Illustration3.svg */}
-            <div className="hidden top-1/2 -right-28 xl:-right-12 absolute lg:flex justify-center items-center -translate-y-1/2 pointer-events-none select-none">
-              <img
-                src="Illustration3.svg"
-                alt="Contact Illustration"
-                className="right absolute w-162.5 max-w-none h-auto object-contain"
-              />
-            </div>
-          </div>
-        </section>
-        <section className="bg-[#191A23] px-15 pt-13.75 pb-12.5 rounded-t-[45px] text-white">
-          <div className="flex justify-between items-center mb-16.5">
-            <div>
-              <img
-                src="Positivus Logo White.svg"
-                alt="Positivus Logo"
-                className="w-40 h-auto"
-              />
-            </div>
-            <div className="flex gap-10">
-              <span className="underline hover:text-[#B9FF66] transition-colors cursor-pointer">About Us</span>
-              <span className="underline hover:text-[#B9FF66] transition-colors cursor-pointer">Services</span>
-              <span className="underline hover:text-[#B9FF66] transition-colors cursor-pointer">Use Cases</span>
-              <span className="underline hover:text-[#B9FF66] transition-colors cursor-pointer">Pricing</span>
-              <span className="underline hover:text-[#B9FF66] transition-colors cursor-pointer">Blog</span>
-            </div>
-            <div className="flex items-center gap-5">
-              <img src="icons/Social icon.svg" alt="linkedin" />
-              <img src="icons/Social icon-1.svg" alt="facebook" />
-              <img src="icons/Social icon-2.svg" alt="twitter" />
-            </div>
-          </div>
-          <div className="flex gap-38.5 ">
-            <div className="w-83 space-y-6.75">
-              <div className="flex justify-center items-center bg-[#B9FF66] px-1.75 rounded-[5px] shrink-0 w-fit">
-                <h2 className="font-medium text-[20px] leading-tight text-black">
-                  Contact us:
-                </h2>
-              </div>
-              <div className="space-y-5">
-                <p>Email: info@positivus.com</p>
-                <p>Phone: 555-567-8901</p>
-                <p>
-                  Address: 1234 Main St Moonstone City, Stardust State 12345
-                </p>
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
               </div>
             </div>
-            <div className="flex px-10 py-15 gap-5 rounded-[14px] bg-[#292A32] w-158.5 mb-12.5">
-              <input
-                type="email"
-                className="w-1/2 px-8.75 outline rounded-[14px]"
-                placeholder="Email"
-              />
-              <button className="bg-[#B9FF66] hover:bg-[#84cd2b] text-black hover:text-black px-8 py-5 rounded-[14px] font-medium w-1/2 transition-colors cursor-pointer">
-                Subscribe to news
-              </button>
+          </section>
+
+          {/* ================= 9. CONTACT US SECTION ================= */}
+          <section id="contact-us" className="mb-16 sm:mb-24 lg:mb-32">
+            <SectionHeading
+              title="Contact Us"
+              description="Connect with Us: Let's Discuss Your Digital Marketing Needs"
+            />
+            <div className="relative flex justify-between items-center bg-[#F3F3F3] p-6 sm:p-10 md:p-14 lg:p-20 rounded-[30px] sm:rounded-[45px] overflow-hidden">
+              <div className="z-10 relative w-full lg:max-w-xl">
+                <form onSubmit={handleContactSubmit}>
+                  {/* Radio Buttons (Say Hi / Get a Quote) */}
+                  <div className="flex items-center gap-6 sm:gap-9 mb-6 sm:mb-8">
+                    <label
+                      onClick={() => setContactType("say-hi")}
+                      className="group flex items-center gap-3 cursor-pointer select-none"
+                    >
+                      <div className="relative flex justify-center items-center bg-white border border-black rounded-full w-6 h-6 sm:w-7 sm:h-7 transition-all">
+                        {contactType === "say-hi" && (
+                          <div className="bg-[#B9FF66] rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        )}
+                      </div>
+                      <span className="text-sm sm:text-base text-black font-medium">
+                        Say Hi
+                      </span>
+                    </label>
+
+                    <label
+                      onClick={() => setContactType("get-quote")}
+                      className="group flex items-center gap-3 cursor-pointer select-none"
+                    >
+                      <div className="relative flex justify-center items-center bg-white border border-black rounded-full w-6 h-6 sm:w-7 sm:h-7 transition-all">
+                        {contactType === "get-quote" && (
+                          <div className="bg-[#B9FF66] rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        )}
+                      </div>
+                      <span className="text-sm sm:text-base text-black font-medium">
+                        Get a Quote
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Form Inputs */}
+                  <div className="space-y-4 sm:space-y-6">
+                    <div>
+                      <label
+                        htmlFor="contact-name"
+                        className="block mb-1.5 text-sm sm:text-base font-normal text-black"
+                      >
+                        Name
+                      </label>
+                      <input
+                        id="contact-name"
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="bg-white px-5 sm:px-7.5 py-3.5 sm:py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full text-sm sm:text-base text-black placeholder:text-[#898989] transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="contact-email"
+                        className="block mb-1.5 text-sm sm:text-base font-normal text-black"
+                      >
+                        Email*
+                      </label>
+                      <input
+                        id="contact-email"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="bg-white px-5 sm:px-7.5 py-3.5 sm:py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full text-sm sm:text-base text-black placeholder:text-[#898989] transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="contact-message"
+                        className="block mb-1.5 text-sm sm:text-base font-normal text-black"
+                      >
+                        Message*
+                      </label>
+                      <textarea
+                        id="contact-message"
+                        name="message"
+                        required
+                        rows={5}
+                        placeholder="Message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        className="bg-white px-5 sm:px-7.5 py-3.5 sm:py-4.5 border border-black rounded-[14px] focus:outline-none focus:ring-[#B9FF66] focus:ring-2 w-full min-h-[140px] text-sm sm:text-base text-black placeholder:text-[#898989] transition-all resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-8 sm:mt-10">
+                    <button
+                      type="submit"
+                      className="bg-[#191A23] hover:bg-[#B9FF66] px-8 py-4 sm:py-5 rounded-[14px] w-full font-medium text-base sm:text-lg text-white hover:text-black active:scale-[0.98] transition-all duration-300 cursor-pointer text-center"
+                    >
+                      {formSubmitted ? "Message Sent! ✓" : "Send Message"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Right Column: Illustration3.svg */}
+              <div className="hidden lg:flex top-1/2 -right-28 xl:-right-12 absolute justify-center items-center -translate-y-1/2 pointer-events-none select-none">
+                <img
+                  src="Illustration3.svg"
+                  alt="Contact Illustration"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-130 xl:w-162.5 max-w-none h-auto object-contain"
+                />
+              </div>
             </div>
-          </div>
-          <div className="space-y-12.5">
-            <div className="w-full h-px bg-white" />
-            <div className="flex gap-10">
-              <span>
-                © 2024 Positivus. Coded by{" "}
-                <span className="text-white font-medium">Bilal Shandyarta Syamsudin</span> · Designed
-                by{" "}
+          </section>
+
+          {/* ================= 10. FOOTER SECTION ================= */}
+          <footer className="bg-[#191A23] p-6 sm:p-10 lg:p-14 rounded-t-[30px] sm:rounded-t-[45px] text-white">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-8 mb-10 sm:mb-14">
+              <div>
+                <img
+                  src="Positivus Logo White.svg"
+                  alt="Positivus Logo"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-36 sm:w-40 h-auto"
+                />
+              </div>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm sm:text-base">
+                <button
+                  onClick={() => scrollToSection("about-us")}
+                  className="underline hover:text-[#B9FF66] transition-colors cursor-pointer"
+                >
+                  About Us
+                </button>
+                <button
+                  onClick={() => scrollToSection("services")}
+                  className="underline hover:text-[#B9FF66] transition-colors cursor-pointer"
+                >
+                  Services
+                </button>
+                <button
+                  onClick={() => scrollToSection("use-cases")}
+                  className="underline hover:text-[#B9FF66] transition-colors cursor-pointer"
+                >
+                  Use Cases
+                </button>
+                <button
+                  onClick={() => scrollToSection("process")}
+                  className="underline hover:text-[#B9FF66] transition-colors cursor-pointer"
+                >
+                  Process
+                </button>
+                <button
+                  onClick={() => scrollToSection("team")}
+                  className="underline hover:text-[#B9FF66] transition-colors cursor-pointer"
+                >
+                  Team
+                </button>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="icons/Social icon.svg"
+                  alt="LinkedIn"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-7 h-7 sm:w-8 sm:h-8 hover:opacity-80 transition-opacity cursor-pointer"
+                />
+                <img
+                  src="icons/Social icon-1.svg"
+                  alt="Facebook"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-7 h-7 sm:w-8 sm:h-8 hover:opacity-80 transition-opacity cursor-pointer"
+                />
+                <img
+                  src="icons/Social icon-2.svg"
+                  alt="Twitter"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-7 h-7 sm:w-8 sm:h-8 hover:opacity-80 transition-opacity cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row justify-between gap-8 lg:gap-12 items-start mb-10 sm:mb-14">
+              <div className="space-y-4 sm:space-y-6 max-w-sm">
+                <div className="bg-[#B9FF66] px-2 py-0.5 rounded-[5px] w-fit">
+                  <h3 className="font-medium text-base sm:text-lg text-black">
+                    Contact us:
+                  </h3>
+                </div>
+                <div className="space-y-2.5 text-sm sm:text-base text-white/80">
+                  <p>Email: info@positivus.com</p>
+                  <p>Phone: 555-567-8901</p>
+                  <p>
+                    Address: 1234 Main St Moonstone City, Stardust State 12345
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row p-6 sm:p-8 lg:p-10 gap-3.5 sm:gap-4 rounded-[14px] bg-[#292A32] w-full lg:max-w-xl">
+                <input
+                  type="email"
+                  className="w-full sm:w-3/5 px-4 sm:px-6 py-3.5 rounded-[14px] bg-transparent border border-white/30 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:border-[#B9FF66]"
+                  placeholder="Email"
+                />
+                <button
+                  type="button"
+                  className="bg-[#B9FF66] hover:bg-[#84cd2b] text-black px-5 sm:px-7 py-3.5 rounded-[14px] font-medium text-sm sm:text-base transition-colors cursor-pointer w-full sm:w-2/5 active:scale-95 text-center"
+                >
+                  Subscribe to news
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-6 pt-6 border-t border-white/20">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-white/70 text-center sm:text-left">
+                <span>
+                  © 2024 Positivus. Coded by{" "}
+                  <span className="text-white font-medium">
+                    Bilal Shandyarta Syamsudin
+                  </span>{" "}
+                  · Designed by{" "}
+                  <a
+                    href="https://www.olgaskuja.design/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-[#B9FF66] transition-colors"
+                  >
+                    Olga Skuja
+                  </a>
+                </span>
                 <a
-                  href="https://www.olgaskuja.design/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#privacy"
                   className="underline hover:text-[#B9FF66] transition-colors"
                 >
-                  Olga Skuja
+                  Privacy Policy
                 </a>
-              </span>
-              <a
-                href="#privacy"
-                className="underline hover:text-[#B9FF66] transition-colors"
-              >
-                Privacy Policy
-              </a>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }

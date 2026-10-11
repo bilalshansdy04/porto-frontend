@@ -86,6 +86,18 @@ export function demoAssetsPlugin(): Plugin {
         `src={$1/demos/${demoSlug}/$2$1}`
       );
 
+      // Match JSX src={... ? "Logo.svg" : "Logo2.svg"}
+      transformed = transformed.replace(
+        /\bsrc=\{([^}]+)\}/g,
+        (fullMatch, expr) => {
+          const replaced = expr.replace(
+            /(["'`])(?!https?:\/\/|\/|data:|blob:)(?:\.\/)?([^"'`]+\.(?:svg|png|jpe?g|webp|gif|avif|ico))\1/g,
+            `$1/demos/${demoSlug}/$2$1`
+          );
+          return `src={${replaced}}`;
+        }
+      );
+
       // Match compiled JS object property src: "Logo.svg" or src: 'Logo.svg'
       transformed = transformed.replace(
         /\bsrc:\s*(["'`])(?!https?:\/\/|\/|data:|blob:)(?:\.\/)?([^"'`]+)\1/g,
@@ -146,8 +158,8 @@ export function demoAssetsPlugin(): Plugin {
           reqSlug = directMatch[1];
           assetPath = directMatch[2];
         } else {
-          // Case B: Relative URL fallback /demos/:assetPath (e.g. browser resolved Logo.svg from /demos/shrimp to /demos/Logo.svg)
-          const fallbackMatch = pathname.match(/^\/demos\/([^/]+)$/);
+          // Case B: Relative URL fallback /demos/:assetPath or /:assetPath with referer
+          const fallbackMatch = pathname.match(/^\/demos\/(.+)$/) || (req.headers.referer ? pathname.match(/^\/(.+)$/) : null);
           if (fallbackMatch && req.headers.referer) {
             try {
               const refererUrl = new URL(req.headers.referer);
@@ -164,12 +176,30 @@ export function demoAssetsPlugin(): Plugin {
 
         const subfolders = fs.readdirSync(publicDir);
         // Case-insensitive match on folder name or kebab-case
-        const matchedFolder = subfolders.find((f) => {
+        let matchedFolder = subfolders.find((f) => {
           const lower = f.toLowerCase();
           const kebab = toKebabCase(f);
           const reqLower = reqSlug!.toLowerCase();
           return lower === reqLower || kebab === reqLower;
         });
+
+        // If reqSlug wasn't a valid demo folder (e.g. /demos/icons/Arrow 1.svg where reqSlug="icons"), check referer for actual demo folder
+        if (!matchedFolder && req.headers.referer) {
+          try {
+            const refererUrl = new URL(req.headers.referer);
+            const refMatch = refererUrl.pathname.match(/^\/demos\/([^/]+)/);
+            if (refMatch && refMatch[1].toLowerCase() !== 'public') {
+              const refSlug = refMatch[1].toLowerCase();
+              const refFolder = subfolders.find(
+                (f) => f.toLowerCase() === refSlug || toKebabCase(f) === refSlug
+              );
+              if (refFolder) {
+                matchedFolder = refFolder;
+                assetPath = `${reqSlug}/${assetPath}`;
+              }
+            }
+          } catch {}
+        }
 
         if (!matchedFolder) return next();
 
