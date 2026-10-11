@@ -227,28 +227,7 @@ export function Home() {
         setCategories(catsData || []);
 
         let loadedProjects = (projData || []).filter((p) => p.is_visible);
-        // Include Nova AI dummy landing page demo so it is immediately visible & clickable
-        if (!loadedProjects.some((p) => p.link === "/demos/landingpage1" || p.link === "/landingpage1")) {
-          loadedProjects = [
-            {
-              id: 99901,
-              name: "Nova AI - SaaS Platform",
-              description:
-                "High-converting, responsive AI analytics platform landing page with real-time telemetry, autonomous agents, and interactive live demo.",
-              status: "Live",
-              image_url: "/stitch_downloads/admin_overview.png",
-              is_visible: true,
-              date_modified: "2026-10-06",
-              tech_stack: ["React 19", "Tailwind CSS", "TypeScript", "Lucide"],
-              project_flow: [],
-              jobdesc: [],
-              category: "Dummy Landing Page",
-              target_type: "direct",
-              link: "/demos/landingpage1",
-            },
-            ...loadedProjects,
-          ];
-        }
+        
         setProjects(loadedProjects);
       } catch (err) {
         console.error("Failed to load home data", err);
